@@ -1,6 +1,22 @@
 <?php
 
-function clearEmail($email){
+const EMAIL_FIELD_KEY = 2;
+
+const PASSWORD_FIELD_KEY = 3;
+
+const NICKNAME_FIELD_KEY = 4;
+
+const PRODUCT_ID_FIELD_KEY = 0;
+
+const PRODUCT_NAME_FIELD_KEY = 1;
+
+const PRODUCT_SKU_FIELD_KEY = 2;
+
+const PRODUCT_QTY_FIELD_KEY = 3;
+
+const PRODUCT_PRICE_FIELD_KEY = 4;
+
+function cleanEmail($email){
     return trim(strtolower($email));
 }
 
@@ -8,10 +24,10 @@ function isEmailValid($email){
     return strpos($email, '@') !== false;
 }
 
-function isEmailUniq($email){
+function isValueUniq($value, $key){
     $users = readFromCsv('users.csv');
     foreach ($users as $user){
-        if ($user[2] === $email){
+        if ($user[$key] === $value){
             return false;
         }
     }

@@ -5,7 +5,7 @@ include 'helper.php';
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-$email = clearEmail($email);
+$email = cleanEmail($email);
 $password = hashPassword($password);
 
 $users = readFromCsv('users.csv');
@@ -13,7 +13,7 @@ $users = readFromCsv('users.csv');
 $login = false;
 
 foreach ($users as $user){
-    if ($password === $user[3] && $email === $user[2]){
+    if ($password === $user[PASSWORD_FIELD_KEY] && $email === $user[EMAIL_FIELD_KEY]){
         $login = true;
         break;
     }

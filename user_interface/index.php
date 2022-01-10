@@ -22,7 +22,3 @@
 </form>
 </body>
 </html>
-
-<!--Registruojantis pachekinti, ar emailas laisvas.-->
-<!--perkurti registracija, kad saugotu nickname, jai nicknamas jau yra, prideti skaiciu gale.-->
-<!--jei vartotojas nepazysmi sutikimo su salygomis, jo neregistruoti.-->
