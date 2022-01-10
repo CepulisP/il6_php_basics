@@ -4,7 +4,7 @@
 //$y = ['2', $x];
 //echo '<pre>';
 //var_dump($y);
-
+//
 //$x = '2faAuth';
 //$y = 2;
 //
@@ -13,7 +13,7 @@
 //var_dump($x * $y);
 // $x = (float)2;
 // $y = 3;
-
+//
 // if ($x === 2) {
 //     echo 'true';
 // } elseif ($x == 3) {
@@ -21,7 +21,7 @@
 // } else {
 //     echo 'whats left';
 // }
-
+//
 // switch($x){
 //     case 2:
 //         echo '$x = 2';
