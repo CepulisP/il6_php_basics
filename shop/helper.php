@@ -15,6 +15,14 @@ function readFromCsv($fileName){
     return $data;
 }
 
+function writeToCsv($data, $fileName){
+    $file = fopen($fileName, 'a');
+    foreach ($data as $element){
+        fputcsv($file, $element);
+    }
+    fclose($file);
+}
+
 function debug($data){
     echo '<pre>';
     var_dump($data);
@@ -50,12 +58,4 @@ function getProductById($id){
         }
     }
     return null;
-}
-
-function writeToCsv($data, $fileName){
-    $file = fopen($fileName, 'a');
-    foreach ($data as $element){
-        fputcsv($file, $element);
-    }
-    fclose($file);
 }
