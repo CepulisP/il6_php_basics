@@ -36,6 +36,6 @@ if (isset($_POST['play'])){
         echo $outcome;
     }
     $data = [];
-    $data[]=['Player played - '.$pChoice,'PC played - '.$pcChoice,'Outcome - '.$outcome];
+    $data[]=[$pChoice,$pcChoice,$outcome];
     writeToCsv($data,'outcomes.csv');
 }
