@@ -4,7 +4,7 @@
 <body>
 <h2>Subscribe</h2>
 <form action="http://localhost/pamokos/subscribe/index.php" method="post">
-    <input type="email" name="email" placeholder="john@gmail.com">
+    <input type="email" name="email" placeholder="name@mail.com">
     <input type="submit" value="Subscribe">
 </form>
 </body>
@@ -14,18 +14,21 @@
 
 include 'helper.php';
 
-$email = cleanEmail($_POST['email']);
-
-if (isEmailValid($email)){
-    if (isValueUniq($email, EMAIL_FIELD_KEY, 'emails.csv')) {
-        $data = [];
-        $data[] = [$email];
-        writeToCsv($data, 'emails.csv');
+if (isset($_POST['email'])) {
+    $email = cleanEmail($_POST['email']);
+    if (isEmailValid($email)) {
+        if (isValueUniq($email, EMAIL_FIELD_KEY, 'emails.csv')) {
+            $data = [];
+            $data[] = [$email];
+            writeToCsv($data, 'emails.csv');
+            echo '<br>';
+            echo '<b>Thank you for subscribing</b>';
+        } else {
+            echo '<br>';
+            echo 'Email taken';
+        }
+    } else {
         echo '<br>';
-        echo '<b>Thank you for subscribing</b>';
-    }else{
-        echo 'Email taken';
+        echo 'Check your email';
     }
-}else{
-    echo 'Check your email';
 }
