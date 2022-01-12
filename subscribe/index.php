@@ -15,12 +15,10 @@
 include 'helper.php';
 
 if (isset($_POST['email'])) {
-    $email = cleanEmail($_POST['email']);
+    $email = cleanString($_POST['email']);
     if (isEmailValid($email)) {
-        if (isValueUniq($email, EMAIL_FIELD_KEY, 'emails.csv')) {
-            $data = [];
-            $data[] = [$email];
-            writeToCsv($data, 'emails.csv');
+        if (isValueUniq($email, 'emails.csv')) {
+            writeToCsv($email, 'emails.csv');
             echo '<br>';
             echo '<b>Thank you for subscribing</b>';
         } else {
