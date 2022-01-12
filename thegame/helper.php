@@ -20,3 +20,9 @@ function readFromCsv($fileName){
     fclose($file);
     return $data;
 }
+
+function debug($data){
+    echo '<pre>';
+    var_dump($data);
+    die();
+}
