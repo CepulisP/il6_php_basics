@@ -3,8 +3,8 @@
     <head>
         <title>Our website</title>
     </head>
-    <body>
-        <h2>Subscribe</h2>
+    <body style="background-color: rgba(19,19,20,255);">
+        <h2 style="color:white;">Subscribe</h2>
         <form action="http://localhost/pamokos/subscribe/index.php" method="post">
             <input type="email" name="email" placeholder="name@mail.com">
             <input type="submit" value="Subscribe">
@@ -15,9 +15,9 @@
             $email = cleanString($_POST['email']);
             if (isEmailValid($email) && isValueUniq($email, 'emails.csv')) {
                     writeToCsv($email, 'emails.csv');
-                    echo '<br><b>Thank you for subscribing</b>';
+                    echo '<br><b style="color:white;">Thank you for subscribing</b>';
                 } else {
-                    echo '<br>Email is invalid';
+                    echo '<br><i style="color:white;">Email is invalid</i>';
             }
         }
         ?>
