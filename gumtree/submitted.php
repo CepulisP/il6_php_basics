@@ -14,9 +14,7 @@ try {
     echo "Connection failed: " . $e->getMessage();
 }
 
-
 if (isset($_POST['createAd'])) {
-
     $title = $_POST['title'];
     $content = $_POST['content'];
     $price = $_POST['price'];
@@ -29,7 +27,6 @@ if (isset($_POST['createAd'])) {
 }
 
 if (isset($_POST['createUser'])) {
-
     $name = $_POST['name'];
     $lastName = $_POST['lastName'];
     $email = cleanEmail($_POST['email']);
@@ -39,24 +36,25 @@ if (isset($_POST['createUser'])) {
     $cityId = intval($_POST['city']);
 
     if (isPasswordValid($pass1, $pass2) && isEmailValid($email)) {
-
         $sql = 'INSERT INTO users (name, last_name, email, password, phone, city_id)
-            VALUES ("' . $name . '", "' . $lastName . '", "' . $email . '", "' . $pass1 . '", "' . $phone . '", '.$cityId.')';
+            VALUES ("' . $name . '", "' . $lastName . '", "' . $email . '", "' . $pass1 . '", "' . $phone . '", ' . $cityId . ')';
         $conn->query($sql);
-    }else{
+    } else {
         echo 'check password and email';
     }
 }
 
-function isPasswordValid($pass1, $pass2){
+function isPasswordValid($pass1, $pass2)
+{
     return $pass1 === $pass2 && strlen($pass1) > 3;
 }
 
-function isEmailValid($email){
+function isEmailValid($email)
+{
     return strpos($email, '@') !== false;
 }
 
-function cleanEmail($email){
+function cleanEmail($email)
+{
     return trim(strtolower($email));
 }
-
