@@ -3,7 +3,7 @@
     <head>
         <title>Our website</title>
     </head>
-    <body style="background-color: rgba(19,19,20,255);">
+    <body style="background-color: rgba(33,33,33,255);">
         <h2 style="color:white;">Subscribe</h2>
         <form action="http://localhost/pamokos/subscribe/index.php" method="post">
             <input type="email" name="email" placeholder="name@mail.com">

@@ -36,8 +36,9 @@ if (isset($_POST['createUser'])) {
     $cityId = intval($_POST['city']);
 
     if (isPasswordValid($pass1, $pass2) && isEmailValid($email)) {
+        $pass = md5($pass1);
         $sql = 'INSERT INTO users (name, last_name, email, password, phone, city_id)
-            VALUES ("' . $name . '", "' . $lastName . '", "' . $email . '", "' . $pass1 . '", "' . $phone . '", ' . $cityId . ')';
+            VALUES ("' . $name . '", "' . $lastName . '", "' . $email . '", "' . $pass . '", "' . $phone . '", ' . $cityId . ')';
         $conn->query($sql);
     } else {
         echo 'check password and email';
