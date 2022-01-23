@@ -64,7 +64,6 @@ $users = $rez->fetchAll();
             <?php echo '<b>Type - </b>' . $ads[0]['type_id'] ?>
         </div>
         <br>
-        <hr>
     </div>
 
 <?php include 'parts/footer.php' ?>

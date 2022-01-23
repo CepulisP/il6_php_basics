@@ -26,7 +26,5 @@ if (!empty($user)){
     echo 'Check email and password';
 }
 
-echo '<hr>';
-
 ?>
 <?php include 'parts/footer.php' ?>

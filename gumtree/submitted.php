@@ -1,5 +1,5 @@
 <?php
-
+include 'parts/header.php';
 
 $servername = "localhost";
 $username = "root";
@@ -9,7 +9,7 @@ $dbName = "gumtree";
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbName", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Connected successfully";
+    echo "<b>Ad created</b>";
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
@@ -44,6 +44,8 @@ if (isset($_POST['createUser'])) {
         echo 'check password and email';
     }
 }
+
+include 'parts/footer.php';
 
 function isPasswordValid($pass1, $pass2)
 {

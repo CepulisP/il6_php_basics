@@ -33,5 +33,4 @@ $cities = $rez->fetchAll();
         </select><br>
         <input type="submit" value="create" name="createUser">
     </form>
-    <hr>
 <?php include 'parts/footer.php' ?>

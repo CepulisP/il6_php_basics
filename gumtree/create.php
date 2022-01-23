@@ -12,5 +12,4 @@
         <br>
         <input type="submit" value="create" name="createAd">
     </form>
-    <hr>
 <?php include 'parts/footer.php'; ?>
