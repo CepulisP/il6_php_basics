@@ -1,0 +1,17 @@
+{
+    "name": "povilas/skelbimai",
+    "description": "Another ad portal",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "": "app/code"
+        }
+    },
+    "authors": [
+        {
+            "name": "Povilas Cepulis",
+            "email": "cepulisp@gmail.com"
+        }
+    ],
+    "require": {}
+}

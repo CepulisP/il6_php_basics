@@ -1,5 +1,7 @@
 <?php
 
+namespace Helper;
+
 class FormHelper
 {
     private $form;
@@ -15,7 +17,7 @@ class FormHelper
         foreach ($data as $attribute => $value) {
             $this->form .= $attribute . '="' . $value . '" ';
         }
-        $this->form .= '>';
+        $this->form .= '><br>';
     }
 
     public function select($data)
