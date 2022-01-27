@@ -3,6 +3,8 @@
 namespace Controller;
 
 use Helper\FormHelper;
+use Helper\Validator;
+use Model\User as UserModel;
 
 class User
 {
@@ -14,7 +16,7 @@ class User
             echo '404 no id';
         }
 
-        if ($id === 'you-got-clickbaited'){
+        if ($id === 'you-got-clickbaited') {
             echo '<div class="clickb" style="text-align:center">';
             echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
             echo '</div>';
@@ -24,7 +26,7 @@ class User
 
     public function register($id = null)
     {
-        $form = new FormHelper('*', 'POST');
+        $form = new FormHelper('user/create/', 'POST');
         $form->input([
             'name' => 'name',
             'type' => 'text',
@@ -53,9 +55,9 @@ class User
 
         echo $form->getForm();
 
-        if ($id === 'you-got-clickbaited'){
+        if ($id === 'you-got-clickbaited') {
             echo '<div class="clickb" style="text-align:center">';
-            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
+            echo '<b style="font-size:68px;">YOU GOT CLICKBAITED!</b>';
             echo '</div>';
             die();
         }
@@ -63,7 +65,7 @@ class User
 
     public function login($id = null)
     {
-        $form = new FormHelper('*', 'POST');
+        $form = new FormHelper('user/check/', 'POST');
         $form->input([
             'name' => 'email',
             'type' => 'email',
@@ -75,14 +77,34 @@ class User
             'placeholder' => 'Password'
         ]);
         $form->input([
-            'name' => 'create',
+            'name' => 'login',
             'type' => 'submit',
             'value' => 'Login'
         ]);
 
         echo $form->getForm();
 
-        if ($id === 'you-got-clickbaited'){
+        if ($id === 'you-got-clickbaited') {
+            echo '<div class="clickb" style="text-align:center">';
+            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
+            echo '</div>';
+            die();
+        }
+    }
+
+    public function create($id = null)
+    {
+        $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
+        $isEmailValid = Validator::checkEmail($_POST['email']);
+        $isEmailUniq = UserModel::emailUniq($_POST['email']);
+
+        if ($passMatch && $isEmailValid && $isEmailUniq) {
+            echo 'Success!';
+        } else {
+            echo 'Check email and password';
+        }
+
+        if ($id === 'you-got-clickbaited') {
             echo '<div class="clickb" style="text-align:center">';
             echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
             echo '</div>';

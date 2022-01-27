@@ -9,7 +9,8 @@
 
 <?php
 
-include 'vendor/autoload.php';
+include 'vendor\autoload.php';
+include 'config.php';
 
 if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
 
@@ -28,6 +29,11 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
                 } else {
                     $obj->$method();
                 }
+
+                echo '<div class="clickbait" style="text-align:right;">';
+                echo '<b><a href="you-got-clickbaited" style="color:white;">CLICK ME!</a></b>';
+                echo '</div>';
+
             } else {
                 echo '404 bad method';
             }
@@ -42,9 +48,7 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
 }
 
 ?>
-        </div>
-        <div class="clickbait" style="text-align:right;">
-            <b><a href="you-got-clickbaited" style="color:white;">CLICK ME!</a></b>
+
         </div>
     </body>
 </html>
