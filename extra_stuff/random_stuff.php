@@ -13,7 +13,7 @@
                 foreach ($days as $day) {
                     echo '<td>' . $day . '</td>';
                 }
-                
+
                 echo '</tr><tr>';
                 $month = 'January';
                 echo '<h2>'.$month.'</h2>';
