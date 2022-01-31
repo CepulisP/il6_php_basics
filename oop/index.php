@@ -1,10 +1,16 @@
 <html>
     <head>
-        <title>Another ad portal</title>
+        <title>Gumtree | Another ad portal</title>
     </head>
     <body style="background-color: rgba(33,33,33,255);">
         <div class="content" style="color:white;">
-            <h1 style="text-align:center;">Skalbiu.lt</h1>
+            <h1 style="text-align:center;">Gumtree</h1>
+            <div class="navigation" style="text-align:center;">
+                    <a href='http://localhost/pamokos/oop/index.php/' style="color:white;text-decoration:none">&bullet; Home</a>
+                    <a href='http://localhost/pamokos/oop/index.php/user/show/' style="color:white;text-decoration:none">&bullet; All ads</a>
+                    <a href='http://localhost/pamokos/oop/index.php/user/register/' style="color:white;text-decoration:none">&bullet; Sign up</a>
+                    <a href='http://localhost/pamokos/oop/index.php/user/login/' style="color:white;text-decoration:none">&bullet; Login</a>
+            </div>
             <hr>
 
 <?php
@@ -29,11 +35,6 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
                 } else {
                     $obj->$method();
                 }
-
-                echo '<div class="clickbait" style="text-align:right;">';
-                echo '<b><a href="you-got-clickbaited" style="color:white;">CLICK ME!</a></b>';
-                echo '</div>';
-
             } else {
                 echo '404 bad method';
             }
@@ -41,6 +42,14 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
             echo '404 no method';
         }
     } else {
+
+        if ($path[0] === 'you-got-clickbaited') {
+            echo '<div class="clickb" style="text-align:center">';
+            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
+            echo '</div>';
+            die();
+        }
+
         echo '404 bad class';
     }
 } else {
@@ -48,7 +57,9 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
 }
 
 ?>
-
+            <div class="clickbait" style="text-align:right;">
+                <b><a href="you-got-clickbaited" style="color:white;">CLICK ME!</a></b>
+            </div>
         </div>
     </body>
 </html>
