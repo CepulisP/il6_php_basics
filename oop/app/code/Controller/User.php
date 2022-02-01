@@ -21,6 +21,7 @@ class User
     public function register()
     {
         $cities = City::getCities();
+        $cities = City::formatArrayForSelect($cities);
 
         $form = new FormHelper('user/create/', 'POST');
 
@@ -54,7 +55,7 @@ class User
             'type' => 'password',
             'placeholder' => 'Repeat password'
         ]);
-        $form->selectV2($cities, 'cities');
+        $form->select($cities);
         $form->input([
             'name' => 'create',
             'type' => 'submit',
@@ -101,7 +102,7 @@ class User
             $user->setEmail($_POST['email']);
             $user->setPhone($_POST['phone']);
             $user->setPassword(md5($_POST['password']));
-            $user->setCityId($_POST['cities']);
+            $user->setCityId($_POST['city_id']);
             $user->save();
 
             echo '<h2 style="text-align:center;">Registration complete!</h2>';

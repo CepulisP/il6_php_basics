@@ -90,7 +90,7 @@ class User
         if (!isset($this->id)) {
             $this->create();
         } else {
-            $this->update($this->id);
+            $this->update();
         }
     }
 
