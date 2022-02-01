@@ -25,7 +25,7 @@ class City
         $this->city = $city;
     }
 
-    public static function formatArrayForSelect($data)
+    public static function formatArray($data)
     {
         $array['name'] = 'city_id';
 //        $array=['name' => 'city_id'];
@@ -44,8 +44,6 @@ class City
     public static function getCities()
     {
         $db = new DBHelper();
-        $rez = $db->select()->from('cities')->get();
-
-        return $rez;
+        return self::formatArray($db->select()->from('cities')->get());
     }
 }

@@ -26,7 +26,7 @@ class FormHelper
         foreach ($data['options'] as $key => $option) {
             $this->form .= '<option value ="' . $key . '">' . $option . '</option>';
         }
-        $this->form .= '</select>';
+        $this->form .= '</select><br>';
     }
 
     public function textArea($name, $placeholder = '')

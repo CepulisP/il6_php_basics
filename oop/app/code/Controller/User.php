@@ -20,70 +20,28 @@ class User
 
     public function register()
     {
-        $cities = City::getCities();
-        $cities = City::formatArrayForSelect($cities);
-
         $form = new FormHelper('user/create/', 'POST');
+        $cities = City::getCities();
 
-        $form->input([
-            'name' => 'name',
-            'type' => 'text',
-            'placeholder' => 'Name'
-        ]);
-        $form->input([
-            'name' => 'last_name',
-            'type' => 'text',
-            'placeholder' => 'Last name'
-        ]);
-        $form->input([
-            'name' => 'phone',
-            'type' => 'text',
-            'placeholder' => '+3706*******'
-        ]);
-        $form->input([
-            'name' => 'email',
-            'type' => 'email',
-            'placeholder' => 'name@mail.com'
-        ]);
-        $form->input([
-            'name' => 'password',
-            'type' => 'password',
-            'placeholder' => 'Password'
-        ]);
-        $form->input([
-            'name' => 'password2',
-            'type' => 'password',
-            'placeholder' => 'Repeat password'
-        ]);
+        $form->input(['name' => 'name', 'type' => 'text', 'placeholder' => 'Name']);
+        $form->input(['name' => 'last_name', 'type' => 'text', 'placeholder' => 'Last name']);
+        $form->input(['name' => 'phone', 'type' => 'text', 'placeholder' => 'Phone (+370...)']);
+        $form->input(['name' => 'email', 'type' => 'email', 'placeholder' => 'name@mail.com']);
+        $form->input(['name' => 'password', 'type' => 'password', 'placeholder' => 'Password']);
+        $form->input(['name' => 'password2', 'type' => 'password', 'placeholder' => 'Repeat password']);
         $form->select($cities);
-        $form->input([
-            'name' => 'create',
-            'type' => 'submit',
-            'value' => 'Register'
-        ]);
+        $form->input(['name' => 'create', 'type' => 'submit', 'value' => 'Register']);
 
         echo $form->getForm();
-
     }
 
     public function login()
     {
         $form = new FormHelper('user/check/', 'POST');
-        $form->input([
-            'name' => 'email',
-            'type' => 'email',
-            'placeholder' => 'name@mail.com'
-        ]);
-        $form->input([
-            'name' => 'password',
-            'type' => 'password',
-            'placeholder' => 'Password'
-        ]);
-        $form->input([
-            'name' => 'login',
-            'type' => 'submit',
-            'value' => 'Login'
-        ]);
+
+        $form->input(['name' => 'email', 'type' => 'email', 'placeholder' => 'name@mail.com']);
+        $form->input(['name' => 'password', 'type' => 'password', 'placeholder' => 'Password']);
+        $form->input(['name' => 'login', 'type' => 'submit', 'value' => 'Login']);
 
         echo $form->getForm();
     }
