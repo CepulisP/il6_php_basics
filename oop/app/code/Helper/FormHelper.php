@@ -29,6 +29,15 @@ class FormHelper
         $this->form .= '</select>';
     }
 
+    public function selectV2($data, $name)
+    {
+        $this->form .= '<select name="' . $name . '">';
+        foreach ($data as $option) {
+            $this->form .= '<option value ="' . $option['id'] . '">' . $option['name'] . '</option>';
+        }
+        $this->form .= '</select>';
+    }
+
     public function textArea($name, $placeholder = '')
     {
         $this->form .= '<textarea name ="' . $name . '">' . $placeholder . '</textarea>';

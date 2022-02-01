@@ -5,6 +5,7 @@ namespace Controller;
 use Helper\FormHelper;
 use Helper\Validator;
 use Model\User as UserModel;
+use Model\City;
 
 class User
 {
@@ -19,6 +20,8 @@ class User
 
     public function register()
     {
+        $cities = City::getCities();
+
         $form = new FormHelper('user/create/', 'POST');
 
         $form->input([
@@ -51,6 +54,7 @@ class User
             'type' => 'password',
             'placeholder' => 'Repeat password'
         ]);
+        $form->selectV2($cities, 'cities');
         $form->input([
             'name' => 'create',
             'type' => 'submit',
@@ -58,6 +62,7 @@ class User
         ]);
 
         echo $form->getForm();
+
     }
 
     public function login()
@@ -96,10 +101,10 @@ class User
             $user->setEmail($_POST['email']);
             $user->setPhone($_POST['phone']);
             $user->setPassword(md5($_POST['password']));
-            $user->setCityId(1);
+            $user->setCityId($_POST['cities']);
             $user->save();
 
-            echo '<h2 style="text-align:center;">Welcome!</h2>';
+            echo '<h2 style="text-align:center;">Registration complete!</h2>';
 
         } else {
             echo 'Check email and password';
@@ -109,5 +114,22 @@ class User
     public function update()
     {
 
+    }
+
+    public function check()
+    {
+        $email = $_POST['email'];
+        $password = md5($_POST['password']);
+
+        $userId = UserModel::checkLoginCredentials($email, $password);
+
+        if ($userId) {
+            $user = new UserModel();
+            $user->load($userId);
+
+            echo '<h2 style="text-align:center;">Welcome!</h2>';
+        } else {
+            echo 'Check your credentials';
+        }
     }
 }

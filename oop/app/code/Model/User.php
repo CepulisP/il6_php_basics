@@ -3,7 +3,6 @@
 namespace Model;
 
 use Helper\DBHelper;
-use Helper\FormHelper;
 
 class User
 {
@@ -110,19 +109,19 @@ class User
         $db->insert('users', $data)->exec();
     }
 
-    private function update($id)
+    private function update()
     {
-        $data = [
-            'name' => $this->name,
-            'last_name' => $this->lastName,
-            'email' => $this->email,
-            'password' => $this->password,
-            'phone' => $this->phone,
-            'city_id' => $this->cityId
-        ];
-
-        $db = new DBHelper();
-        $db->update('users', $data, $id)->exec();
+//        $data = [
+//            'name' => $this->name,
+//            'last_name' => $this->lastName,
+//            'email' => $this->email,
+//            'password' => $this->password,
+//            'phone' => $this->phone,
+//            'city_id' => $this->cityId
+//        ];
+//
+//        $db = new DBHelper();
+//        $db->update('users', $data)->where('id', $this->id)->exec();
     }
 
     public function load($id)
@@ -147,7 +146,26 @@ class User
     public static function emailUniq($email)
     {
         $db = new DBHelper();
-        $db->select()->from('users')->where('email', $email)->get();
+        $rez = $db->select()->from('users')->where('email', $email)->get();
         return empty($rez);
+    }
+
+    public static function checkLoginCredentials($email, $pass)
+    {
+        $db = new DBHelper();
+        $rez = $db
+            ->select('id')
+            ->from('users')
+            ->where('email', $email)
+            ->andWhere('password', $pass)
+            ->getOne();
+
+//        return isset($rez['id']) ? $rez['id'] : false;
+
+        if (isset($rez['id'])) {
+            return $rez['id'];
+        } else {
+            return false;
+        }
     }
 }

@@ -38,6 +38,18 @@ class DBHelper
         return $this;
     }
 
+    public function andWhere($field, $value, $operator = '=')
+    {
+        $this->sql .= ' AND ' . $field . $operator . '"' . $value . '"';
+        return $this;
+    }
+
+    public function orWhere($field, $value, $operator = '=')
+    {
+        $this->sql .= ' OR ' . $field . $operator . '"' . $value . '"';
+        return $this;
+    }
+
     public function delete()
     {
         $this->sql .= ' DELETE ';
@@ -59,7 +71,11 @@ class DBHelper
     {
         $rez = $this->conn->query($this->sql);
         $data = $rez->fetchAll();
-        return $data[0];
+        if (!empty($data)) {
+            return $data[0];
+        } else {
+            return [];
+        }
     }
 
     public function insert($table, $data)
@@ -70,20 +86,20 @@ class DBHelper
         return $this;
     }
 
-    public function update($table, $data, $id)
+    public function update($table, $data)
     {
         $this->sql .= 'UPDATE ' . $table . ' SET ';
-        $i = 0;
-        foreach ($data as $key => $element) {
-            $count = count($data);
-            $i++;
-            if ($i < $count) {
-                $this->sql .= $key . ' = "' . $element . '", ';
-            } else {
-                $this->sql .= $key . ' = "' . $element . '"';
-            }
+        $values = [];
+
+        foreach ($data as $column => $value) {
+            $values[] = "$column = '$value'";
         }
-        $this->sql .= ' WHERE id = ' . $id;
-        return $this;
+
+        $this->sql .= implode(',', $values);
+    }
+
+    public function limit($number)
+    {
+        $this->sql .= ' LIMIT ' . $number;
     }
 }
