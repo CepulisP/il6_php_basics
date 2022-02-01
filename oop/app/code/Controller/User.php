@@ -10,13 +10,6 @@ class User
 {
     public function show($id = null)
     {
-        if ($id === 'you-got-clickbaited') {
-            echo '<div class="clickb" style="text-align:center">';
-            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
-            echo '</div>';
-            die();
-        }
-
         if ($id !== null) {
             echo 'User controller ID ' . $id;
         } else {
@@ -24,15 +17,8 @@ class User
         }
     }
 
-    public function register($id = null)
+    public function register()
     {
-        if ($id === 'you-got-clickbaited') {
-            echo '<div class="clickb" style="text-align:center">';
-            echo '<b style="font-size:68px;">YOU GOT CLICKBAITED!</b>';
-            echo '</div>';
-            die();
-        }
-
         $form = new FormHelper('user/create/', 'POST');
 
         $form->input([
@@ -74,15 +60,8 @@ class User
         echo $form->getForm();
     }
 
-    public function login($id = null)
+    public function login()
     {
-        if ($id === 'you-got-clickbaited') {
-            echo '<div class="clickb" style="text-align:center">';
-            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
-            echo '</div>';
-            die();
-        }
-
         $form = new FormHelper('user/check/', 'POST');
         $form->input([
             'name' => 'email',
@@ -103,15 +82,8 @@ class User
         echo $form->getForm();
     }
 
-    public function create($id = null)
+    public function create()
     {
-        if ($id === 'you-got-clickbaited') {
-            echo '<div class="clickb" style="text-align:center">';
-            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
-            echo '</div>';
-            die();
-        }
-
         $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
         $isEmailValid = Validator::checkEmail($_POST['email']);
         $isEmailUniq = UserModel::emailUniq($_POST['email']);
@@ -134,25 +106,8 @@ class User
         }
     }
 
-    public function update($id = null)
+    public function update()
     {
-        if ($id === 'you-got-clickbaited') {
-            echo '<div class="clickb" style="text-align:center">';
-            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
-            echo '</div>';
-            die();
-        }
 
-        $user = new UserModel();
-        $user->setName($_POST['id']);
-        $user->setName($_POST['name']);
-        $user->setLastName($_POST['last_name']);
-        $user->setEmail($_POST['email']);
-        $user->setPhone($_POST['phone']);
-        $user->setPassword(md5($_POST['password']));
-        $user->setCityId(1);
-        $user->save();
-
-        echo '<h2 style="text-align:center;">Welcome!</h2>';
     }
 }

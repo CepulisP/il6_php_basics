@@ -11,27 +11,14 @@ class Catalog
         } else {
             echo '404 no id';
         }
-
-        if ($id === 'you-got-clickbaited') {
-            echo '<div class="clickb" style="text-align:center">';
-            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
-            echo '</div>';
-            die();
-        }
     }
 
-    public function all($id = null)
+    public function all()
     {
         for ($i = 0; $i < 10; $i++) {
-            echo '<a href="http://localhost/pamokos/oop/index.php/catalog/show/' . $i . '">Read more</a>';
+            echo '<a href="http://localhost/pamokos/oop/index.php/catalog/show/' . $i
+                . '" style="color:white;text-decoration:none">Read more</a>';
             echo '<br>';
-        }
-
-        if ($id === 'you-got-clickbaited') {
-            echo '<div class="clickb" style="text-align:center">';
-            echo '<b style="font-size:68px;"=>YOU GOT CLICKBAITED!</b>';
-            echo '</div>';
-            die();
         }
     }
 
@@ -40,7 +27,7 @@ class Catalog
 
     }
 
-    public function update($data)
+    public function update()
     {
         echo 'I\'m Robot';
     }

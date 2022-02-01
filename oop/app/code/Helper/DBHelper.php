@@ -72,18 +72,18 @@ class DBHelper
 
     public function update($table, $data, $id)
     {
-        $this->sql .= 'UPDATE '.$table.' SET ';
-        $i=0;
-        foreach ($data as $key => $element){
+        $this->sql .= 'UPDATE ' . $table . ' SET ';
+        $i = 0;
+        foreach ($data as $key => $element) {
             $count = count($data);
             $i++;
-            if ($i<$count) {
+            if ($i < $count) {
                 $this->sql .= $key . ' = "' . $element . '", ';
-            }else{
+            } else {
                 $this->sql .= $key . ' = "' . $element . '"';
             }
         }
-        $this->sql .= ' WHERE id = '.$id;
+        $this->sql .= ' WHERE id = ' . $id;
         return $this;
     }
 }
