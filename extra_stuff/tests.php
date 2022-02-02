@@ -12,16 +12,24 @@ $data = [
 ];
 
 $line = '';
-$line .= 'UPDATE '.$table.' SET ';
-$i=0;
-foreach ($data as $key => $element){
+$line .= 'UPDATE ' . $table . ' SET ';
+$i = 0;
+foreach ($data as $key => $element) {
     $count = count($data);
     $i++;
-    if ($i<$count) {
+    if ($i < $count) {
         $line .= $key . ' = "' . $element . '", ';
-    }else{
+    } else {
         $line .= $key . ' = "' . $element . '"';
     }
 }
-$line .= ' WHERE id = '.$id;
-echo $line;
+$line .= ' WHERE id = ' . $id;
+echo $line . '<br>';
+
+$x = 1;
+
+if (empty($x)) {
+    echo 'true';
+} else {
+    echo 'false';
+}

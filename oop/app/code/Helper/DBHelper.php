@@ -96,6 +96,8 @@ class DBHelper
         }
 
         $this->sql .= implode(',', $values);
+
+        return $this;
     }
 
     public function limit($number)

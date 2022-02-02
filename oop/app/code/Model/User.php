@@ -119,7 +119,17 @@ class User
 
     private function update()
     {
+        $data = [
+            'name' => $this->name,
+            'last_name' => $this->lastName,
+            'email' => $this->email,
+            'password' => $this->password,
+            'phone' => $this->phone,
+            'city_id' => $this->cityId
+        ];
 
+        $db = new DBHelper();
+        $db->update('users', $data)->where('id', $this->getId())->exec();
     }
 
     public function load($id)
@@ -149,6 +159,7 @@ class User
 
     public static function emailUniq($email)
     {
+        $email = strtolower(trim($email));
         $db = new DBHelper();
         $rez = $db->select()->from('users')->where('email', $email)->get();
         return empty($rez);

@@ -12,6 +12,10 @@
         Sign up</a>
     <a href='http://localhost/pamokos/oop/index.php/user/login/' style="color:white;text-decoration:none">&bullet;
         Login</a>
+    <a href='http://localhost/pamokos/oop/index.php/user/edit/' style="color:white;text-decoration:none">&bullet;
+        Edit</a>
+    <a href='http://localhost/pamokos/oop/index.php/user/logout/' style="color:white;text-decoration:none">&bullet;
+        Logout</a>
     <hr>
 </div>
 <div class="content" style="color:white;">
@@ -51,6 +55,7 @@
         }
     } else {
         echo '<h2 style="text-align:center;">Home page</h2>';
+        echo '<pre>';
         print_r($_SESSION);
     }
 
