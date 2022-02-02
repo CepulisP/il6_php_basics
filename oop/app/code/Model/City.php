@@ -8,42 +8,39 @@ class City
 {
     private $id;
 
-    private $city;
+    private $name;
 
     public function getId()
     {
         return $this->id;
     }
 
-    public function getCity()
+    public function getName()
     {
-        return $this->city;
+        return $this->name;
     }
 
-    public function setCity($city)
+    public function load($id)
     {
-        $this->city = $city;
-    }
-
-    public static function formatArray($data)
-    {
-        $array['name'] = 'city_id';
-//        $array=['name' => 'city_id'];
-
-        foreach ($data as $element) {
-            $array['options'][$element['id']] = $element['name'];
-//            $array['options']=[$element['id'] => $element['name']]; //broken
-        }
-//        echo '<pre>';
-//        print_r($array);
-//        die();
-
-        return $array;
+        $db = new DBHelper();
+        $city = $db->select()->from('cities')->where('id', $id)->getOne();
+        $this->id = $city['id'];
+        $this->name = $city['name'];
+        return $this;
     }
 
     public static function getCities()
     {
         $db = new DBHelper();
-        return self::formatArray($db->select()->from('cities')->get());
+        $data = $db->select()->from('cities')->get();
+        $cities = [];
+
+        foreach ($data as $element) {
+            $city = new City();
+            $city->load($element['id']);
+            $cities[] = $city;
+        }
+
+        return $cities;
     }
 }

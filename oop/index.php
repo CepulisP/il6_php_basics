@@ -21,6 +21,8 @@
     include 'vendor\autoload.php';
     include 'config.php';
 
+    session_start();
+
     if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
 
         $path = trim($_SERVER['PATH_INFO'], '/');
@@ -49,6 +51,7 @@
         }
     } else {
         echo '<h2 style="text-align:center;">Home page</h2>';
+        print_r($_SESSION);
     }
 
     ?>

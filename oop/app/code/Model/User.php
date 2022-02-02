@@ -3,6 +3,7 @@
 namespace Model;
 
 use Helper\DBHelper;
+use Model\City;
 
 class User
 {
@@ -19,6 +20,8 @@ class User
     private $phone;
 
     private $cityId;
+
+    private $city;
 
     public function getId()
     {
@@ -85,6 +88,11 @@ class User
         $this->cityId = $cityId;
     }
 
+    public function getCity()
+    {
+        return $this->city;
+    }
+
     public function save()
     {
         if (!isset($this->id)) {
@@ -116,8 +124,11 @@ class User
 
     public function load($id)
     {
+        $city = new City();
         $db = new DBHelper();
+
         $data = $db->select()->from('users')->where('id', $id)->getOne();
+
         $this->id = $data['id'];
         $this->name = $data['name'];
         $this->lastName = $data['last_name'];
@@ -125,6 +136,9 @@ class User
         $this->password = $data['password'];
         $this->phone = $data['phone'];
         $this->cityId = $data['city_id'];
+        $this->city = $city->load($this->cityId);
+
+        return $this;
     }
 
     public function delete()
@@ -150,12 +164,13 @@ class User
             ->andWhere('password', $pass)
             ->getOne();
 
-//        return isset($rez['id']) ? $rez['id'] : false;
-
         if (isset($rez['id'])) {
             return $rez['id'];
         } else {
             return false;
         }
+
+//        One liner doing the same thing
+//        return isset($rez['id']) ? $rez['id'] : false;
     }
 }
