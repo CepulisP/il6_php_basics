@@ -3,7 +3,6 @@
 namespace Model;
 
 use Helper\DBHelper;
-use Model\City;
 
 class User
 {
@@ -129,7 +128,7 @@ class User
         ];
 
         $db = new DBHelper();
-        $db->update('users', $data)->where('id', $this->getId())->exec();
+        $db->update('users', $data)->where('id', $this->id)->exec();
     }
 
     public function load($id)

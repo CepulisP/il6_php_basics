@@ -7,6 +7,7 @@
     <h1 style="color:white;">Gumtree</h1>
     <a href='http://localhost/pamokos/oop/index.php/' style="color:white;text-decoration:none">&bullet; Home</a>
     <a href='http://localhost/pamokos/oop/index.php/catalog/all/' style="color:white;text-decoration:none">&bullet; All ads</a>
+    <a href='http://localhost/pamokos/oop/index.php/catalog/add/' style="color:white;text-decoration:none">&bullet; New ad</a>
     <a href='http://localhost/pamokos/oop/index.php/user/register/' style="color:white;text-decoration:none">&bullet; Sign up</a>
     <a href='http://localhost/pamokos/oop/index.php/user/login/' style="color:white;text-decoration:none">&bullet; Login</a>
     <a href='http://localhost/pamokos/oop/index.php/user/edit/' style="color:white;text-decoration:none">&bullet; Edit</a>

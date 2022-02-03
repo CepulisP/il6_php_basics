@@ -49,49 +49,45 @@ class User
 
     public function edit()
     {
-        if (isset($_SESSION['user_id'])) {
-            $form = new FormHelper('user/update/', 'POST');
-            $user = new UserModel();
-
-            $user->load($_SESSION['user_id']);
-
-            $form->input([
-                'name' => 'name', 'type' => 'text', 'placeholder' => 'Name', 'value' => $user->getName()
-            ]);
-            $form->input([
-                'name' => 'last_name', 'type' => 'text', 'placeholder' => 'Last name', 'value' => $user->getLastName()
-            ]);
-            $form->input([
-                'name' => 'phone', 'type' => 'text', 'placeholder' => 'Phone (+370...)', 'value' => $user->getPhone()
-            ]);
-            $form->input([
-                'name' => 'email', 'type' => 'email', 'placeholder' => 'name@mail.com', 'value' => $user->getEmail()
-            ]);
-            $form->input([
-                'name' => 'password', 'type' => 'password', 'placeholder' => 'New password'
-            ]);
-            $form->input([
-                'name' => 'password2', 'type' => 'password', 'placeholder' => 'Repeat password'
-            ]);
-
-            $cities = City::getCities();
-            $options = [];
-
-            foreach ($cities as $city) {
-                $options[$city->getId()] = $city->getName();
-            }
-
-            $form->select(['name' => 'city_id', 'options' => $options]);
-            $form->input(['name' => 'edit', 'type' => 'submit', 'value' => 'Save']);
-
-            echo $form->getForm();
-
-//        Print current city
-            $cities = new City();
-            echo 'Current city: ' . $cities->load($user->getCityId())->getName();
-        } else {
+        if (!isset($_SESSION['user_id'])) {
             Url::redirect('user/login');
         }
+
+        $form = new FormHelper('user/update/', 'POST');
+        $user = new UserModel();
+
+        $user->load($_SESSION['user_id']);
+
+        $form->input([
+            'name' => 'name', 'type' => 'text', 'placeholder' => 'Name', 'value' => $user->getName()
+        ]);
+        $form->input([
+            'name' => 'last_name', 'type' => 'text', 'placeholder' => 'Last name', 'value' => $user->getLastName()
+        ]);
+        $form->input([
+            'name' => 'phone', 'type' => 'text', 'placeholder' => 'Phone (+370...)', 'value' => $user->getPhone()
+        ]);
+        $form->input([
+            'name' => 'email', 'type' => 'email', 'placeholder' => 'name@mail.com', 'value' => $user->getEmail()
+        ]);
+        $form->input([
+            'name' => 'password', 'type' => 'password', 'placeholder' => 'New password'
+        ]);
+        $form->input([
+            'name' => 'password2', 'type' => 'password', 'placeholder' => 'Repeat password'
+        ]);
+
+        $cities = City::getCities();
+        $options = [];
+
+        foreach ($cities as $city) {
+            $options[$city->getId()] = $city->getName();
+        }
+
+        $form->select(['name' => 'city_id', 'options' => $options, 'selected' => $user->getCityId()]);
+        $form->input(['name' => 'edit', 'type' => 'submit', 'value' => 'Save']);
+
+        echo $form->getForm();
     }
 
     public function login()
@@ -137,19 +133,21 @@ class User
         $emailUniq = UserModel::emailUniq($_POST['email']);
         $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
         $passSet = !empty($_POST['password']);
+        $userId = $_SESSION['user_id'];
 
         $user = new UserModel();
 
-        $userEmail = $user->load($_SESSION['user_id'])->getEmail();
+        $user->load($userId);
+        $userEmail = $user->getEmail();
         $inputEmail = strtolower(trim($_POST['email']));
+
+        $user->setName($_POST['name']);
+        $user->setLastName($_POST['last_name']);
+        $user->setPhone($_POST['phone']);
+        $user->setCityId($_POST['city_id']);
 
         if ($emailValid) {
             if ($passMatch) {
-                $user = new UserModel();
-                $user->load($_SESSION['user_id']);
-                $user->setName($_POST['name']);
-                $user->setLastName($_POST['last_name']);
-
                 if ($userEmail !== $inputEmail) {
                     if ($emailUniq) {
                         $user->setEmail(strtolower(trim($_POST['email'])));
@@ -160,15 +158,11 @@ class User
                     }
                 }
 
-                $user->setPhone($_POST['phone']);
-                $user->setCityId($_POST['city_id']);
-
                 if ($passSet) {
                     $user->setPassword(md5(strtolower(trim($_POST['password']))));
                 }
 
                 $user->save();
-
                 $user->load($_SESSION['user_id']);
                 $_SESSION['user'] = $user;
 

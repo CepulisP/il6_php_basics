@@ -24,14 +24,20 @@ class FormHelper
     {
         $this->form .= '<select name="' . $data['name'] . '">';
         foreach ($data['options'] as $key => $option) {
-            $this->form .= '<option value ="' . $key . '">' . $option . '</option>';
+            $this->form .= '<option';
+            if (isset($data['selected'])) {
+                if ($data['selected'] == $key){
+                    $this->form .= ' selected ';
+                }
+            }
+            $this->form .= ' value ="' . $key . '">' . $option . '</option>';
         }
         $this->form .= '</select><br>';
     }
 
     public function textArea($name, $placeholder = '')
     {
-        $this->form .= '<textarea name ="' . $name . '">' . $placeholder . '</textarea>';
+        $this->form .= '<textarea name ="' . $name . '">' . $placeholder . '</textarea><br>';
     }
 
     public function getForm()
