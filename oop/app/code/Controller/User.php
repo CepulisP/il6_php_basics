@@ -21,8 +21,11 @@ class User
 
     public function register()
     {
+        if (isset($_SESSION['user_id'])) {
+            $this->logout();
+        }
+
         $form = new FormHelper('user/create/', 'POST');
-        $cities = City::getCities();
 
         $form->input(['name' => 'name', 'type' => 'text', 'placeholder' => 'Name']);
         $form->input(['name' => 'last_name', 'type' => 'text', 'placeholder' => 'Last name']);
@@ -31,6 +34,7 @@ class User
         $form->input(['name' => 'password', 'type' => 'password', 'placeholder' => 'Password']);
         $form->input(['name' => 'password2', 'type' => 'password', 'placeholder' => 'Repeat password']);
 
+        $cities = City::getCities();
         $options = [];
 
         foreach ($cities as $city) {
@@ -45,49 +49,57 @@ class User
 
     public function edit()
     {
-        $form = new FormHelper('user/update/', 'POST');
-        $user = new UserModel();
+        if (isset($_SESSION['user_id'])) {
+            $form = new FormHelper('user/update/', 'POST');
+            $user = new UserModel();
 
-        $user->load($_SESSION['user_id']);
+            $user->load($_SESSION['user_id']);
 
-        $form->input([
-            'name' => 'name', 'type' => 'text', 'placeholder' => 'Name', 'value' => $user->getName()
-        ]);
-        $form->input([
-            'name' => 'last_name', 'type' => 'text', 'placeholder' => 'Last name', 'value' => $user->getLastName()
-        ]);
-        $form->input([
-            'name' => 'phone', 'type' => 'text', 'placeholder' => 'Phone (+370...)', 'value' => $user->getPhone()
-        ]);
-        $form->input([
-            'name' => 'email', 'type' => 'email', 'placeholder' => 'name@mail.com', 'value' => $user->getEmail()
-        ]);
-        $form->input([
-            'name' => 'password', 'type' => 'password', 'placeholder' => 'New password'
-        ]);
-        $form->input([
-            'name' => 'password2', 'type' => 'password', 'placeholder' => 'Repeat password'
-        ]);
+            $form->input([
+                'name' => 'name', 'type' => 'text', 'placeholder' => 'Name', 'value' => $user->getName()
+            ]);
+            $form->input([
+                'name' => 'last_name', 'type' => 'text', 'placeholder' => 'Last name', 'value' => $user->getLastName()
+            ]);
+            $form->input([
+                'name' => 'phone', 'type' => 'text', 'placeholder' => 'Phone (+370...)', 'value' => $user->getPhone()
+            ]);
+            $form->input([
+                'name' => 'email', 'type' => 'email', 'placeholder' => 'name@mail.com', 'value' => $user->getEmail()
+            ]);
+            $form->input([
+                'name' => 'password', 'type' => 'password', 'placeholder' => 'New password'
+            ]);
+            $form->input([
+                'name' => 'password2', 'type' => 'password', 'placeholder' => 'Repeat password'
+            ]);
 
-        $cities = City::getCities();
-        $options = [];
+            $cities = City::getCities();
+            $options = [];
 
-        foreach ($cities as $city) {
-            $options[$city->getId()] = $city->getName();
-        }
+            foreach ($cities as $city) {
+                $options[$city->getId()] = $city->getName();
+            }
 
-        $form->select(['name' => 'city_id', 'options' => $options]);
-        $form->input(['name' => 'edit', 'type' => 'submit', 'value' => 'Save']);
+            $form->select(['name' => 'city_id', 'options' => $options]);
+            $form->input(['name' => 'edit', 'type' => 'submit', 'value' => 'Save']);
 
-        echo $form->getForm();
+            echo $form->getForm();
 
 //        Print current city
-        $cities = new City();
-        echo 'Current city: ' . $cities->load($user->getCityId())->getName();
+            $cities = new City();
+            echo 'Current city: ' . $cities->load($user->getCityId())->getName();
+        } else {
+            Url::redirect('user/login');
+        }
     }
 
     public function login()
     {
+        if (isset($_SESSION['user_id'])) {
+            $this->logout();
+        }
+
         $form = new FormHelper('user/check/', 'POST');
 
         $form->input(['name' => 'email', 'type' => 'email', 'placeholder' => 'name@mail.com']);
@@ -104,7 +116,6 @@ class User
         $emailUniq = UserModel::emailUniq($_POST['email']);
 
         if ($passMatch && $emailValid && $emailUniq) {
-
             $user = new UserModel();
             $user->setName($_POST['name']);
             $user->setLastName($_POST['last_name']);
@@ -113,8 +124,8 @@ class User
             $user->setPhone($_POST['phone']);
             $user->setCityId($_POST['city_id']);
             $user->save();
-            Url::redirect('user/login');
 
+            Url::redirect('user/login');
         } else {
             echo 'Check email and password';
         }
@@ -131,10 +142,6 @@ class User
 
         $userEmail = $user->load($_SESSION['user_id'])->getEmail();
         $inputEmail = strtolower(trim($_POST['email']));
-
-//        echo '<pre>';
-//        print_r($test);
-//        die();
 
         if ($emailValid) {
             if ($passMatch) {
@@ -162,10 +169,13 @@ class User
 
                 $user->save();
 
-                Url::redirect('');
+                $user->load($_SESSION['user_id']);
+                $_SESSION['user'] = $user;
 
+                Url::redirect('');
             } else {
-                echo 'Pass did not match';
+                echo 'Passwords did not match<br>';
+                echo '<a href="' . BASE_URL . 'user/edit/" style="color:white;">Back to edit</a>';
             }
         } else {
             echo 'Email is not valid (must contain "@")';

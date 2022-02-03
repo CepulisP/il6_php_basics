@@ -6,20 +6,14 @@
 <div class="navigation" style="text-align:center;">
     <h1 style="color:white;">Gumtree</h1>
     <a href='http://localhost/pamokos/oop/index.php/' style="color:white;text-decoration:none">&bullet; Home</a>
-    <a href='http://localhost/pamokos/oop/index.php/catalog/all/' style="color:white;text-decoration:none">&bullet; All
-        ads</a>
-    <a href='http://localhost/pamokos/oop/index.php/user/register/' style="color:white;text-decoration:none">&bullet;
-        Sign up</a>
-    <a href='http://localhost/pamokos/oop/index.php/user/login/' style="color:white;text-decoration:none">&bullet;
-        Login</a>
-    <a href='http://localhost/pamokos/oop/index.php/user/edit/' style="color:white;text-decoration:none">&bullet;
-        Edit</a>
-    <a href='http://localhost/pamokos/oop/index.php/user/logout/' style="color:white;text-decoration:none">&bullet;
-        Logout</a>
+    <a href='http://localhost/pamokos/oop/index.php/catalog/all/' style="color:white;text-decoration:none">&bullet; All ads</a>
+    <a href='http://localhost/pamokos/oop/index.php/user/register/' style="color:white;text-decoration:none">&bullet; Sign up</a>
+    <a href='http://localhost/pamokos/oop/index.php/user/login/' style="color:white;text-decoration:none">&bullet; Login</a>
+    <a href='http://localhost/pamokos/oop/index.php/user/edit/' style="color:white;text-decoration:none">&bullet; Edit</a>
+    <a href='http://localhost/pamokos/oop/index.php/user/logout/' style="color:white;text-decoration:none">&bullet; Logout</a>
     <hr>
 </div>
 <div class="content" style="color:white;">
-
     <?php
 
     include 'vendor\autoload.php';

@@ -5,6 +5,7 @@ namespace Helper;
 class DBHelper
 {
     private $conn;
+
     private $sql;
 
     public function __construct()
