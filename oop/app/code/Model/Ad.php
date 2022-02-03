@@ -106,7 +106,7 @@ class Ad
 
     public function setUserId($user_id)
     {
-        $this->type_id = $user_id;
+        $this->user_id = $user_id;
     }
 
     public function save()
