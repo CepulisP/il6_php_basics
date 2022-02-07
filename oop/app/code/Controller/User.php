@@ -7,8 +7,9 @@ use Helper\Validator;
 use Model\User as UserModel;
 use Model\City;
 use Helper\Url;
+use Core\AbstractController;
 
-class User
+class User extends AbstractController
 {
     public function show($id = null)
     {
@@ -44,7 +45,8 @@ class User
         $form->select(['name' => 'city_id', 'options' => $options]);
         $form->input(['name' => 'create', 'type' => 'submit', 'value' => 'Register']);
 
-        echo $form->getForm();
+        $this->data['form'] = $form->getForm();
+        $this->render('user/register');
     }
 
     public function edit()
@@ -87,7 +89,8 @@ class User
         $form->select(['name' => 'city_id', 'options' => $options, 'selected' => $user->getCityId()]);
         $form->input(['name' => 'edit', 'type' => 'submit', 'value' => 'Save']);
 
-        echo $form->getForm();
+        $this->data['form'] = $form->getForm();
+        $this->render('user/edit');
     }
 
     public function login()
@@ -102,7 +105,8 @@ class User
         $form->input(['name' => 'password', 'type' => 'password', 'placeholder' => 'Password']);
         $form->input(['name' => 'login', 'type' => 'submit', 'value' => 'Login']);
 
-        echo $form->getForm();
+        $this->data['form'] = $form->getForm();
+        $this->render('user/login');
     }
 
     public function create()
@@ -200,5 +204,6 @@ class User
     public function logout()
     {
         session_destroy();
+        Url::redirect('');
     }
 }

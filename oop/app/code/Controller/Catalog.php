@@ -6,25 +6,30 @@ use Helper\FormHelper;
 use Model\User as UserModel;
 use Helper\Url;
 use Model\Ad;
+use Core\AbstractController;
 
-class Catalog
+class Catalog extends AbstractController
 {
     public function show($id = null)
     {
+        $this->data['content'] = '';
         if ($id !== null) {
-            echo 'Catalog controller ID ' . $id;
+            $this->data['content'] .= 'Catalog controller ID ' . $id;
         } else {
-            echo '404 no id';
+            $this->data['content'] .= '404 no id';
         }
+        $this->render('catalog/show');
     }
 
     public function all()
     {
+        $this->data['content'] = '';
         for ($i = 0; $i < 10; $i++) {
-            echo '<a href="http://localhost/pamokos/oop/index.php/catalog/show/' . $i
+            $this->data['content'] .= '<a href="http://localhost/pamokos/oop/index.php/catalog/show/' . $i
                 . '" style="color:white;text-decoration:none">Read more</a>';
-            echo '<br>';
+            $this->data['content'] .= '<br>';
         }
+        $this->render('catalog/all');
     }
 
     public function add()
@@ -48,7 +53,8 @@ class Catalog
         $form->select(['name' => 'year', 'options' => $options]);
         $form->input(['name' => 'create', 'type' => 'submit', 'value' => 'Create']);
 
-        echo $form->getForm();
+        $this->data['form'] = $form->getForm();
+        $this->render('catalog/add');
     }
 
     public function create()

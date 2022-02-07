@@ -1,60 +1,45 @@
-<html>
-<head>
-    <title>Gumtree | Ad portal</title>
-</head>
-<body style="background-color: rgba(33,33,33,255);">
-<div class="navigation" style="text-align:center;">
-    <h1 style="color:white;">Gumtree</h1>
-    <a href='http://localhost/pamokos/oop/index.php/' style="color:white;text-decoration:none">&bullet; Home</a>
-    <a href='http://localhost/pamokos/oop/index.php/catalog/all/' style="color:white;text-decoration:none">&bullet; All ads</a>
-    <a href='http://localhost/pamokos/oop/index.php/catalog/add/' style="color:white;text-decoration:none">&bullet; New ad</a>
-    <a href='http://localhost/pamokos/oop/index.php/user/register/' style="color:white;text-decoration:none">&bullet; Sign up</a>
-    <a href='http://localhost/pamokos/oop/index.php/user/login/' style="color:white;text-decoration:none">&bullet; Login</a>
-    <a href='http://localhost/pamokos/oop/index.php/user/edit/' style="color:white;text-decoration:none">&bullet; Edit</a>
-    <a href='http://localhost/pamokos/oop/index.php/user/logout/' style="color:white;text-decoration:none">&bullet; Logout</a>
-    <hr>
-</div>
-<div class="content" style="color:white;">
-    <?php
+<?php
 
-    include 'vendor\autoload.php';
-    include 'config.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-    session_start();
+include 'vendor\autoload.php';
+include 'config.php';
 
-    if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
+session_start();
 
-        $path = trim($_SERVER['PATH_INFO'], '/');
-        $path = explode('/', $path);
+if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
 
-        $class = '\Controller\\' . ucfirst($path[0]);
-        if (class_exists($class)) {
-            $obj = new $class();
-            if (isset($path[1])) {
-                $method = $path[1];
-                if (method_exists($obj, $method)) {
-                    if (isset($path[2])) {
-                        $id = $path[2];
-                        $obj->$method($id);
-                    } else {
-                        $obj->$method();
-                    }
+    $path = trim($_SERVER['PATH_INFO'], '/');
+    $path = explode('/', $path);
+
+    $class = '\Controller\\' . ucfirst($path[0]);
+    if (class_exists($class)) {
+        $obj = new $class();
+        if (isset($path[1])) {
+            $method = $path[1];
+            if (method_exists($obj, $method)) {
+                if (isset($path[2])) {
+                    $id = $path[2];
+                    $obj->$method($id);
                 } else {
-                    echo '404 bad method';
+                    $obj->$method();
                 }
             } else {
-                echo '404 no method';
+                echo '404 bad method';
             }
         } else {
-            echo '404 bad class';
+            echo '404 no method';
         }
     } else {
-        echo '<h2 style="text-align:center;">Home page</h2>';
-        echo '<pre>';
-        print_r($_SESSION);
+        echo '404 bad class';
     }
-
-    ?>
-</div>
-</body>
-</html>
+} else {
+    include PROJECT_ROOT_DIR . '\app\design\parts\header.php';
+    echo '<h2 style="text-align:center;">Home page</h2>';
+    echo '<pre>';
+    print_r($_SESSION);
+    echo '</pre>';
+    include PROJECT_ROOT_DIR . '\app\design\parts\footer.php';
+}
