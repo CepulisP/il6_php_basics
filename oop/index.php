@@ -36,10 +36,6 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
         echo '404 bad class';
     }
 } else {
-    include PROJECT_ROOT_DIR . '\app\design\parts\header.php';
-    echo '<h2 style="text-align:center;">Home page</h2>';
-    echo '<pre>';
-    print_r($_SESSION);
-    echo '</pre>';
-    include PROJECT_ROOT_DIR . '\app\design\parts\footer.php';
+    $obj = new \Controller\Home();
+    $obj->index();
 }

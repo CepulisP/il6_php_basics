@@ -13,11 +13,13 @@ class User extends AbstractController
 {
     public function show($id = null)
     {
+        $this->data['content'] = '';
         if ($id !== null) {
-            echo 'User controller ID ' . $id;
+            $this->data['content'] .= 'User controller ID ' . $id;
         } else {
-            echo '404 no id';
+            $this->data['content'] .= '404 no id';
         }
+        $this->render('user/show');
     }
 
     public function register()
@@ -205,5 +207,11 @@ class User extends AbstractController
     {
         session_destroy();
         Url::redirect('');
+    }
+
+    public function all()
+    {
+        $this->data['users'] = UserModel::getAllUsers();
+        $this->render('user/all');
     }
 }
