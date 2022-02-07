@@ -123,11 +123,11 @@ class Ad
         $data = [
             'title' => $this->title,
             'description' => $this->description,
-            'manufacturer_id' => 1,
-            'model_id' => 1,
+            'manufacturer_id' => $this->manufacturer_id,
+            'model_id' => $this->model_id,
             'price' => $this->price,
             'year' => $this->year,
-            'type_id' => 1,
+            'type_id' => $this->type_id,
             'user_id' => $this->user_id
         ];
 
@@ -137,12 +137,39 @@ class Ad
 
     private function update()
     {
+        $data = [
+            'title' => $this->title,
+            'description' => $this->description,
+            'manufacturer_id' => $this->manufacturer_id,
+            'model_id' => $this->model_id,
+            'price' => $this->price,
+            'year' => $this->year,
+            'type_id' => $this->type_id,
+            'user_id' => $this->user_id
+        ];
 
+        $db = new DBHelper();
+        $db->update('ads', $data)->where('id', $this->id)->exec();
     }
 
-    private function load($id)
+    public function load($id)
     {
+        $db = new DBHelper();
+        $ad = $db->select()->from('ads')->where('id', $id)->getOne();
 
+        if (!empty($ad)){
+            $this->id = $ad['id'];
+            $this->title = $ad['title'];
+            $this->description = $ad['description'];
+            $this->manufacturer_id = $ad['manufacturer_id'];
+            $this->model_id = $ad['model_id'];
+            $this->price = $ad['price'];
+            $this->year = $ad['year'];
+            $this->type_id = $ad['type_id'];
+            $this->user_id = $ad['user_id'];
+        }
+
+        return $this;
     }
 
     public function delete()

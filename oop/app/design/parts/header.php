@@ -12,7 +12,7 @@
             <li><a href='<?php echo BASE_URL ?>catalog/add/' style="color:white;text-decoration:none">&bullet; New ad</a></li>
             <li><a href='<?php echo BASE_URL ?>user/register/' style="color:white;text-decoration:none">&bullet; Sign up</a></li>
             <li><a href='<?php echo BASE_URL ?>user/login/' style="color:white;text-decoration:none">&bullet; Login</a></li>
-            <li><a href='<?php echo BASE_URL ?>user/edit/' style="color:white;text-decoration:none">&bullet; Edit</a></li>
+            <li><a href='<?php echo BASE_URL ?>user/edit/' style="color:white;text-decoration:none">&bullet; Edit user</a></li>
             <li><a href='<?php echo BASE_URL ?>user/logout/' style="color:white;text-decoration:none">&bullet; Logout</a></li>
         </ul>
     </nav>

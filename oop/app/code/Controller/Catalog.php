@@ -57,13 +57,47 @@ class Catalog extends AbstractController
         $this->render('catalog/add');
     }
 
+    public function edit($id)
+    {
+        $ad = new Ad();
+        $ad->load($id);
+
+        if (!isset($_SESSION['user_id'])) {
+            Url::redirect('user/login');
+        } elseif ($_SESSION['user_id'] !== $ad->getUserId()) {
+            Url::redirect('');
+        }
+
+        $form = new FormHelper('catalog/update', 'POST');
+
+        $form->input(['name' => 'title', 'type' => 'text', 'placeholder' => 'Title', 'value' => $ad->getTitle()]);
+        $form->input(['name' => 'id', 'type' => 'hidden', 'value' => $id]);
+        $form->textArea('description', $ad->getDescription());
+        $form->input(['name' => 'price', 'type' => 'number', 'step' => '0.01', 'placeholder' => 'Price', 'value' => $ad->getPrice()]);
+
+        $options = [];
+
+        for ($i = 1990; $i <= date('Y'); $i++) {
+            $options[$i] = $i;
+        }
+
+        $form->select(['name' => 'year', 'options' => $options, 'selected' => $ad->getYear()]);
+        $form->input(['name' => 'create', 'type' => 'submit', 'value' => 'Create']);
+
+        $this->data['form'] = $form->getForm();
+        $this->render('catalog/edit');
+    }
+
     public function create()
     {
         $ad = new Ad();
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);
+        $ad->setManufacturerId(1);
+        $ad->setModelId(1);
         $ad->setPrice($_POST['price']);
         $ad->setYear($_POST['year']);
+        $ad->setTypeId(1);
         $ad->setUserId($_SESSION['user_id']);
         $ad->save();
 
@@ -72,6 +106,18 @@ class Catalog extends AbstractController
 
     public function update()
     {
-        echo 'I\'m Robot';
+        $adId = $_POST['id'];
+        $ad = new Ad();
+        $ad->load($adId);
+        $ad->setTitle($_POST['title']);
+        $ad->setDescription($_POST['description']);
+        $ad->setManufacturerId(1);
+        $ad->setModelId(1);
+        $ad->setPrice($_POST['price']);
+        $ad->setYear($_POST['year']);
+        $ad->setTypeId(1);
+        $ad->save();
+
+        Url::redirect('');
     }
 }
