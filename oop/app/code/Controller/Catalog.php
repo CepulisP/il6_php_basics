@@ -44,7 +44,7 @@ class Catalog extends AbstractController
         foreach ($ads as $ad) {
             $this->data['content'] .= '<td style="padding:0 50px 0 50px;">';
             $this->data['content'] .= '<b style="font-size:24px;">'.ucfirst($ad->getTitle()) . '</b><br>';
-            $this->data['content'] .= $ad->getPrice() . '<br>';
+            $this->data['content'] .= $ad->getPrice() . ' Eur<br>';
             $this->data['content'] .= '<a href="http://localhost/pamokos/oop/index.php/catalog/show/'
                 . $ad->getId()
                 . '" style="color:white;">Read more</a><hr><br>';
