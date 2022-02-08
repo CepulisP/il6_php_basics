@@ -17,4 +17,9 @@ class AbstractController
         include_once PROJECT_ROOT_DIR . '\app\design\\' . $template . '.php';
         include_once PROJECT_ROOT_DIR . '\app\design\parts\footer.php';
     }
+
+    protected function isUserLoggedIn()
+    {
+        return isset($_SESSION['user_id']);
+    }
 }

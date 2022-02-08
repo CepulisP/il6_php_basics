@@ -1,19 +1,29 @@
 <html>
 <head>
     <title>Gumtree | Ad portal</title>
+    <link rel="stylesheet" href="<?php echo BASE_URL_WITHOUT_INDEX_PHP . 'css/style.css'; ?>"
 </head>
-<body style="background-color: rgba(33,33,33,255);">
+<body>
 <header style="text-align:center;">
     <h1 style="color:white;">Gumtree</h1>
     <nav>
-        <a href='<?php echo BASE_URL ?>' style="color:white;text-decoration:none">&bullet; Home</a>
-        <a href='<?php echo BASE_URL ?>catalog/all/' style="color:white;text-decoration:none">&bullet; All ads</a>
-        <a href='<?php echo BASE_URL ?>catalog/add/' style="color:white;text-decoration:none">&bullet; New ad</a>
-        <a href='<?php echo BASE_URL ?>user/register/' style="color:white;text-decoration:none">&bullet; Sign up</a>
-        <a href='<?php echo BASE_URL ?>user/login/' style="color:white;text-decoration:none">&bullet; Login</a>
-        <a href='<?php echo BASE_URL ?>user/edit/' style="color:white;text-decoration:none">&bullet; Edit user</a>
-        <a href='<?php echo BASE_URL ?>user/logout/' style="color:white;text-decoration:none">&bullet; Logout</a>
+        <ul>
+            <li><a href='<?php echo BASE_URL ?>'>Home</a></li>
+            <li><a href='<?php echo BASE_URL ?>catalog/all/'>All ads</a></li>
+
+            <?php if($this->isUserLoggedIn()) : ?>
+
+            <li><a href='<?php echo BASE_URL ?>catalog/add/'>New ad</a></li>
+            <li><a href='<?php echo BASE_URL ?>user/edit/'>Edit user</a></li>
+            <li><a href='<?php echo BASE_URL ?>user/logout/'>Logout</a></li>
+
+            <?php else : ?>
+
+            <li><a href='<?php echo BASE_URL ?>user/register/'>Sign up</a></li>
+            <li><a href='<?php echo BASE_URL ?>user/login/'>Login</a></li>
+
+            <?php endif ?>
+        </ul>
     </nav>
-    <hr>
 </header>
 <div class="content" style="color:white;">
