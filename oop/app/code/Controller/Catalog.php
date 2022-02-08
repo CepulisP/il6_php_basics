@@ -10,7 +10,7 @@ use Core\AbstractController;
 
 class Catalog extends AbstractController
 {
-    public function show($id = null)
+    public function show($id)
     {
         $ad = new Ad();
         $ad->load($id);
@@ -18,17 +18,15 @@ class Catalog extends AbstractController
         $user = new UserModel();
         $user->load($ad->getUserId());
 
-        $this->data['content'] = '';
-
-        $this->data['content'] .= '<h2>' . $ad->getTitle() . '</h2><br>';
-        $this->data['content'] .= '<h3>Description</h3>' . $ad->getDescription() . '<br>';
-        $this->data['content'] .= '<br>Manufacturer: ' . $ad->getManufacturerId() . '<br>';
-        $this->data['content'] .= 'Model: ' . $ad->getModelId() . '<br>';
-        $this->data['content'] .= 'Price: ' . $ad->getPrice() . ' Eur<br>';
-        $this->data['content'] .= 'Year of manufacture: ' . $ad->getYear() . '<br>';
-        $this->data['content'] .= 'Type: ' . $ad->getTypeId() . '<br>';
-        $this->data['content'] .= 'Created by: ' . ucfirst($user->getName()) . ' '
-            . ucfirst($user->getLastName()) . '<br>';
+        $this->data['content'] = '<h2>' . $ad->getTitle() . '</h2><br>' .
+            '<h3>Description</h3>' . $ad->getDescription() . '<br>' .
+            '<br>Manufacturer: ' . $ad->getManufacturerId() . '<br>' .
+            'Model: ' . $ad->getModelId() . '<br>' .
+            'Price: ' . $ad->getPrice() . ' Eur<br>' .
+            'Year of manufacture: ' . $ad->getYear() . '<br>' .
+            'Type: ' . $ad->getTypeId() . '<br>' .
+            'Created by: ' . ucfirst($user->getName()) . ' ' .
+            ucfirst($user->getLastName()) . '<br>';
 
         $this->render('catalog/show');
     }
@@ -43,13 +41,13 @@ class Catalog extends AbstractController
 
         foreach ($ads as $ad) {
             $this->data['content'] .= '<td style="padding:0 50px 0 50px;">';
-            $this->data['content'] .= '<b style="font-size:24px;">'.ucfirst($ad->getTitle()) . '</b><br>';
+            $this->data['content'] .= '<b style="font-size:24px;">' . ucfirst($ad->getTitle()) . '</b><br>';
             $this->data['content'] .= $ad->getPrice() . ' Eur<br>';
             $this->data['content'] .= '<a href="http://localhost/pamokos/oop/index.php/catalog/show/'
                 . $ad->getId()
                 . '" style="color:white;">Read more</a><hr><br>';
             $this->data['content'] .= '</td>';
-            if ($count % 5 == 0){
+            if ($count % 5 == 0) {
                 $this->data['content'] .= '</tr><tr>';
             }
             $count++;
