@@ -12,23 +12,51 @@ class Catalog extends AbstractController
 {
     public function show($id = null)
     {
+        $ad = new Ad();
+        $ad->load($id);
+
+        $user = new UserModel();
+        $user->load($ad->getUserId());
+
         $this->data['content'] = '';
-        if ($id !== null) {
-            $this->data['content'] .= 'Catalog controller ID ' . $id;
-        } else {
-            $this->data['content'] .= '404 no id';
-        }
+
+        $this->data['content'] .= '<h2>' . $ad->getTitle() . '</h2><br>';
+        $this->data['content'] .= '<h3>Description</h3>' . $ad->getDescription() . '<br>';
+        $this->data['content'] .= '<br>Manufacturer: ' . $ad->getManufacturerId() . '<br>';
+        $this->data['content'] .= 'Model: ' . $ad->getModelId() . '<br>';
+        $this->data['content'] .= 'Price: ' . $ad->getPrice() . ' Eur<br>';
+        $this->data['content'] .= 'Year of manufacture: ' . $ad->getYear() . '<br>';
+        $this->data['content'] .= 'Type: ' . $ad->getTypeId() . '<br>';
+        $this->data['content'] .= 'Created by: ' . ucfirst($user->getName()) . ' '
+            . ucfirst($user->getLastName()) . '<br>';
+
         $this->render('catalog/show');
     }
 
     public function all()
     {
-        $this->data['content'] = '';
-        for ($i = 0; $i < 10; $i++) {
-            $this->data['content'] .= '<a href="http://localhost/pamokos/oop/index.php/catalog/show/' . $i
-                . '" style="color:white;text-decoration:none">Read more</a>';
-            $this->data['content'] .= '<br>';
+        $ads = Ad::getAllAds();
+
+        $count = 1;
+
+        $this->data['content'] = '<table style="color:white;"><tr>';
+
+        foreach ($ads as $ad) {
+            $this->data['content'] .= '<td style="padding:0 50px 0 50px;">';
+            $this->data['content'] .= '<b style="font-size:24px;">'.ucfirst($ad->getTitle()) . '</b><br>';
+            $this->data['content'] .= $ad->getPrice() . '<br>';
+            $this->data['content'] .= '<a href="http://localhost/pamokos/oop/index.php/catalog/show/'
+                . $ad->getId()
+                . '" style="color:white;">Read more</a><hr><br>';
+            $this->data['content'] .= '</td>';
+            if ($count % 5 == 0){
+                $this->data['content'] .= '</tr><tr>';
+            }
+            $count++;
         }
+
+        $this->data['content'] .= '</tr></table>';
+
         $this->render('catalog/all');
     }
 
@@ -59,12 +87,14 @@ class Catalog extends AbstractController
 
     public function edit($id)
     {
+        if (!isset($_SESSION['user_id'])) {
+            Url::redirect('user/login');
+        }
+
         $ad = new Ad();
         $ad->load($id);
 
-        if (!isset($_SESSION['user_id'])) {
-            Url::redirect('user/login');
-        } elseif ($_SESSION['user_id'] !== $ad->getUserId()) {
+        if ($_SESSION['user_id'] !== $ad->getUserId()) {
             Url::redirect('');
         }
 

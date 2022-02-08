@@ -176,4 +176,19 @@ class Ad
     {
 
     }
+
+    public static function getAllAds()
+    {
+        $db = new DBHelper();
+        $data = $db->select()->from('ads')->get();
+        $ads = [];
+
+        foreach ($data as $element) {
+            $ad = new Ad();
+            $ad->load($element['id']);
+            $ads[] = $ad;
+        }
+
+        return $ads;
+    }
 }
