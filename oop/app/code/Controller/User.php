@@ -199,6 +199,9 @@ class User extends AbstractController
                 $loginCount = $user->getLoginAttempts();
                 $loginCount++;
                 $user->setLoginAttempts($loginCount);
+                if ($loginCount > 5){
+                    $_SESSION['message'] = 'User locked';
+                }
                 $user->save();
             }
         }
@@ -219,12 +222,13 @@ class User extends AbstractController
                 Url::redirect('user/login');
             }
         }else{
-            $id = UserModel::getIdByEmail($email);
-            $user = new UserModel();
-            $user->load($id);
-            $user->setActive(0);
-            $user->save();
-            Url::redirect('user/login');
+            if (isset($id)) {
+                $user = new UserModel();
+                $user->load($id);
+                $user->setActive(0);
+                $user->save();
+                Url::redirect('user/login');
+            }
         }
     }
 
