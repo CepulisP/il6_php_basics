@@ -125,6 +125,7 @@ class User extends AbstractController
             $user->setPassword(md5(strtolower(trim($_POST['password']))));
             $user->setPhone($_POST['phone']);
             $user->setCityId($_POST['city_id']);
+            $user->setActive(1);
             $user->save();
 
             Url::redirect('user/login');
@@ -151,6 +152,7 @@ class User extends AbstractController
         $user->setLastName($_POST['last_name']);
         $user->setPhone($_POST['phone']);
         $user->setCityId($_POST['city_id']);
+        $user->setActive(1);
 
         if ($emailValid) {
             if ($passMatch) {
@@ -189,16 +191,39 @@ class User extends AbstractController
 
         $userId = UserModel::checkLoginCredentials($email, $password);
 
-        if ($userId) {
+        if (!empty($email)) {
+            $id = UserModel::getIdByEmail($email);
+            if (!empty($id)) {
+                $user = new UserModel();
+                $user->load($id);
+                $loginCount = $user->getLoginAttempts();
+                $loginCount++;
+                $user->setLoginAttempts($loginCount);
+                $user->save();
+            }
+        }
+
+        if (!empty($user) && $user->getLoginAttempts() <= 5) {
+            if ($userId) {
+                $user = new UserModel();
+                $user->load($userId);
+                $user->setLoginAttempts(0);
+                $user->save();
+
+                $_SESSION['logged'] = true;
+                $_SESSION['user_id'] = $userId;
+                $_SESSION['user'] = $user;
+
+                Url::redirect('');
+            } else {
+                Url::redirect('user/login');
+            }
+        }else{
+            $id = UserModel::getIdByEmail($email);
             $user = new UserModel();
-            $user->load($userId);
-
-            $_SESSION['logged'] = true;
-            $_SESSION['user_id'] = $userId;
-            $_SESSION['user'] = $user;
-
-            Url::redirect('');
-        } else {
+            $user->load($id);
+            $user->setActive(0);
+            $user->save();
             Url::redirect('user/login');
         }
     }

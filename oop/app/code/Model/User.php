@@ -2,9 +2,10 @@
 
 namespace Model;
 
+use Core\AbstractModel;
 use Helper\DBHelper;
 
-class User
+class User extends AbstractModel
 {
     private $id;
 
@@ -21,6 +22,10 @@ class User
     private $cityId;
 
     private $city;
+
+    private $active;
+
+    private $loginAttempts;
 
     public function getId()
     {
@@ -92,6 +97,26 @@ class User
         return $this->city;
     }
 
+    public function setActive($active)
+    {
+        $this->active = $active;
+    }
+
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    public function setLoginAttempts($loginAttempts)
+    {
+        $this->loginAttempts = $loginAttempts;
+    }
+
+    public function getLoginAttempts()
+    {
+        return $this->loginAttempts;
+    }
+
     public function save()
     {
         if (!isset($this->id)) {
@@ -109,7 +134,8 @@ class User
             'email' => $this->email,
             'password' => $this->password,
             'phone' => $this->phone,
-            'city_id' => $this->cityId
+            'city_id' => $this->cityId,
+            'active' => $this->active
         ];
 
         $db = new DBHelper();
@@ -124,7 +150,9 @@ class User
             'email' => $this->email,
             'password' => $this->password,
             'phone' => $this->phone,
-            'city_id' => $this->cityId
+            'city_id' => $this->cityId,
+            'active' => $this->active,
+            'login_attempts' => $this->loginAttempts
         ];
 
         $db = new DBHelper();
@@ -145,6 +173,8 @@ class User
         $this->password = $data['password'];
         $this->phone = $data['phone'];
         $this->cityId = $data['city_id'];
+        $this->active = $data['active'];
+        $this->loginAttempts = $data['login_attempts'];
         $this->city = $city->load($this->cityId);
 
         return $this;
@@ -167,11 +197,13 @@ class User
     public static function checkLoginCredentials($email, $pass)
     {
         $db = new DBHelper();
+
         $rez = $db
             ->select('id')
             ->from('users')
             ->where('email', $email)
             ->andWhere('password', $pass)
+            ->andWhere('active', 1)
             ->getOne();
 
         if (isset($rez['id'])) {
@@ -197,5 +229,22 @@ class User
         }
 
         return $users;
+    }
+
+    public static function getIdByEmail($email)
+    {
+        $db = new DBHelper();
+
+        $rez = $db
+            ->select('id')
+            ->from('users')
+            ->where('email', $email)
+            ->getOne();
+
+        if (isset($rez['id'])) {
+            return $rez['id'];
+        } else {
+            return false;
+        }
     }
 }

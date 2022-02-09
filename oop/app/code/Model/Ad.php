@@ -2,9 +2,10 @@
 
 namespace Model;
 
+use Core\AbstractModel;
 use Helper\DBHelper;
 
-class Ad
+class Ad extends AbstractModel
 {
     private $id;
 
@@ -23,6 +24,10 @@ class Ad
     private $type_id;
 
     private $user_id;
+
+    private $image;
+
+    private $active;
 
     public function getId()
     {
@@ -109,6 +114,26 @@ class Ad
         $this->user_id = $user_id;
     }
 
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image)
+    {
+        $this->image = $image;
+    }
+
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    public function setActive($active)
+    {
+        $this->active = $active;
+    }
+
     public function save()
     {
         if (!isset($this->id)) {
@@ -128,7 +153,9 @@ class Ad
             'price' => $this->price,
             'year' => $this->year,
             'type_id' => $this->type_id,
-            'user_id' => $this->user_id
+            'user_id' => $this->user_id,
+            'image' => $this->image,
+            'active' => $this->active
         ];
 
         $db = new DBHelper();
@@ -145,7 +172,9 @@ class Ad
             'price' => $this->price,
             'year' => $this->year,
             'type_id' => $this->type_id,
-            'user_id' => $this->user_id
+            'user_id' => $this->user_id,
+            'image' => $this->image,
+            'active' => $this->active
         ];
 
         $db = new DBHelper();
@@ -167,6 +196,8 @@ class Ad
             $this->year = $ad['year'];
             $this->type_id = $ad['type_id'];
             $this->user_id = $ad['user_id'];
+            $this->image = $ad['image'];
+            $this->active = $ad['active'];
         }
 
         return $this;

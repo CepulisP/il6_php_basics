@@ -15,10 +15,15 @@ class Catalog extends AbstractController
         $ad = new Ad();
         $ad->load($id);
 
+        if ($ad->getActive() == 0){
+            Url::redirect('catalog/all');
+        }
+
         $user = new UserModel();
         $user->load($ad->getUserId());
 
         $this->data['content'] = '<h2>' . $ad->getTitle() . '</h2><br>' .
+            '<img width="100" src="' . IMAGE_PATH . $ad->getImage() . '">' .
             '<h3>Description</h3>' . $ad->getDescription() . '<br>' .
             '<br>Manufacturer: ' . $ad->getManufacturerId() . '<br>' .
             'Model: ' . $ad->getModelId() . '<br>' .
@@ -40,17 +45,20 @@ class Catalog extends AbstractController
         $this->data['content'] = '<table style="color:white;"><tr>';
 
         foreach ($ads as $ad) {
-            $this->data['content'] .= '<td style="padding:0 50px 0 50px;">';
-            $this->data['content'] .= '<b style="font-size:24px;">' . ucfirst($ad->getTitle()) . '</b><br>';
-            $this->data['content'] .= $ad->getPrice() . ' Eur<br>';
-            $this->data['content'] .= '<a href="http://localhost/pamokos/oop/index.php/catalog/show/'
-                . $ad->getId()
-                . '" style="color:white;">Read more</a><hr><br>';
-            $this->data['content'] .= '</td>';
-            if ($count % 5 == 0) {
-                $this->data['content'] .= '</tr><tr>';
+            if ($ad->getActive() == 1) {
+                $this->data['content'] .= '<td style="padding:0 50px 0 50px;">';
+                $this->data['content'] .= '<b style="font-size:24px;">' . ucfirst($ad->getTitle()) . '</b><br>';
+                $this->data['content'] .= '<img width="100" src="' . IMAGE_PATH . $ad->getImage() . '"><br>';
+                $this->data['content'] .= $ad->getPrice() . ' Eur<br>';
+                $this->data['content'] .= '<a href="http://localhost/pamokos/oop/index.php/catalog/show/'
+                    . $ad->getId()
+                    . '" style="color:white;">Read more</a><hr><br>';
+                $this->data['content'] .= '</td>';
+                if ($count % 5 == 0) {
+                    $this->data['content'] .= '</tr><tr>';
+                }
+                $count++;
             }
-            $count++;
         }
 
         $this->data['content'] .= '</tr></table>';
@@ -69,6 +77,7 @@ class Catalog extends AbstractController
         $form->input(['name' => 'title', 'type' => 'text', 'placeholder' => 'Title']);
         $form->textArea('description');
         $form->input(['name' => 'price', 'type' => 'number', 'step' => '0.01', 'placeholder' => 'Price']);
+        $form->input(['name' => 'image', 'type' => 'text', 'placeholder' => 'Image.png']);
 
         $options = [];
 
@@ -101,7 +110,19 @@ class Catalog extends AbstractController
         $form->input(['name' => 'title', 'type' => 'text', 'placeholder' => 'Title', 'value' => $ad->getTitle()]);
         $form->input(['name' => 'id', 'type' => 'hidden', 'value' => $id]);
         $form->textArea('description', $ad->getDescription());
-        $form->input(['name' => 'price', 'type' => 'number', 'step' => '0.01', 'placeholder' => 'Price', 'value' => $ad->getPrice()]);
+        $form->input([
+            'name' => 'price',
+            'type' => 'number',
+            'step' => '0.01',
+            'placeholder' => 'Price',
+            'value' => $ad->getPrice()
+        ]);
+        $form->input([
+            'name' => 'image',
+            'type' => 'text',
+            'placeholder' => 'Image name',
+            'value' => $ad->getImage()
+        ]);
 
         $options = [];
 
@@ -127,6 +148,8 @@ class Catalog extends AbstractController
         $ad->setYear($_POST['year']);
         $ad->setTypeId(1);
         $ad->setUserId($_SESSION['user_id']);
+        $ad->setImage($_SESSION['image']);
+        $ad->setActive(1);
         $ad->save();
 
         Url::redirect('');
@@ -144,6 +167,8 @@ class Catalog extends AbstractController
         $ad->setPrice($_POST['price']);
         $ad->setYear($_POST['year']);
         $ad->setTypeId(1);
+        $ad->setImage($_SESSION['image']);
+        $ad->setActive(1);
         $ad->save();
 
         Url::redirect('');

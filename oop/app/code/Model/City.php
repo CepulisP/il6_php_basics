@@ -2,9 +2,10 @@
 
 namespace Model;
 
+use Core\AbstractModel;
 use Helper\DBHelper;
 
-class City
+class City extends AbstractModel
 {
     private $id;
 
