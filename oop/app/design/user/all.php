@@ -3,7 +3,7 @@
     <ol class="user-wrapper">
         <?php foreach ($this->data['users'] as $user) : ?>
             <li>
-                <a href="<?php echo BASE_URL . 'user/show/' . $user->getId() ?>" style="color:white;">
+                <a href="<?php echo $this->url('user/show', $user->getId()) ?>" style="color:white;">
                     <?php echo $user->getName() . ' ' . $user->getLastName() ?>
                 </a>
             </li>

@@ -7,8 +7,6 @@ use Helper\DBHelper;
 
 class Ad extends AbstractModel
 {
-    private $id;
-
     private $title;
 
     private $description;
@@ -29,9 +27,25 @@ class Ad extends AbstractModel
 
     private $active;
 
-    public function getId()
+    public function __construct()
     {
-        return $this->id;
+        $this->table = 'ads';
+    }
+
+    protected function assignData()
+    {
+        $this->data = [
+            'title' => $this->title,
+            'description' => $this->description,
+            'manufacturer_id' => $this->manufacturer_id,
+            'model_id' => $this->model_id,
+            'price' => $this->price,
+            'year' => $this->year,
+            'type_id' => $this->type_id,
+            'user_id' => $this->user_id,
+            'image' => $this->image,
+            'active' => $this->active
+        ];
     }
 
     public function getTitle()
@@ -124,7 +138,7 @@ class Ad extends AbstractModel
         $this->image = $image;
     }
 
-    public function getActive()
+    public function isActive()
     {
         return $this->active;
     }
@@ -132,53 +146,6 @@ class Ad extends AbstractModel
     public function setActive($active)
     {
         $this->active = $active;
-    }
-
-    public function save()
-    {
-        if (!isset($this->id)) {
-            $this->create();
-        } else {
-            $this->update();
-        }
-    }
-
-    private function create()
-    {
-        $data = [
-            'title' => $this->title,
-            'description' => $this->description,
-            'manufacturer_id' => $this->manufacturer_id,
-            'model_id' => $this->model_id,
-            'price' => $this->price,
-            'year' => $this->year,
-            'type_id' => $this->type_id,
-            'user_id' => $this->user_id,
-            'image' => $this->image,
-            'active' => $this->active
-        ];
-
-        $db = new DBHelper();
-        $db->insert('ads', $data)->exec();
-    }
-
-    private function update()
-    {
-        $data = [
-            'title' => $this->title,
-            'description' => $this->description,
-            'manufacturer_id' => $this->manufacturer_id,
-            'model_id' => $this->model_id,
-            'price' => $this->price,
-            'year' => $this->year,
-            'type_id' => $this->type_id,
-            'user_id' => $this->user_id,
-            'image' => $this->image,
-            'active' => $this->active
-        ];
-
-        $db = new DBHelper();
-        $db->update('ads', $data)->where('id', $this->id)->exec();
     }
 
     public function load($id)
@@ -201,11 +168,6 @@ class Ad extends AbstractModel
         }
 
         return $this;
-    }
-
-    public function delete()
-    {
-
     }
 
     public static function getAllAds()

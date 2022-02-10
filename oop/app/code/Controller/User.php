@@ -115,7 +115,7 @@ class User extends AbstractController
     {
         $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
         $emailValid = Validator::checkEmail($_POST['email']);
-        $emailUniq = UserModel::emailUniq($_POST['email']);
+        $emailUniq = UserModel::isValueUniq('email', $_POST['email'], 'users');
 
         if ($passMatch && $emailValid && $emailUniq) {
             $user = new UserModel();
@@ -137,7 +137,7 @@ class User extends AbstractController
     public function update()
     {
         $emailValid = Validator::checkEmail($_POST['email']);
-        $emailUniq = UserModel::emailUniq($_POST['email']);
+        $emailUniq = UserModel::isValueUniq('email', $_POST['email'], 'users');
         $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
         $passSet = !empty($_POST['password']);
         $userId = $_SESSION['user_id'];
@@ -160,8 +160,7 @@ class User extends AbstractController
                     if ($emailUniq) {
                         $user->setEmail(strtolower(trim($_POST['email'])));
                     } else {
-                        echo 'Email is not unique<br>';
-                        echo '<a href="' . BASE_URL . 'user/edit/" style="color:white;">Back to edit</a>';
+                        echo 'Email is not unique';
                         die();
                     }
                 }
@@ -176,8 +175,7 @@ class User extends AbstractController
 
                 Url::redirect('');
             } else {
-                echo 'Passwords did not match<br>';
-                echo '<a href="' . BASE_URL . 'user/edit/" style="color:white;">Back to edit</a>';
+                echo 'Passwords did not match';
             }
         } else {
             echo 'Email is not valid (must contain "@")';
@@ -199,7 +197,7 @@ class User extends AbstractController
                 $loginCount = $user->getLoginAttempts();
                 $loginCount++;
                 $user->setLoginAttempts($loginCount);
-                if ($loginCount > 5){
+                if ($loginCount > 5) {
                     $_SESSION['message'] = 'User locked';
                 }
                 $user->save();
@@ -221,7 +219,7 @@ class User extends AbstractController
             } else {
                 Url::redirect('user/login');
             }
-        }else{
+        } else {
             if (isset($id)) {
                 $user = new UserModel();
                 $user->load($id);

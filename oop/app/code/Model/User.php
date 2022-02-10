@@ -7,8 +7,6 @@ use Helper\DBHelper;
 
 class User extends AbstractModel
 {
-    private $id;
-
     private $name;
 
     private $lastName;
@@ -27,9 +25,23 @@ class User extends AbstractModel
 
     private $loginAttempts;
 
-    public function getId()
+    public function __construct()
     {
-        return $this->id;
+        $this->table = 'users';
+    }
+
+    protected function assignData()
+    {
+        $this->data = [
+            'name' => $this->name,
+            'last_name' => $this->lastName,
+            'email' => $this->email,
+            'password' => $this->password,
+            'phone' => $this->phone,
+            'city_id' => $this->cityId,
+            'active' => $this->active,
+            'login_attempts' => $this->loginAttempts
+        ];
     }
 
     public function getName()
@@ -102,7 +114,7 @@ class User extends AbstractModel
         $this->active = $active;
     }
 
-    public function getActive()
+    public function isActive()
     {
         return $this->active;
     }
@@ -115,48 +127,6 @@ class User extends AbstractModel
     public function getLoginAttempts()
     {
         return $this->loginAttempts;
-    }
-
-    public function save()
-    {
-        if (!isset($this->id)) {
-            $this->create();
-        } else {
-            $this->update();
-        }
-    }
-
-    private function create()
-    {
-        $data = [
-            'name' => $this->name,
-            'last_name' => $this->lastName,
-            'email' => $this->email,
-            'password' => $this->password,
-            'phone' => $this->phone,
-            'city_id' => $this->cityId,
-            'active' => $this->active
-        ];
-
-        $db = new DBHelper();
-        $db->insert('users', $data)->exec();
-    }
-
-    private function update()
-    {
-        $data = [
-            'name' => $this->name,
-            'last_name' => $this->lastName,
-            'email' => $this->email,
-            'password' => $this->password,
-            'phone' => $this->phone,
-            'city_id' => $this->cityId,
-            'active' => $this->active,
-            'login_attempts' => $this->loginAttempts
-        ];
-
-        $db = new DBHelper();
-        $db->update('users', $data)->where('id', $this->id)->exec();
     }
 
     public function load($id)
@@ -178,20 +148,6 @@ class User extends AbstractModel
         $this->city = $city->load($this->cityId);
 
         return $this;
-    }
-
-    public function delete()
-    {
-        $db = new DBHelper();
-        $db->delete()->from('users')->where('id', $this->id)->exec();
-    }
-
-    public static function emailUniq($email)
-    {
-        $email = strtolower(trim($email));
-        $db = new DBHelper();
-        $rez = $db->select()->from('users')->where('email', $email)->get();
-        return empty($rez);
     }
 
     public static function checkLoginCredentials($email, $pass)

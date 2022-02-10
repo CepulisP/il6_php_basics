@@ -15,7 +15,7 @@ class Catalog extends AbstractController
         $ad = new Ad();
         $ad->load($id);
 
-        if ($ad->getActive() == 0){
+        if ($ad->isActive() == 0) {
             Url::redirect('catalog/all');
         }
 
@@ -45,13 +45,12 @@ class Catalog extends AbstractController
         $this->data['content'] = '<table style="color:white;"><tr>';
 
         foreach ($ads as $ad) {
-            if ($ad->getActive() == 1) {
+            if ($ad->isActive() == 1) {
                 $this->data['content'] .= '<td style="padding:0 50px 0 50px;">';
                 $this->data['content'] .= '<b style="font-size:24px;">' . ucfirst($ad->getTitle()) . '</b><br>';
                 $this->data['content'] .= '<img width="100" src="' . IMAGE_PATH . $ad->getImage() . '"><br>';
                 $this->data['content'] .= $ad->getPrice() . ' Eur<br>';
-                $this->data['content'] .= '<a href="http://localhost/pamokos/oop/index.php/catalog/show/'
-                    . $ad->getId()
+                $this->data['content'] .= '<a href="' . Url::link('catalog/show', $ad->getId())
                     . '" style="color:white;">Read more</a><hr><br>';
                 $this->data['content'] .= '</td>';
                 if ($count % 5 == 0) {
@@ -148,7 +147,7 @@ class Catalog extends AbstractController
         $ad->setYear($_POST['year']);
         $ad->setTypeId(1);
         $ad->setUserId($_SESSION['user_id']);
-        $ad->setImage($_SESSION['image']);
+        $ad->setImage($_POST['image']);
         $ad->setActive(1);
         $ad->save();
 
@@ -167,8 +166,7 @@ class Catalog extends AbstractController
         $ad->setPrice($_POST['price']);
         $ad->setYear($_POST['year']);
         $ad->setTypeId(1);
-        $ad->setImage($_SESSION['image']);
-        $ad->setActive(1);
+        $ad->setImage($_POST['image']);
         $ad->save();
 
         Url::redirect('');
