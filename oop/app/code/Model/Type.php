@@ -29,14 +29,14 @@ class Type
         return $this;
     }
 
-    public static function getCities()
+    public static function getTypes()
     {
         $db = new DBHelper();
         $data = $db->select()->from('types')->get();
         $types = [];
 
         foreach ($data as $element) {
-            $type = new City();
+            $type = new Type();
             $type->load($element['id']);
             $types[] = $type;
         }

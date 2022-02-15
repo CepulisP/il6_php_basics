@@ -3,9 +3,6 @@
         <h2>All ads</h2>
     </div>
     <div class="form-wrapper">
-        <div class="form-label">
-            Sort by:
-        </div>
         <div class="form">
             <?= $this->data['form']; ?>
         </div>

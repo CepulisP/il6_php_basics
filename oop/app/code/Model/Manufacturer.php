@@ -29,14 +29,14 @@ class Manufacturer
         return $this;
     }
 
-    public static function getmanufacturers()
+    public static function getManufacturers()
     {
         $db = new DBHelper();
         $data = $db->select()->from('manufacturers')->get();
         $manufacturers = [];
 
         foreach ($data as $element) {
-            $manufacturer = new City();
+            $manufacturer = new Manufacturer();
             $manufacturer->load($element['id']);
             $manufacturers[] = $manufacturer;
         }

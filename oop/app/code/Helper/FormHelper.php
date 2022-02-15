@@ -11,18 +11,25 @@ class FormHelper
         $this->form = '<form action="' . BASE_URL . $action . '" method="' . $method . '">';
     }
 
-    public function input($data, $br = '<br>')
+    public function input($data, $br = 1)
     {
         $this->form .= '<input ';
         foreach ($data as $attribute => $value) {
             $this->form .= $attribute . '="' . $value . '" ';
         }
-        $this->form .= '>' . $br;
+        $this->form .= '>';
+        if ($br) {
+            $this->form .= '<br>';
+        }
     }
 
-    public function select($data)
+    public function select($data, $br = 1)
     {
-        $this->form .= '<select name="' . $data['name'] . '">';
+        $this->form .= '<select name="' . $data['name'] . '"';
+        if (isset($data['id'])) {
+            $this->form .= ' id="' . $data['id'] . '"';
+        }
+        $this->form .= '>';
         foreach ($data['options'] as $key => $option) {
             $this->form .= '<option';
             if (isset($data['selected'])) {
@@ -32,21 +39,33 @@ class FormHelper
             }
             $this->form .= ' value ="' . $key . '">' . $option . '</option>';
         }
-        $this->form .= '</select><br>';
+        $this->form .= '</select>';
+        if ($br) {
+            $this->form .= '<br>';
+        }
     }
 
-    public function textArea($name, $value = null, $placeholder = null)
+    public function textArea($name, $value = null, $placeholder = null, $id = null, $br = 1)
     {
         $this->form .= '<textarea name ="' . $name . '"';
         if (isset($placeholder)) {
-            $this->form .= ' placeholder = "' . $placeholder . '"';
+            $this->form .= ' placeholder="' . $placeholder . '"';
         }
-        $this->form .= '>' . $value . '</textarea><br>';
+        if (isset($id)) {
+            $this->form .= ' id="' . $id . '"';
+        }
+        $this->form .= '>' . $value . '</textarea>';
+        if ($br) {
+            $this->form .= '<br>';
+        }
     }
 
-    public function addText($text)
+    public function label($id, $label, $br = 1)
     {
-        $this->form .= $text;
+        $this->form .= '<label for="' . $id . '">' . $label . '</label>';
+        if ($br) {
+            $this->form .= '<br>';
+        }
     }
 
     public function getForm()

@@ -8,4 +8,4 @@ define('DB_USER', 'root');
 define('DB_NAME', 'gumtree');
 define('DB_PASSWORD', '');
 define('PROJECT_ROOT_DIR', __DIR__);
-define('DEBUG_MODE', true);
+define('DEBUG_MODE', 0);

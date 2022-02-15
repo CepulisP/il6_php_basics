@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Helper\FormHelper;
+use Helper\Logger;
 use Model\Manufacturer;
 use Model\Model;
 use Model\Type;
@@ -38,8 +39,12 @@ class Catalog extends AbstractController
     public function all()
     {
         $form = new FormHelper('catalog/all', 'GET');
+        $form->label('sort', 'Sort by ', 0);
         $this->sortForm($form);
-        $form->input(['type' => 'submit', 'value' => 'Enter']);
+        $form->input([
+            'type' => 'submit',
+            'value' => 'Enter'
+        ]);
         $this->data['form'] = $form->getForm();
 
         $ads = Ad::getAllAds();
@@ -57,13 +62,13 @@ class Catalog extends AbstractController
     {
         $form = new FormHelper('catalog/search', 'GET');
 
-        $this->searchForm($form, '');
+        $this->searchForm($form);
 
         if (isset($_GET['search']) && isset($_GET['field'])) {
             $ads = Ad::getAllAds($_GET['search'], $_GET['field']);
 
             if (!empty($ads)) {
-                $form->addText('<br>Sort by:<br>');
+                $form->label('sort', ' Sort by: ', 0);
                 $this->sortForm($form);
 
                 if (isset($_GET['sort'])) {
@@ -74,72 +79,66 @@ class Catalog extends AbstractController
             }
         }
 
-        $form->input(['type' => 'submit', 'value' => 'Enter']);
-        $this->data['form'] = $form->getForm();
+        $form->input([
+            'type' => 'submit',
+            'value' => 'Enter'
+        ]);
 
+        $this->data['form'] = $form->getForm();
 
         $this->render('catalog/search');
     }
 
     private function sortForm($form)
     {
+        $sort = [
+            'name' => 'sort',
+            'id' => 'sort',
+            'options' => [
+                'null' => '',
+                'ascending_date' => 'Older to newer',
+                'descending_date' => 'Newer to older',
+                'ascending_price' => 'Price: Low to high',
+                'descending_price' => 'Price: High to low',
+                'ascending_title' => 'A - Z',
+                'descending_title' => 'Z - A'
+            ],
+        ];
         if (isset($_GET['sort'])) {
-            $form->select([
-                'name' => 'sort',
-                'options' => [
-                    'null' => '',
-                    'ascending_date' => 'Older to newer',
-                    'descending_date' => 'Newer to older',
-                    'ascending_price' => 'Price: Low to high',
-                    'descending_price' => 'Price: High to low',
-                    'ascending_title' => 'A - Z',
-                    'descending_title' => 'Z - A'
-                ],
-                'selected' => $_GET['sort']
-            ]);
-        } else {
-            $form->select([
-                'name' => 'sort',
-                'options' => [
-                    'null' => '',
-                    'ascending_date' => 'Older to newer',
-                    'descending_date' => 'Newer to older',
-                    'ascending_price' => 'Price: Low to high',
-                    'descending_price' => 'Price: High to low',
-                    'ascending_title' => 'A - Z',
-                    'descending_title' => 'Z - A'
-                ]
-            ]);
+            $sort['selected'] = $_GET['sort'];
         }
+        $form->select($sort, 0);
     }
 
-    private function searchForm($form, $br = null)
+    private function searchForm($form)
     {
-        $form->addText('Keyword or phrase: ');
-        if (isset($_GET['search']) && isset($_GET['field'])) {
-            $form->input(['name' => 'search', 'type' => 'text', 'value' => $_GET['search']], '');
-            $form->addText(' in ');
-            $form->select([
-                'name' => 'field',
-                'options' => [
-                    'null' => '',
-                    'title' => 'Title',
-                    'description' => 'Description',
-                ],
-                'selected' => $_GET['field']
-            ], $br);
-        } else {
-            $form->input(['name' => 'search', 'type' => 'text'], '');
-            $form->addText(' in ');
-            $form->select([
-                'name' => 'field',
-                'options' => [
-                    'null' => '',
-                    'title' => 'Title',
-                    'description' => 'Description'
-                ]
-            ], $br);
+
+        $searchBox = [
+            'name' => 'search',
+            'type' => 'text',
+            'id' => 'search_box'
+        ];
+        $searchField = [
+            'name' => 'field',
+            'id' => 'search_field',
+            'options' => [
+                'null' => '',
+                'title' => 'Title',
+                'description' => 'Description',
+            ]
+        ];
+
+        if (isset($_GET['search'])) {
+            $searchBox['value'] = $_GET['search'];
         }
+        if (isset($_GET['field'])) {
+            $searchField['selected'] = $_GET['field'];
+        }
+
+        $form->label('search_box', 'Keyword or phrase: ', 0);
+        $form->input($searchBox, 0);
+        $form->label('search_field', ' in ', 0);
+        $form->select($searchField, 0);
     }
 
     public function add()
@@ -150,11 +149,42 @@ class Catalog extends AbstractController
 
         $form = new FormHelper('catalog/create/', 'POST');
 
-        $form->input(['name' => 'title', 'type' => 'text', 'placeholder' => 'Title']);
+        $form->input([
+            'name' => 'title',
+            'type' => 'text',
+            'placeholder' => 'Title'
+        ]);
         $form->textArea('description');
-        $form->input(['name' => 'price', 'type' => 'number', 'step' => '0.01', 'placeholder' => 'Price']);
-        $form->input(['name' => 'image', 'type' => 'text', 'placeholder' => 'Image.png']);
-        $form->input(['name' => 'vin', 'type' => 'text', 'placeholder' => 'VIN']);
+
+        $manufacturers = Manufacturer::getManufacturers();
+        $options = [];
+
+        foreach ($manufacturers as $manufacturer) {
+            $options[$manufacturer->getId()] = $manufacturer->getName();
+        }
+
+        $form->select([
+            'name' => 'manufacturer_id',
+            'options' => $options
+        ]);
+
+        $models = Model::getModels();
+        $options = [];
+
+        foreach ($models as $model) {
+            $options[$model->getId()] = $model->getName();
+        }
+
+        $form->select([
+            'name' => 'model_id',
+            'options' => $options
+        ]);
+        $form->input([
+            'name' => 'price',
+            'type' => 'number',
+            'step' => '0.01',
+            'placeholder' => 'Price'
+        ]);
 
         $options = [];
 
@@ -162,8 +192,37 @@ class Catalog extends AbstractController
             $options[$i] = $i;
         }
 
-        $form->select(['name' => 'year', 'options' => $options]);
-        $form->input(['name' => 'create', 'type' => 'submit', 'value' => 'Create']);
+        $form->select([
+            'name' => 'year',
+            'options' => $options
+        ]);
+
+        $types = Type::getTypes();
+        $options = [];
+
+        foreach ($types as $type) {
+            $options[$type->getId()] = $type->getName();
+        }
+
+        $form->select([
+            'name' => 'type_id',
+            'options' => $options
+        ]);
+        $form->input([
+            'name' => 'image',
+            'type' => 'text',
+            'placeholder' => 'Image.png'
+        ]);
+        $form->input([
+            'name' => 'vin',
+            'type' => 'text',
+            'placeholder' => 'VIN'
+        ]);
+        $form->input([
+            'name' => 'create',
+            'type' => 'submit',
+            'value' => 'Create'
+        ]);
 
         $this->data['form'] = $form->getForm();
         $this->render('catalog/add');
@@ -184,15 +243,75 @@ class Catalog extends AbstractController
 
         $form = new FormHelper('catalog/update', 'POST');
 
-        $form->input(['name' => 'title', 'type' => 'text', 'placeholder' => 'Title', 'value' => $ad->getTitle()]);
-        $form->input(['name' => 'id', 'type' => 'hidden', 'value' => $id]);
+        $form->input([
+            'name' => 'title',
+            'type' => 'text',
+            'placeholder' => 'Title',
+            'value' => $ad->getTitle()
+        ]);
+        $form->input([
+            'name' => 'id',
+            'type' => 'hidden',
+            'value' => $id
+        ]);
         $form->textArea('description', $ad->getDescription());
+
+        $manufacturers = Manufacturer::getManufacturers();
+        $options = [];
+
+        foreach ($manufacturers as $manufacturer) {
+            $options[$manufacturer->getId()] = $manufacturer->getName();
+        }
+
+        $form->select([
+            'name' => 'manufacturer_id',
+            'options' => $options,
+            'selected' => $ad->getManufacturerId()
+        ]);
+
+        $models = Model::getModels();
+        $options = [];
+
+        foreach ($models as $model) {
+            $options[$model->getId()] = $model->getName();
+        }
+
+        $form->select([
+            'name' => 'model_id',
+            'options' => $options,
+            'selected' => $ad->getModelId()
+        ]);
         $form->input([
             'name' => 'price',
             'type' => 'number',
             'step' => '0.01',
             'placeholder' => 'Price',
             'value' => $ad->getPrice()
+        ]);
+
+        $options = [];
+
+        for ($i = 1990; $i <= date('Y'); $i++) {
+            $options[$i] = $i;
+        }
+
+        $form->select([
+            'name' => 'year',
+            'options' => $options,
+            'selected' => $ad->getYear()
+        ]);
+
+        $types = Type::getTypes();
+        $options = [];
+
+        foreach ($types as $type) {
+            $options[$type->getId()] = $type->getName();
+        }
+
+        $form->select([
+            'name' => 'type_id',
+            'options' => $options,
+            'selected' => $ad->getTypeId()
         ]);
         $form->input([
             'name' => 'image',
@@ -206,18 +325,45 @@ class Catalog extends AbstractController
             'placeholder' => 'VIN',
             'value' => $ad->getVin()
         ]);
-
-        $options = [];
-
-        for ($i = 1990; $i <= date('Y'); $i++) {
-            $options[$i] = $i;
-        }
-
-        $form->select(['name' => 'year', 'options' => $options, 'selected' => $ad->getYear()]);
-        $form->input(['name' => 'create', 'type' => 'submit', 'value' => 'Create']);
+        $form->input([
+            'name' => 'create',
+            'type' => 'submit',
+            'value' => 'Create'
+        ]);
 
         $this->data['form'] = $form->getForm();
         $this->render('catalog/edit');
+    }
+
+    private function setPostData($slug = null, $active = null, $userId = null, $loadId = null)
+    {
+        $ad = new Ad();
+
+        if (isset($loadId)) {
+            $ad->load($loadId, 'id');
+        }
+
+        $ad->setTitle($_POST['title']);
+        $ad->setDescription($_POST['description']);
+        $ad->setManufacturerId($_POST['manufacturer_id']);
+        $ad->setModelId($_POST['model_id']);
+        $ad->setPrice($_POST['price']);
+        $ad->setYear($_POST['year']);
+        $ad->setTypeId($_POST['type_id']);
+        $ad->setImage($_POST['image']);
+        $ad->setVin($_POST['vin']);
+
+        if (isset($userId)) {
+            $ad->setUserId($userId);
+        }
+        if (isset($slug)) {
+            $ad->setSlug($slug);
+        }
+        if ($active) {
+            $ad->setActive(1);
+        }
+
+        $ad->save();
     }
 
     public function create()
@@ -228,20 +374,7 @@ class Catalog extends AbstractController
             $slug .= '-' . rand(0, 999999);
         }
 
-        $ad = new Ad();
-        $ad->setTitle($_POST['title']);
-        $ad->setDescription($_POST['description']);
-        $ad->setManufacturerId(1);
-        $ad->setModelId(1);
-        $ad->setPrice($_POST['price']);
-        $ad->setYear($_POST['year']);
-        $ad->setTypeId(1);
-        $ad->setUserId($_SESSION['user_id']);
-        $ad->setImage($_POST['image']);
-        $ad->setActive(1);
-        $ad->setSlug($slug);
-        $ad->setVin($_POST['vin']);
-        $ad->save();
+        $this->setPostData($slug, 1, $_SESSION['user_id']);
 
         Url::redirect('');
     }
@@ -249,18 +382,8 @@ class Catalog extends AbstractController
     public function update()
     {
         $adId = $_POST['id'];
-        $ad = new Ad();
-        $ad->load($adId, 'id');
-        $ad->setTitle($_POST['title']);
-        $ad->setDescription($_POST['description']);
-        $ad->setManufacturerId(1);
-        $ad->setModelId(1);
-        $ad->setPrice($_POST['price']);
-        $ad->setYear($_POST['year']);
-        $ad->setTypeId(1);
-        $ad->setImage($_POST['image']);
-        $ad->setVin($_POST['vin']);
-        $ad->save();
+
+        $this->setPostData(null, null, null, $adId);
 
         Url::redirect('');
     }

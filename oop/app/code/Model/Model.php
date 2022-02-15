@@ -37,14 +37,29 @@ class Model
         return $this;
     }
 
-    public static function getCities()
+    public static function getModels()
     {
         $db = new DBHelper();
         $data = $db->select()->from('models')->get();
         $models = [];
 
         foreach ($data as $element) {
-            $model = new City();
+            $model = new Model();
+            $model->load($element['id']);
+            $models[] = $model;
+        }
+
+        return $models;
+    }
+
+    public static function getModelsByManufacturer($id)
+    {
+        $db = new DBHelper();
+        $data = $db->select()->from('models')->where('manufacturer_id', $id)->get();
+        $models = [];
+
+        foreach ($data as $element) {
+            $model = new Model();
             $model->load($element['id']);
             $models[] = $model;
         }
