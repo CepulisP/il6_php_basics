@@ -35,7 +35,7 @@ class DBHelper
 
     public function where($field, $value, $operator = '=')
     {
-        $this->sql .= ' WHERE ' . $field . $operator . '"' . $value . '"';
+        $this->sql .= ' WHERE ' . $field . ' ' . $operator . ' ' . '"' . $value . '"';
         return $this;
     }
 
@@ -59,18 +59,18 @@ class DBHelper
 
     public function get()
     {
-        $rez = $this->conn->query($this->sql);
+        $rez = $this->exec();
         return $rez->fetchAll();
     }
 
     public function exec()
     {
-        $this->conn->query($this->sql);
+        return $this->conn->query($this->sql);
     }
 
     public function getOne()
     {
-        $rez = $this->conn->query($this->sql);
+        $rez = $this->exec();
         $data = $rez->fetchAll();
         if (!empty($data)) {
             return $data[0];

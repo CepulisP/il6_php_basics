@@ -25,6 +25,8 @@ class User extends AbstractModel
 
     private $loginAttempts;
 
+    private $createdAt;
+
     public function __construct()
     {
         $this->table = 'users';
@@ -129,6 +131,11 @@ class User extends AbstractModel
         return $this->loginAttempts;
     }
 
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
     public function load($id)
     {
         $city = new City();
@@ -146,6 +153,7 @@ class User extends AbstractModel
         $this->active = $data['active'];
         $this->loginAttempts = $data['login_attempts'];
         $this->city = $city->load($this->cityId);
+        $this->active = $data['created_at'];
 
         return $this;
     }

@@ -27,6 +27,12 @@ class Ad extends AbstractModel
 
     private $active;
 
+    private $slug;
+
+    private $createdAt;
+
+    private $vin;
+
     public function __construct()
     {
         $this->table = 'ads';
@@ -44,7 +50,9 @@ class Ad extends AbstractModel
             'type_id' => $this->type_id,
             'user_id' => $this->user_id,
             'image' => $this->image,
-            'active' => $this->active
+            'active' => $this->active,
+            'slug' => $this->slug,
+            'vin' => $this->vin
         ];
     }
 
@@ -148,12 +156,37 @@ class Ad extends AbstractModel
         $this->active = $active;
     }
 
-    public function load($id)
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function getVin()
+    {
+        return $this->vin;
+    }
+
+    public function setVin($vin)
+    {
+        $this->vin = $vin;
+    }
+
+    public function load($value, $field)
     {
         $db = new DBHelper();
-        $ad = $db->select()->from('ads')->where('id', $id)->getOne();
+        $ad = $db->select()->from($this->table)->where($field, $value)->getOne();
 
-        if (!empty($ad)){
+        if (!empty($ad)) {
             $this->id = $ad['id'];
             $this->title = $ad['title'];
             $this->description = $ad['description'];
@@ -165,20 +198,33 @@ class Ad extends AbstractModel
             $this->user_id = $ad['user_id'];
             $this->image = $ad['image'];
             $this->active = $ad['active'];
+            $this->slug = $ad['slug'];
+            $this->createdAt = $ad['created_at'];
+            $this->vin = $ad['vin'];
         }
 
         return $this;
     }
 
-    public static function getAllAds()
+    public static function getAllAds($value = null, $field = null)
     {
         $db = new DBHelper();
-        $data = $db->select()->from('ads')->get();
+        if (isset($value) && isset($field)) {
+            $value = '%' . $value . '%';
+            $data = $db
+                ->select()
+                ->from('ads')
+                ->where($field, $value, 'LIKE')
+                ->andWhere('active', 1)
+                ->get();
+        } else {
+            $data = $db->select()->from('ads')->where('active', 1)->get();
+        }
         $ads = [];
 
         foreach ($data as $element) {
             $ad = new Ad();
-            $ad->load($element['id']);
+            $ad->load($element['id'], 'id');
             $ads[] = $ad;
         }
 

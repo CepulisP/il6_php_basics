@@ -11,13 +11,13 @@ class FormHelper
         $this->form = '<form action="' . BASE_URL . $action . '" method="' . $method . '">';
     }
 
-    public function input($data)
+    public function input($data, $br = '<br>')
     {
         $this->form .= '<input ';
         foreach ($data as $attribute => $value) {
             $this->form .= $attribute . '="' . $value . '" ';
         }
-        $this->form .= '><br>';
+        $this->form .= '>' . $br;
     }
 
     public function select($data)
@@ -26,7 +26,7 @@ class FormHelper
         foreach ($data['options'] as $key => $option) {
             $this->form .= '<option';
             if (isset($data['selected'])) {
-                if ($data['selected'] == $key){
+                if ($data['selected'] == $key) {
                     $this->form .= ' selected ';
                 }
             }
@@ -35,9 +35,18 @@ class FormHelper
         $this->form .= '</select><br>';
     }
 
-    public function textArea($name, $placeholder = '')
+    public function textArea($name, $value = null, $placeholder = null)
     {
-        $this->form .= '<textarea name ="' . $name . '">' . $placeholder . '</textarea><br>';
+        $this->form .= '<textarea name ="' . $name . '"';
+        if (isset($placeholder)) {
+            $this->form .= ' placeholder = "' . $placeholder . '"';
+        }
+        $this->form .= '>' . $value . '</textarea><br>';
+    }
+
+    public function addText($text)
+    {
+        $this->form .= $text;
     }
 
     public function getForm()

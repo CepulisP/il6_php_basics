@@ -3,6 +3,9 @@
 namespace Controller;
 
 use Helper\FormHelper;
+use Model\Manufacturer;
+use Model\Model;
+use Model\Type;
 use Model\User as UserModel;
 use Helper\Url;
 use Model\Ad;
@@ -10,59 +13,133 @@ use Core\AbstractController;
 
 class Catalog extends AbstractController
 {
-    public function show($id)
+    public function show($slug)
     {
         $ad = new Ad();
-        $ad->load($id);
+        $user = new UserModel();
+        $manufacturer = new Manufacturer();
+        $model = new Model();
+        $type = new Type();
 
-        if ($ad->isActive() == 0) {
+        $this->data['ad'] = $ad->load($slug, 'slug');
+        $this->data['user_name'] = ucfirst($user->load($ad->getUserId())->getName());
+        $this->data['user_last_name'] = ucfirst($user->load($ad->getUserId())->getLastName());
+        $this->data['manufacturer'] = ucfirst($manufacturer->load($ad->getManufacturerId())->getName());
+        $this->data['model'] = ucfirst($model->load($ad->getModelId())->getName());
+        $this->data['type'] = ucfirst($type->load($ad->getTypeId())->getName());
+
+        if (!$ad->isActive()) {
             Url::redirect('catalog/all');
         }
-
-        $user = new UserModel();
-        $user->load($ad->getUserId());
-
-        $this->data['content'] = '<h2>' . $ad->getTitle() . '</h2><br>' .
-            '<img width="100" src="' . IMAGE_PATH . $ad->getImage() . '">' .
-            '<h3>Description</h3>' . $ad->getDescription() . '<br>' .
-            '<br>Manufacturer: ' . $ad->getManufacturerId() . '<br>' .
-            'Model: ' . $ad->getModelId() . '<br>' .
-            'Price: ' . $ad->getPrice() . ' Eur<br>' .
-            'Year of manufacture: ' . $ad->getYear() . '<br>' .
-            'Type: ' . $ad->getTypeId() . '<br>' .
-            'Created by: ' . ucfirst($user->getName()) . ' ' .
-            ucfirst($user->getLastName()) . '<br>';
 
         $this->render('catalog/show');
     }
 
     public function all()
     {
+        $form = new FormHelper('catalog/all', 'GET');
+        $this->sortForm($form);
+        $form->input(['type' => 'submit', 'value' => 'Enter']);
+        $this->data['form'] = $form->getForm();
+
         $ads = Ad::getAllAds();
 
-        $count = 1;
+        if (isset($_GET['sort'])) {
+            $ads = $this->orderBy($_GET['sort'], $ads);
+        }
 
-        $this->data['content'] = '<table style="color:white;"><tr>';
+        $this->data['ads'] = $ads;
 
-        foreach ($ads as $ad) {
-            if ($ad->isActive() == 1) {
-                $this->data['content'] .= '<td style="padding:0 50px 0 50px;">';
-                $this->data['content'] .= '<b style="font-size:24px;">' . ucfirst($ad->getTitle()) . '</b><br>';
-                $this->data['content'] .= '<img width="100" src="' . IMAGE_PATH . $ad->getImage() . '"><br>';
-                $this->data['content'] .= $ad->getPrice() . ' Eur<br>';
-                $this->data['content'] .= '<a href="' . Url::link('catalog/show', $ad->getId())
-                    . '" style="color:white;">Read more</a><hr><br>';
-                $this->data['content'] .= '</td>';
-                if ($count % 5 == 0) {
-                    $this->data['content'] .= '</tr><tr>';
+        $this->render('catalog/all');
+    }
+
+    public function search()
+    {
+        $form = new FormHelper('catalog/search', 'GET');
+
+        $this->searchForm($form, '');
+
+        if (isset($_GET['search']) && isset($_GET['field'])) {
+            $ads = Ad::getAllAds($_GET['search'], $_GET['field']);
+
+            if (!empty($ads)) {
+                $form->addText('<br>Sort by:<br>');
+                $this->sortForm($form);
+
+                if (isset($_GET['sort'])) {
+                    $ads = $this->orderBy($_GET['sort'], $ads);
                 }
-                $count++;
+
+                $this->data['ads'] = $ads;
             }
         }
 
-        $this->data['content'] .= '</tr></table>';
+        $form->input(['type' => 'submit', 'value' => 'Enter']);
+        $this->data['form'] = $form->getForm();
 
-        $this->render('catalog/all');
+
+        $this->render('catalog/search');
+    }
+
+    private function sortForm($form)
+    {
+        if (isset($_GET['sort'])) {
+            $form->select([
+                'name' => 'sort',
+                'options' => [
+                    'null' => '',
+                    'ascending_date' => 'Older to newer',
+                    'descending_date' => 'Newer to older',
+                    'ascending_price' => 'Price: Low to high',
+                    'descending_price' => 'Price: High to low',
+                    'ascending_title' => 'A - Z',
+                    'descending_title' => 'Z - A'
+                ],
+                'selected' => $_GET['sort']
+            ]);
+        } else {
+            $form->select([
+                'name' => 'sort',
+                'options' => [
+                    'null' => '',
+                    'ascending_date' => 'Older to newer',
+                    'descending_date' => 'Newer to older',
+                    'ascending_price' => 'Price: Low to high',
+                    'descending_price' => 'Price: High to low',
+                    'ascending_title' => 'A - Z',
+                    'descending_title' => 'Z - A'
+                ]
+            ]);
+        }
+    }
+
+    private function searchForm($form, $br = null)
+    {
+        $form->addText('Keyword or phrase: ');
+        if (isset($_GET['search']) && isset($_GET['field'])) {
+            $form->input(['name' => 'search', 'type' => 'text', 'value' => $_GET['search']], '');
+            $form->addText(' in ');
+            $form->select([
+                'name' => 'field',
+                'options' => [
+                    'null' => '',
+                    'title' => 'Title',
+                    'description' => 'Description',
+                ],
+                'selected' => $_GET['field']
+            ], $br);
+        } else {
+            $form->input(['name' => 'search', 'type' => 'text'], '');
+            $form->addText(' in ');
+            $form->select([
+                'name' => 'field',
+                'options' => [
+                    'null' => '',
+                    'title' => 'Title',
+                    'description' => 'Description'
+                ]
+            ], $br);
+        }
     }
 
     public function add()
@@ -77,6 +154,7 @@ class Catalog extends AbstractController
         $form->textArea('description');
         $form->input(['name' => 'price', 'type' => 'number', 'step' => '0.01', 'placeholder' => 'Price']);
         $form->input(['name' => 'image', 'type' => 'text', 'placeholder' => 'Image.png']);
+        $form->input(['name' => 'vin', 'type' => 'text', 'placeholder' => 'VIN']);
 
         $options = [];
 
@@ -98,7 +176,7 @@ class Catalog extends AbstractController
         }
 
         $ad = new Ad();
-        $ad->load($id);
+        $ad->load($id, 'id');
 
         if ($_SESSION['user_id'] !== $ad->getUserId()) {
             Url::redirect('');
@@ -122,6 +200,12 @@ class Catalog extends AbstractController
             'placeholder' => 'Image name',
             'value' => $ad->getImage()
         ]);
+        $form->input([
+            'name' => 'vin',
+            'type' => 'text',
+            'placeholder' => 'VIN',
+            'value' => $ad->getVin()
+        ]);
 
         $options = [];
 
@@ -138,6 +222,12 @@ class Catalog extends AbstractController
 
     public function create()
     {
+        $slug = Url::generateSlug($_POST['title']);
+
+        while (!Ad::isValueUniq('slug', $slug, 'ads')) {
+            $slug .= '-' . rand(0, 999999);
+        }
+
         $ad = new Ad();
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);
@@ -149,6 +239,8 @@ class Catalog extends AbstractController
         $ad->setUserId($_SESSION['user_id']);
         $ad->setImage($_POST['image']);
         $ad->setActive(1);
+        $ad->setSlug($slug);
+        $ad->setVin($_POST['vin']);
         $ad->save();
 
         Url::redirect('');
@@ -158,7 +250,7 @@ class Catalog extends AbstractController
     {
         $adId = $_POST['id'];
         $ad = new Ad();
-        $ad->load($adId);
+        $ad->load($adId, 'id');
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);
         $ad->setManufacturerId(1);
@@ -167,8 +259,58 @@ class Catalog extends AbstractController
         $ad->setYear($_POST['year']);
         $ad->setTypeId(1);
         $ad->setImage($_POST['image']);
+        $ad->setVin($_POST['vin']);
         $ad->save();
 
         Url::redirect('');
+    }
+
+    private function orderBy($method, $data)
+    {
+        switch ($method) {
+            case 'ascending_date':
+                $date = [];
+                foreach ($data as $key => $row) {
+                    $date[$key] = $row->getCreatedAt();
+                }
+                array_multisort($date, SORT_ASC, $data);
+                break;
+            case 'descending_date':
+                $date = [];
+                foreach ($data as $key => $row) {
+                    $date[$key] = $row->getCreatedAt();
+                }
+                array_multisort($date, SORT_DESC, $data);
+                break;
+            case 'ascending_price':
+                $price = [];
+                foreach ($data as $key => $row) {
+                    $price[$key] = $row->getPrice();
+                }
+                array_multisort($price, SORT_ASC, $data);
+                break;
+            case 'descending_price':
+                $price = [];
+                foreach ($data as $key => $row) {
+                    $price[$key] = $row->getPrice();
+                }
+                array_multisort($price, SORT_DESC, $data);
+                break;
+            case 'ascending_title':
+                $title = [];
+                foreach ($data as $key => $row) {
+                    $title[$key] = $row->getTitle();
+                }
+                array_multisort($title, SORT_ASC, $data);
+                break;
+            case 'descending_title':
+                $title = [];
+                foreach ($data as $key => $row) {
+                    $title[$key] = $row->getTitle();
+                }
+                array_multisort($title, SORT_DESC, $data);
+                break;
+        }
+        return $data;
     }
 }

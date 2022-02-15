@@ -3,7 +3,7 @@
     <div class="form-wrapper">
         <?php
         echo $this->data['form'];
-        if (isset($_SESSION['message'])){
+        if (isset($_SESSION['message'])) {
             echo $_SESSION['message'];
         }
         ?>

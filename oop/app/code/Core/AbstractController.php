@@ -25,7 +25,7 @@ class AbstractController
         return isset($_SESSION['user_id']);
     }
 
-    public function url($path, $param = null)
+    public function link($path, $param = null)
     {
         return Url::link($path, $param);
     }
