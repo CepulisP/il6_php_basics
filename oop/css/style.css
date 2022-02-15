@@ -24,3 +24,9 @@ footer{
     border-top: 1px solid white;
     text-align: center;
 }
+
+.content-wrapper{
+    border: 1px solid white;
+    padding: 10px;
+    margin: 10px auto;
+}
