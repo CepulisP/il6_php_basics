@@ -153,7 +153,7 @@ class User extends AbstractModel
         $this->active = $data['active'];
         $this->loginAttempts = $data['login_attempts'];
         $this->city = $city->load($this->cityId);
-        $this->active = $data['created_at'];
+        $this->createdAt = $data['created_at'];
 
         return $this;
     }
