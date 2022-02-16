@@ -33,6 +33,8 @@ class Ad extends AbstractModel
 
     private $vin;
 
+    private $views;
+
     public function __construct()
     {
         $this->table = 'ads';
@@ -52,7 +54,8 @@ class Ad extends AbstractModel
             'image' => $this->image,
             'active' => $this->active,
             'slug' => $this->slug,
-            'vin' => $this->vin
+            'vin' => $this->vin,
+            'views' => $this->views
         ];
     }
 
@@ -181,6 +184,16 @@ class Ad extends AbstractModel
         $this->vin = $vin;
     }
 
+    public function getViews()
+    {
+        return $this->views;
+    }
+
+    public function setViews($views)
+    {
+        $this->views = $views;
+    }
+
     public function load($value, $field)
     {
         $db = new DBHelper();
@@ -201,25 +214,110 @@ class Ad extends AbstractModel
             $this->slug = $ad['slug'];
             $this->createdAt = $ad['created_at'];
             $this->vin = $ad['vin'];
+            $this->views = $ad['views'];
         }
 
         return $this;
     }
 
-    public static function getAllAds($value = null, $field = null)
+//    public static function getAllAds($limit = null)
+//    {
+//        $db = new DBHelper();
+//
+//        $db->select()->from('ads')->where('active', 1);
+//
+//        if (isset($limit)) {
+//            $db->limit($limit);
+//        }
+//
+//        $data = $db->get();
+//
+//        $ads = [];
+//
+//        foreach ($data as $element) {
+//            $ad = new Ad();
+//            $ad->load($element['id'], 'id');
+//            $ads[] = $ad;
+//        }
+//
+//        return $ads;
+//    }
+//
+//    public static function getAdsLike($value, $field, $limit = null)
+//    {
+//        $db = new DBHelper();
+//
+//        $value = '%' . $value . '%';
+//
+//        $db->select()->from('ads')->where($field, $value, 'LIKE')->andWhere('active', 1);
+//
+//        if (isset($limit)) {
+//            $db->limit($limit);
+//        }
+//
+//        $data = $db->get();
+//
+//        $ads = [];
+//
+//        foreach ($data as $element) {
+//            $ad = new Ad();
+//            $ad->load($element['id'], 'id');
+//            $ads[] = $ad;
+//        }
+//
+//        return $ads;
+//    }
+//
+//    public static function getOrderedAds($field, $order, $limit = null)
+//    {
+//        $db = new DBHelper();
+//
+//        $db->select()->from('ads')->where('active', 1)->orderby($field, $order);
+//
+//        if (isset($limit)) {
+//            $db->limit($limit);
+//        }
+//
+//        $data = $db->get();
+//
+//        $ads = [];
+//
+//        foreach ($data as $element) {
+//            $ad = new Ad();
+//            $ad->load($element['id'], 'id');
+//            $ads[] = $ad;
+//        }
+//
+//        return $ads;
+//    }
+
+    public static function getAds(
+        $searchValue= null,
+        $searchField = null,
+        $orderMethod = null,
+        $orderField = null,
+        $limit = null
+    )
     {
         $db = new DBHelper();
-        if (isset($value) && isset($field)) {
-            $value = '%' . $value . '%';
-            $data = $db
-                ->select()
-                ->from('ads')
-                ->where($field, $value, 'LIKE')
-                ->andWhere('active', 1)
-                ->get();
-        } else {
-            $data = $db->select()->from('ads')->where('active', 1)->get();
+
+        $db->select()->from('ads')->where('active', 1);
+
+        if (isset($searchField) && isset($searchValue)) {
+            $searchValue = '%' . $searchValue . '%';
+            $db->andWhere($searchField, $searchValue, 'LIKE');
         }
+
+        if (isset($orderMethod) && isset($orderField)) {
+            $db->orderby($orderField, $orderMethod);
+        }
+
+        if (isset($limit)) {
+            $db->limit($limit);
+        }
+
+        $data = $db->get();
+
         $ads = [];
 
         foreach ($data as $element) {

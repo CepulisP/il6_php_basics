@@ -30,7 +30,7 @@ class DBHelper
 
     public function from($table)
     {
-        $this->sql .= ' FROM ' . $table . ' ';
+        $this->sql .= ' FROM ' . $table;
         return $this;
     }
 
@@ -42,13 +42,13 @@ class DBHelper
 
     public function andWhere($field, $value, $operator = '=')
     {
-        $this->sql .= ' AND ' . $field . $operator . '"' . $value . '"';
+        $this->sql .= ' AND ' . $field . ' ' . $operator . ' "' . $value . '"';
         return $this;
     }
 
     public function orWhere($field, $value, $operator = '=')
     {
-        $this->sql .= ' OR ' . $field . $operator . '"' . $value . '"';
+        $this->sql .= ' OR ' . $field . ' ' . $operator . ' "' . $value . '"';
         return $this;
     }
 
@@ -108,5 +108,12 @@ class DBHelper
     public function limit($number)
     {
         $this->sql .= ' LIMIT ' . $number;
+        return $this;
+    }
+
+    public function orderby($field, $order)
+    {
+        $this->sql .= ' ORDER BY ' . $field . ' ' . $order;
+        return $this;
     }
 }

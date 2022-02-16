@@ -1,0 +1,41 @@
+body{
+    background-color: #202020;
+    color: #FFFFFF;
+}
+
+header{
+    background-color: #181818;
+}
+
+header .header{
+    display: flex;
+}
+
+header .title{
+    height: 100px;
+    width: 200px;
+    padding: 10px;
+}
+
+header .icon img{
+    width: 100px;
+    padding: 10px;
+}
+
+header .navigation{
+
+}
+
+footer{
+    background-color: #181818;
+    text-align: center;
+}
+
+a{
+    color: #FFFFFF;
+}
+
+.home-content img{
+    width: 200px;
+}
+

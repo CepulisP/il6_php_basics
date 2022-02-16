@@ -33,13 +33,18 @@ class Catalog extends AbstractController
             Url::redirect('catalog/all');
         }
 
+        $adViews = $ad->getViews();
+        $adViews++;
+        $ad->setViews($adViews);
+        $ad->save();
+
         $this->render('catalog/show');
     }
 
     public function all()
     {
         $form = new FormHelper('catalog/all', 'GET');
-        $form->label('sort', 'Sort by ', 0);
+        $form->label('sort', 'Sort by: ', 0);
         $this->sortForm($form);
         $form->input([
             'type' => 'submit',
@@ -47,14 +52,12 @@ class Catalog extends AbstractController
         ]);
         $this->data['form'] = $form->getForm();
 
-        $ads = Ad::getAllAds();
-
         if (isset($_GET['sort'])) {
-            $ads = $this->orderBy($_GET['sort'], $ads);
+            $sort = explode('_', $_GET['sort'], 2);
+            $this->data['ads'] = Ad::getAds(null, null, $sort[0], strtoupper($sort[1]));
+        }else{
+            $this->data['ads'] = Ad::getAds();
         }
-
-        $this->data['ads'] = $ads;
-
         $this->render('catalog/all');
     }
 
@@ -65,16 +68,22 @@ class Catalog extends AbstractController
         $this->searchForm($form);
 
         if (isset($_GET['search']) && isset($_GET['field'])) {
-            $ads = Ad::getAllAds($_GET['search'], $_GET['field']);
+            $ads = Ad::getAds($_GET['search'], $_GET['field']);
 
             if (!empty($ads)) {
                 $form->label('sort', ' Sort by: ', 0);
                 $this->sortForm($form);
 
-                if (isset($_GET['sort'])) {
-                    $ads = $this->orderBy($_GET['sort'], $ads);
-                }
+                if (!empty($_GET['sort'])) {
+                    $sort = explode('_', $_GET['sort'], 2);
 
+                    $ads = Ad::getAds(
+                        $_GET['search'],
+                        $_GET['field'],
+                        strtoupper($sort[0]),
+                        $sort[1]
+                    );
+                }
                 $this->data['ads'] = $ads;
             }
         }
@@ -95,13 +104,13 @@ class Catalog extends AbstractController
             'name' => 'sort',
             'id' => 'sort',
             'options' => [
-                'null' => '',
-                'ascending_date' => 'Older to newer',
-                'descending_date' => 'Newer to older',
-                'ascending_price' => 'Price: Low to high',
-                'descending_price' => 'Price: High to low',
-                'ascending_title' => 'A - Z',
-                'descending_title' => 'Z - A'
+                null => '',
+                'asc_created_at' => 'Older to newer',
+                'desc_created_at' => 'Newer to older',
+                'asc_price' => 'Price: Low to high',
+                'desc_price' => 'Price: High to low',
+                'asc_title' => 'A - Z',
+                'desc_title' => 'Z - A'
             ],
         ];
         if (isset($_GET['sort'])) {
@@ -122,7 +131,7 @@ class Catalog extends AbstractController
             'name' => 'field',
             'id' => 'search_field',
             'options' => [
-                'null' => '',
+                null => '',
                 'title' => 'Title',
                 'description' => 'Description',
             ]
@@ -386,54 +395,5 @@ class Catalog extends AbstractController
         $this->setPostData(null, null, null, $adId);
 
         Url::redirect('');
-    }
-
-    private function orderBy($method, $data)
-    {
-        switch ($method) {
-            case 'ascending_date':
-                $date = [];
-                foreach ($data as $key => $row) {
-                    $date[$key] = $row->getCreatedAt();
-                }
-                array_multisort($date, SORT_ASC, $data);
-                break;
-            case 'descending_date':
-                $date = [];
-                foreach ($data as $key => $row) {
-                    $date[$key] = $row->getCreatedAt();
-                }
-                array_multisort($date, SORT_DESC, $data);
-                break;
-            case 'ascending_price':
-                $price = [];
-                foreach ($data as $key => $row) {
-                    $price[$key] = $row->getPrice();
-                }
-                array_multisort($price, SORT_ASC, $data);
-                break;
-            case 'descending_price':
-                $price = [];
-                foreach ($data as $key => $row) {
-                    $price[$key] = $row->getPrice();
-                }
-                array_multisort($price, SORT_DESC, $data);
-                break;
-            case 'ascending_title':
-                $title = [];
-                foreach ($data as $key => $row) {
-                    $title[$key] = $row->getTitle();
-                }
-                array_multisort($title, SORT_ASC, $data);
-                break;
-            case 'descending_title':
-                $title = [];
-                foreach ($data as $key => $row) {
-                    $title[$key] = $row->getTitle();
-                }
-                array_multisort($title, SORT_DESC, $data);
-                break;
-        }
-        return $data;
     }
 }
