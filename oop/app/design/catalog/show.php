@@ -3,10 +3,12 @@
         <h2><?= $this->data['ad']->getTitle() ?></h2>
     </div>
     <div class="image">
-        <img width="100" src="<?= IMAGE_PATH . $this->data['ad']->getImage() ?>">
+        <img src="<?= IMAGE_PATH . $this->data['ad']->getImage() ?>">
     </div>
     <div class="description">
-        <p><?= $this->data['ad']->getDescription() ?></p>
+        <p>
+            <?= $this->data['ad']->getDescription() ?>
+        </p>
     </div>
     <div class="details">
         Manufacturer: <?= $this->data['manufacturer'] ?>

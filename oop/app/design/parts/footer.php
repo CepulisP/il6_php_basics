@@ -1,6 +1,6 @@
 </div>
-<footer style="text-align:center;color:white;">
-    Gumtree &#169; <?php echo date('Y') ?>
+<footer>
+    Gumtree &#169; <?= date('Y') ?>
 </footer>
 </body>
 </html>
