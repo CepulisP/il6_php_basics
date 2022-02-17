@@ -17,23 +17,27 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/') {
     $class = '\Controller\\' . ucfirst($path[0]);
     if (class_exists($class)) {
         $obj = new $class();
+
         if (isset($path[1])) {
             $method = $path[1];
-            if (method_exists($obj, $method)) {
-                if (isset($path[2])) {
-                    $id = $path[2];
-                    $obj->$method($id);
-                } else {
-                    $obj->$method();
-                }
+        } else {
+            $method = 'index';
+        }
+
+        if (method_exists($obj, $method)) {
+            if (isset($path[2])) {
+                $id = $path[2];
+                $obj->$method($id);
             } else {
-                echo '404 bad method';
+                $obj->$method();
             }
         } else {
-            echo '404 no method';
+            $error = new \Controller\Error();
+            $error->error404();
         }
     } else {
-        echo '404 bad class';
+        $error = new \Controller\Error();
+        $error->error404();
     }
 } else {
     $obj = new \Controller\Home();

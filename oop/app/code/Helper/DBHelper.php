@@ -111,6 +111,12 @@ class DBHelper
         return $this;
     }
 
+    public function offset($number)
+    {
+        $this->sql .= ' OFFSET ' . $number;
+        return $this;
+    }
+
     public function orderby($field, $order)
     {
         $this->sql .= ' ORDER BY ' . $field . ' ' . $order;

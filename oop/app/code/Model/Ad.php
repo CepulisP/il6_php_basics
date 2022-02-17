@@ -296,7 +296,8 @@ class Ad extends AbstractModel
         $searchField = null,
         $orderMethod = null,
         $orderField = null,
-        $limit = null
+        $limit = null,
+        $limitOffset = null
     )
     {
         $db = new DBHelper();
@@ -314,6 +315,10 @@ class Ad extends AbstractModel
 
         if (isset($limit)) {
             $db->limit($limit);
+        }
+
+        if (isset($limitOffset)) {
+            $db->offset($limitOffset);
         }
 
         $data = $db->get();

@@ -14,6 +14,63 @@ use Core\AbstractController;
 
 class Catalog extends AbstractController
 {
+    public function index()
+    {
+        $form = new FormHelper('catalog/', 'GET');
+        $form->label('sort', 'Sort by: ', 0);
+        $this->sortForm($form);
+        $ads = Ad::getAds();
+
+        $adCount = count($ads);
+        $adsPerPage = 5;
+        $pageCount = $adCount / $adsPerPage;
+        $options = [];
+
+        for ($i = 1; $i <= ($pageCount + 1); $i++){
+            $options[$i] = $i;
+        }
+
+        $pageSelect = [
+            'name' => 'p',
+            'id' => 'page',
+            'options' => $options
+        ];
+
+        if (!empty($_GET['p'])){
+            $pageSelect['selected'] = $_GET['p'];
+        }
+
+        $form->label('page', ' Page: ', 0);
+        $form->select($pageSelect, 0);
+        $form->input([
+            'type' => 'submit',
+            'value' => 'Enter'
+        ]);
+
+        switch ($ads){
+            case !empty($_GET['sort']) && !empty($_GET['p']):
+                $firstAd = ($_GET['p'] - 1) * $adsPerPage;
+                $sort = explode('_', $_GET['sort'], 2);
+                $ads = Ad::getAds(null, null, $sort[0], strtoupper($sort[1]), $adsPerPage, $firstAd);
+                break;
+            case !empty($_GET['p']):
+                $firstAd = ($_GET['p'] - 1) * $adsPerPage;
+                $ads = Ad::getAds(null, null, null, null, $adsPerPage, $firstAd);
+                break;
+            case !empty($_GET['sort']):
+                $sort = explode('_', $_GET['sort'], 2);
+                $ads = Ad::getAds(null, null, $sort[0], strtoupper($sort[1]));
+                break;
+            default:
+                $ads = Ad::getAds(null, null, null, null, $adsPerPage, 0);
+                break;
+        }
+
+        $this->data['form'] = $form->getForm();
+        $this->data['ads'] = $ads;
+        $this->render('catalog/all');
+    }
+
     public function show($slug)
     {
         $ad = new Ad();
@@ -22,12 +79,7 @@ class Catalog extends AbstractController
         $model = new Model();
         $type = new Type();
 
-        $this->data['ad'] = $ad->load($slug, 'slug');
-        $this->data['user_name'] = ucfirst($user->load($ad->getUserId())->getName());
-        $this->data['user_last_name'] = ucfirst($user->load($ad->getUserId())->getLastName());
-        $this->data['manufacturer'] = ucfirst($manufacturer->load($ad->getManufacturerId())->getName());
-        $this->data['model'] = ucfirst($model->load($ad->getModelId())->getName());
-        $this->data['type'] = ucfirst($type->load($ad->getTypeId())->getName());
+        $ad->load($slug, 'slug');
 
         if (!$ad->isActive()) {
             Url::redirect('catalog/all');
@@ -38,27 +90,15 @@ class Catalog extends AbstractController
         $ad->setViews($adViews);
         $ad->save();
 
+        $this->data['ad'] = $ad;
+        $this->data['user_name'] = ucfirst($user->load($ad->getUserId())->getName());
+        $this->data['user_last_name'] = ucfirst($user->load($ad->getUserId())->getLastName());
+        $this->data['manufacturer'] = ucfirst($manufacturer->load($ad->getManufacturerId())->getName());
+        $this->data['model'] = ucfirst($model->load($ad->getModelId())->getName());
+        $this->data['type'] = ucfirst($type->load($ad->getTypeId())->getName());
+        $this->data['meta_description'] = ucfirst($ad->getDescription());
+        $this->data['title'] = ucfirst($ad->getTitle());
         $this->render('catalog/show');
-    }
-
-    public function all()
-    {
-        $form = new FormHelper('catalog/all', 'GET');
-        $form->label('sort', 'Sort by: ', 0);
-        $this->sortForm($form);
-        $form->input([
-            'type' => 'submit',
-            'value' => 'Enter'
-        ]);
-        $this->data['form'] = $form->getForm();
-
-        if (isset($_GET['sort'])) {
-            $sort = explode('_', $_GET['sort'], 2);
-            $this->data['ads'] = Ad::getAds(null, null, $sort[0], strtoupper($sort[1]));
-        }else{
-            $this->data['ads'] = Ad::getAds();
-        }
-        $this->render('catalog/all');
     }
 
     public function search()

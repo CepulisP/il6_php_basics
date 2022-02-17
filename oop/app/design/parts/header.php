@@ -1,6 +1,7 @@
 <html>
 <head>
-    <title>Auto-Market | Auto ad portal</title>
+    <title><?= $this->data['title']; ?> | Auto-Market</title>
+    <meta name="description" content="<?= $this->data['meta_description']; ?>">
     <link rel="stylesheet" href="<?= BASE_URL_WITHOUT_INDEX_PHP . 'css/style.css'; ?>"
 </head>
 <body>
@@ -16,7 +17,7 @@
             <nav>
                 <ul>
                     <li><a href='<?= $this->link('') ?>'>Home</a></li>
-                    <li><a href='<?= $this->link('catalog/all/') ?>'>All ads</a></li>
+                    <li><a href='<?= $this->link('catalog/') ?>'>All ads</a></li>
                     <li><a href='<?= $this->link('catalog/search/') ?>'>Search</a></li>
                     <?php if ($this->isUserLoggedIn()) : ?>
                         <li><a href='<?= $this->link('catalog/add/') ?>'>New ad</a></li>

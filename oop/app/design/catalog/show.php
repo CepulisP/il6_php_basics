@@ -1,6 +1,6 @@
 <div class="content-wrapper">
     <div class="title">
-        <h2><?= $this->data['ad']->getTitle() ?></h2>
+        <h2><?= ucfirst($this->data['ad']->getTitle()); ?></h2>
     </div>
     <div class="image">
         <img src="<?= IMAGE_PATH . $this->data['ad']->getImage() ?>">
