@@ -23,10 +23,10 @@ class Catalog extends AbstractController
 
         $adCount = count($ads);
         $adsPerPage = 5;
-        $pageCount = $adCount / $adsPerPage;
+        $pageCount = ceil($adCount / $adsPerPage);
         $options = [];
 
-        for ($i = 1; $i <= ($pageCount + 1); $i++){
+        for ($i = 1; $i <= $pageCount; $i++){
             $options[$i] = $i;
         }
 
