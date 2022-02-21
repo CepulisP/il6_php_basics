@@ -26,7 +26,7 @@ class Catalog extends AbstractController
         $pageCount = ceil($adCount / $adsPerPage);
         $options = [];
 
-        for ($i = 1; $i <= $pageCount; $i++){
+        for ($i = 1; $i <= $pageCount; $i++) {
             $options[$i] = $i;
         }
 
@@ -36,7 +36,7 @@ class Catalog extends AbstractController
             'options' => $options
         ];
 
-        if (!empty($_GET['p'])){
+        if (!empty($_GET['p'])) {
             $pageSelect['selected'] = $_GET['p'];
         }
 
@@ -47,22 +47,22 @@ class Catalog extends AbstractController
             'value' => 'Enter'
         ]);
 
-        switch ($ads){
+        switch ($ads) {
             case !empty($_GET['sort']) && !empty($_GET['p']):
                 $firstAd = ($_GET['p'] - 1) * $adsPerPage;
                 $sort = explode('_', $_GET['sort'], 2);
-                $ads = Ad::getAds(null, null, $sort[0], strtoupper($sort[1]), $adsPerPage, $firstAd);
+                $ads = Ad::getAds(null, null, null, $sort[0], strtoupper($sort[1]), $adsPerPage, $firstAd);
                 break;
             case !empty($_GET['p']):
                 $firstAd = ($_GET['p'] - 1) * $adsPerPage;
-                $ads = Ad::getAds(null, null, null, null, $adsPerPage, $firstAd);
+                $ads = Ad::getAds(null, null, null, null, null, $adsPerPage, $firstAd);
                 break;
             case !empty($_GET['sort']):
                 $sort = explode('_', $_GET['sort'], 2);
-                $ads = Ad::getAds(null, null, $sort[0], strtoupper($sort[1]));
+                $ads = Ad::getAds(null, null, null, $sort[0], strtoupper($sort[1]));
                 break;
             default:
-                $ads = Ad::getAds(null, null, null, null, $adsPerPage, 0);
+                $ads = Ad::getAds(null, null, null, 'DESC', 'created_at', $adsPerPage, 0);
                 break;
         }
 
@@ -90,6 +90,30 @@ class Catalog extends AbstractController
         $ad->setViews($adViews);
         $ad->save();
 
+//        Nesekmingas bandymas gaut related pagal title
+//        $title = explode(' ', $ad->getTitle());
+//        $relatedAds = [];
+//
+//        for ($i = 0; $i < count($title); $i++){
+//            $relatedAds[] = Ad::getAds($title[$i], 'title', 'DESC', 'views', 5);
+//        }
+
+        $related = Ad::getAds($ad->getModelId(), 'model_id', '=', null, null, 5);
+
+        if (!empty($related)) {
+            foreach ($related as $element) {
+                if ($element->getSlug() !== $slug) {
+                    $relatedAds[] = $element;
+                }
+            }
+        }
+
+        if (!empty($relatedAds)){
+            $this->data['related'] = $relatedAds;
+        }else{
+            $this->data['related'] = [];
+        }
+
         $this->data['ad'] = $ad;
         $this->data['user_name'] = ucfirst($user->load($ad->getUserId())->getName());
         $this->data['user_last_name'] = ucfirst($user->load($ad->getUserId())->getLastName());
@@ -98,6 +122,7 @@ class Catalog extends AbstractController
         $this->data['type'] = ucfirst($type->load($ad->getTypeId())->getName());
         $this->data['meta_description'] = ucfirst($ad->getDescription());
         $this->data['title'] = ucfirst($ad->getTitle());
+
         $this->render('catalog/show');
     }
 
@@ -108,7 +133,7 @@ class Catalog extends AbstractController
         $this->searchForm($form);
 
         if (isset($_GET['search']) && isset($_GET['field'])) {
-            $ads = Ad::getAds($_GET['search'], $_GET['field']);
+            $ads = Ad::getAds($_GET['search'], $_GET['field'], 'LIKE');
 
             if (!empty($ads)) {
                 $form->label('sort', ' Sort by: ', 0);
@@ -120,6 +145,7 @@ class Catalog extends AbstractController
                     $ads = Ad::getAds(
                         $_GET['search'],
                         $_GET['field'],
+                        'LIKE',
                         strtoupper($sort[0]),
                         $sort[1]
                     );

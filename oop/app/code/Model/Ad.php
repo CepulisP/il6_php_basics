@@ -4,6 +4,7 @@ namespace Model;
 
 use Core\AbstractModel;
 use Helper\DBHelper;
+use Helper\Logger;
 
 class Ad extends AbstractModel
 {
@@ -11,17 +12,17 @@ class Ad extends AbstractModel
 
     private $description;
 
-    private $manufacturer_id;
+    private $manufacturerId;
 
-    private $model_id;
+    private $modelId;
 
     private $price;
 
     private $year;
 
-    private $type_id;
+    private $typeId;
 
-    private $user_id;
+    private $userId;
 
     private $image;
 
@@ -45,12 +46,12 @@ class Ad extends AbstractModel
         $this->data = [
             'title' => $this->title,
             'description' => $this->description,
-            'manufacturer_id' => $this->manufacturer_id,
-            'model_id' => $this->model_id,
+            'manufacturer_id' => $this->manufacturerId,
+            'model_id' => $this->modelId,
             'price' => $this->price,
             'year' => $this->year,
-            'type_id' => $this->type_id,
-            'user_id' => $this->user_id,
+            'type_id' => $this->typeId,
+            'user_id' => $this->userId,
             'image' => $this->image,
             'active' => $this->active,
             'slug' => $this->slug,
@@ -81,22 +82,22 @@ class Ad extends AbstractModel
 
     public function getManufacturerId()
     {
-        return $this->manufacturer_id;
+        return $this->manufacturerId;
     }
 
-    public function setManufacturerId($manufacturer_id)
+    public function setManufacturerId($manufacturerId)
     {
-        $this->manufacturer_id = $manufacturer_id;
+        $this->manufacturerId = $manufacturerId;
     }
 
     public function getModelId()
     {
-        return $this->model_id;
+        return $this->modelId;
     }
 
-    public function setModelId($model_id)
+    public function setModelId($modelId)
     {
-        $this->model_id = $model_id;
+        $this->modelId = $modelId;
     }
 
     public function getPrice()
@@ -121,22 +122,22 @@ class Ad extends AbstractModel
 
     public function getTypeId()
     {
-        return $this->type_id;
+        return $this->typeId;
     }
 
-    public function setTypeId($type_id)
+    public function setTypeId($typeId)
     {
-        $this->type_id = $type_id;
+        $this->typeId = $typeId;
     }
 
     public function getUserId()
     {
-        return $this->user_id;
+        return $this->userId;
     }
 
-    public function setUserId($user_id)
+    public function setUserId($userId)
     {
-        $this->user_id = $user_id;
+        $this->userId = $userId;
     }
 
     public function getImage()
@@ -203,12 +204,12 @@ class Ad extends AbstractModel
             $this->id = $ad['id'];
             $this->title = $ad['title'];
             $this->description = $ad['description'];
-            $this->manufacturer_id = $ad['manufacturer_id'];
-            $this->model_id = $ad['model_id'];
+            $this->manufacturerId = $ad['manufacturer_id'];
+            $this->modelId = $ad['model_id'];
             $this->price = $ad['price'];
             $this->year = $ad['year'];
-            $this->type_id = $ad['type_id'];
-            $this->user_id = $ad['user_id'];
+            $this->typeId = $ad['type_id'];
+            $this->userId = $ad['user_id'];
             $this->image = $ad['image'];
             $this->active = $ad['active'];
             $this->slug = $ad['slug'];
@@ -294,6 +295,7 @@ class Ad extends AbstractModel
     public static function getAds(
         $searchValue= null,
         $searchField = null,
+        $searchOperator = null,
         $orderMethod = null,
         $orderField = null,
         $limit = null,
@@ -305,8 +307,12 @@ class Ad extends AbstractModel
         $db->select()->from('ads')->where('active', 1);
 
         if (isset($searchField) && isset($searchValue)) {
-            $searchValue = '%' . $searchValue . '%';
-            $db->andWhere($searchField, $searchValue, 'LIKE');
+
+            if ($searchOperator == 'LIKE') {
+                $searchValue = '%' . $searchValue . '%';
+            }
+            $db->andWhere($searchField, $searchValue, $searchOperator);
+            Logger::log($searchOperator.'<-that');
         }
 
         if (isset($orderMethod) && isset($orderField)) {

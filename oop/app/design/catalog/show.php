@@ -25,3 +25,25 @@
         <br>
     </div>
 </div>
+<?php if (!empty($this->data['related'])) : ?>
+    <div class="related">
+        <div class="title">
+            <h3>Related ads</h3>
+        </div>
+        <div class="related-list">
+            <?php foreach ($this->data['related'] as $ad) : ?>
+                <div class="element">
+                    <a href="<?= $this->link('catalog/show', $ad->getSlug()) ?>">
+                        <b>
+                            <?= ucfirst($ad->getTitle()) ?>
+                        </b>
+                        <br>
+                        <img src="<?= IMAGE_PATH . $ad->getImage() ?>">
+                        <br>
+                        <?= $ad->getPrice() ?> Eur
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endif; ?>

@@ -43,6 +43,7 @@ class DBHelper
     public function andWhere($field, $value, $operator = '=')
     {
         $this->sql .= ' AND ' . $field . ' ' . $operator . ' "' . $value . '"';
+        Logger::log($operator.'<-this');
         return $this;
     }
 
