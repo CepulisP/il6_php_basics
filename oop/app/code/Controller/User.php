@@ -199,6 +199,7 @@ class User extends AbstractController
             $user->setPhone($_POST['phone']);
             $user->setCityId($_POST['city_id']);
             $user->setActive(1);
+            $user->setRoleId(0);
             $user->save();
 
             Url::redirect('user/login');

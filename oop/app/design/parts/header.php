@@ -22,6 +22,9 @@
                     <?php if ($this->isUserLoggedIn()) : ?>
                         <li><a href='<?= $this->link('catalog/add/') ?>'>New ad</a></li>
                         <li><a href='<?= $this->link('user/edit/') ?>'>Edit user</a></li>
+                        <?php if ($this->isUserAdmin()) : ?>
+                            <li><a href='<?= $this->link('admin/') ?>'>Admin</a></li>
+                        <?php endif; ?>
                         <li><a href='<?= $this->link('user/logout/') ?>'>Logout</a></li>
                     <?php else : ?>
                         <li><a href='<?= $this->link('user/register/') ?>'>Sign up</a></li>

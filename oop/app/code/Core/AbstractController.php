@@ -3,6 +3,8 @@
 namespace Core;
 
 use Helper\Url;
+use Model\User as UserModel;
+use Helper\Logger;
 
 class AbstractController
 {
@@ -22,6 +24,13 @@ class AbstractController
         include_once PROJECT_ROOT_DIR . '\app\design\parts\footer.php';
     }
 
+    protected function renderAdmin($template)
+    {
+        include_once PROJECT_ROOT_DIR . '\app\design\admin\parts\header.php';
+        include_once PROJECT_ROOT_DIR . '\app\design\admin\\' . $template . '.php';
+        include_once PROJECT_ROOT_DIR . '\app\design\admin\parts\footer.php';
+    }
+
     protected function isUserLoggedIn()
     {
         return isset($_SESSION['user_id']);
@@ -30,5 +39,19 @@ class AbstractController
     public function link($path, $param = null)
     {
         return Url::link($path, $param);
+    }
+
+    protected function isUserAdmin()
+    {
+        if ($this->isUserLoggedIn()){
+            $user = new UserModel();
+            $user->load($_SESSION['user_id']);
+
+            if ($user->getRoleId() == 1){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

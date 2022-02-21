@@ -299,7 +299,7 @@ class Ad extends AbstractModel
         $orderMethod = null,
         $orderField = null,
         $limit = null,
-        $limitOffset = null
+        $offset = null
     )
     {
         $db = new DBHelper();
@@ -323,8 +323,57 @@ class Ad extends AbstractModel
             $db->limit($limit);
         }
 
-        if (isset($limitOffset)) {
-            $db->offset($limitOffset);
+        if (isset($offset)) {
+            $db->offset($offset);
+        }
+
+        $data = $db->get();
+
+        $ads = [];
+
+        foreach ($data as $element) {
+            $ad = new Ad();
+            $ad->load($element['id'], 'id');
+            $ads[] = $ad;
+        }
+
+        return $ads;
+    }
+
+//    This will be redone soon(tm)
+    public static function getAllAds(
+        $searchValue= null,
+        $searchField = null,
+        $searchOperator = null,
+        $orderMethod = null,
+        $orderField = null,
+        $limit = null,
+        $offset = null
+    )
+    {
+        $db = new DBHelper();
+
+        $db->select()->from('ads');
+
+        if (isset($searchField) && isset($searchValue)) {
+
+            if ($searchOperator == 'LIKE') {
+                $searchValue = '%' . $searchValue . '%';
+            }
+            $db->andWhere($searchField, $searchValue, $searchOperator);
+            Logger::log($searchOperator.'<-that');
+        }
+
+        if (isset($orderMethod) && isset($orderField)) {
+            $db->orderby($orderField, $orderMethod);
+        }
+
+        if (isset($limit)) {
+            $db->limit($limit);
+        }
+
+        if (isset($offset)) {
+            $db->offset($offset);
         }
 
         $data = $db->get();

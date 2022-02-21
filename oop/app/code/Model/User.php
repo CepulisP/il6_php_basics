@@ -4,6 +4,7 @@ namespace Model;
 
 use Core\AbstractModel;
 use Helper\DBHelper;
+use Helper\Logger;
 
 class User extends AbstractModel
 {
@@ -27,6 +28,8 @@ class User extends AbstractModel
 
     private $createdAt;
 
+    private $roleId;
+
     public function __construct()
     {
         $this->table = 'users';
@@ -42,7 +45,8 @@ class User extends AbstractModel
             'phone' => $this->phone,
             'city_id' => $this->cityId,
             'active' => $this->active,
-            'login_attempts' => $this->loginAttempts
+            'login_attempts' => $this->loginAttempts,
+            'role_id' => $this->roleId
         ];
     }
 
@@ -136,12 +140,22 @@ class User extends AbstractModel
         return $this->createdAt;
     }
 
+    public function getRoleId()
+    {
+        return $this->roleId;
+    }
+
+    public function setRoleId($roleId)
+    {
+        $this->roleId = $roleId;
+    }
+
     public function load($id)
     {
         $city = new City();
         $db = new DBHelper();
 
-        $data = $db->select()->from('users')->where('id', $id)->getOne();
+        $data = $db->select()->from($this->table)->where('id', $id)->getOne();
 
         $this->id = $data['id'];
         $this->name = $data['name'];
@@ -152,8 +166,9 @@ class User extends AbstractModel
         $this->cityId = $data['city_id'];
         $this->active = $data['active'];
         $this->loginAttempts = $data['login_attempts'];
-        $this->city = $city->load($this->cityId);
+        $this->city = $city->load($this->cityId)->getName();
         $this->createdAt = $data['created_at'];
+        $this->roleId = $data['role_id'];
 
         return $this;
     }

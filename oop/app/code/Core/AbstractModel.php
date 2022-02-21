@@ -57,4 +57,11 @@ class AbstractModel
         $rez = $db->select()->from($table)->where($field, $value)->get();
         return empty($rez);
     }
+
+    public static function count($table)
+    {
+        $db = new DBHelper();
+        $rez = $db->select('count(*)')->from($table)->where('active', 1)->get();
+        return $rez[0][0];
+    }
 }
