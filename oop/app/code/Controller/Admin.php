@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Core\AbstractController;
+use Couchbase\IndexFailureException;
 use Helper\FormHelper;
 use Helper\Logger;
 use Helper\Url;
@@ -45,8 +46,7 @@ class Admin extends AbstractController
 
     public function adEdit($id)
     {
-        $ad = new Ad();
-        $ad->load($id, 'id');
+        $ad = new Ad($id);
 
         $form = new FormHelper('admin/adupdate', 'POST');
 
@@ -139,12 +139,15 @@ class Admin extends AbstractController
             'id' => 'image',
             'value' => $ad->getImage()
         ]);
-        $form->label('active', 'Active (0, 1): ', 0);
-        $form->input([
+        $form->label('active', 'Active: ', 0);
+        $form->select([
             'name' => 'active',
-            'type' => 'text',
             'id' => 'active',
-            'value' => $ad->isActive()
+            'selected' => $ad->isActive(),
+            'options' => [
+                '0' => 'Inactive',
+                '1' => 'Active'
+            ]
         ]);
         $form->label('vin', 'VIN: ', 0);
         $form->input([
@@ -233,12 +236,15 @@ class Admin extends AbstractController
             'options' => $options,
             'selected' => $user->getCityId()
         ]);
-        $form->label('active', 'Active (0, 1): ', 0);
-        $form->input([
+        $form->label('active', 'Active: ', 0);
+        $form->select([
             'name' => 'active',
-            'type' => 'text',
             'id' => 'active',
-            'value' => $user->isActive()
+            'selected' => $user->isActive(),
+            'options' => [
+                '0' => 'Inactive',
+                '1' => 'Active'
+            ]
         ]);
         $form->label('login_attempts', 'Login attempts: ', 0);
         $form->input([
@@ -247,12 +253,15 @@ class Admin extends AbstractController
             'id' => 'login_attempts',
             'value' => $user->getLoginAttempts()
         ]);
-        $form->label('role_id', 'Role (0, 1): ', 0);
-        $form->input([
+        $form->label('role_id', 'Role: ', 0);
+        $form->select([
             'name' => 'role_id',
-            'type' => 'text',
             'id' => 'role_id',
-            'value' => $user->getRoleId()
+            'selected' => $user->getRoleId(),
+            'options' => [
+                '0' => 'Basic',
+                '1' => 'Admin'
+            ]
         ]);
         $form->input([
             'name' => 'edit',
@@ -335,6 +344,27 @@ class Admin extends AbstractController
         $ad->setVin($_POST['vin']);
         $ad->save();
 
+        Url::redirect('admin/ads');
+    }
+
+    public function changeAdStatus()
+    {
+        $action = $_POST['action'];
+        unset($_POST['action']);
+
+        if ($action == 'Deactivate'){
+            foreach ($_POST as $key => $value) {
+                $ad = new Ad($key);
+                $ad->setActive(0);
+                $ad->save();
+            }
+        }elseif($action == 'Activate'){
+            foreach ($_POST as $key => $value) {
+                $ad = new Ad($key);
+                $ad->setActive(1);
+                $ad->save();
+            }
+        }
         Url::redirect('admin/ads');
     }
 }
