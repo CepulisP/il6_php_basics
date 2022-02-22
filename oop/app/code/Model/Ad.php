@@ -30,8 +30,6 @@ class Ad extends AbstractModel
 
     private $userId;
 
-    private $user;
-
     private $image;
 
     private $active;
@@ -50,25 +48,6 @@ class Ad extends AbstractModel
         if ($id !== null){
             $this->load($id, 'id');
         }
-    }
-
-    protected function assignData()
-    {
-        $this->data = [
-            'title' => $this->title,
-            'description' => $this->description,
-            'manufacturer_id' => $this->manufacturerId,
-            'model_id' => $this->modelId,
-            'price' => $this->price,
-            'year' => $this->year,
-            'type_id' => $this->typeId,
-            'user_id' => $this->userId,
-            'image' => $this->image,
-            'active' => $this->active,
-            'slug' => $this->slug,
-            'vin' => $this->vin,
-            'views' => $this->views
-        ];
     }
 
     public function getTitle()
@@ -168,7 +147,8 @@ class Ad extends AbstractModel
 
     public function getUser()
     {
-        return $this->user;
+        $array = User::getUser($this->userId);
+        return $array[0];
     }
 
     public function getImage()
@@ -226,6 +206,25 @@ class Ad extends AbstractModel
         $this->views = $views;
     }
 
+    protected function assignData()
+    {
+        $this->data = [
+            'title' => $this->title,
+            'description' => $this->description,
+            'manufacturer_id' => $this->manufacturerId,
+            'model_id' => $this->modelId,
+            'price' => $this->price,
+            'year' => $this->year,
+            'type_id' => $this->typeId,
+            'user_id' => $this->userId,
+            'image' => $this->image,
+            'active' => $this->active,
+            'slug' => $this->slug,
+            'vin' => $this->vin,
+            'views' => $this->views
+        ];
+    }
+
     public function load($value, $field)
     {
         $man = new Manufacturer();
@@ -249,7 +248,6 @@ class Ad extends AbstractModel
             $this->typeId = $ad['type_id'];
             $this->type = $type->load($this->typeId)->getName();
             $this->userId = $ad['user_id'];
-            $this->user = $user->load($this->userId);
             $this->image = $ad['image'];
             $this->active = $ad['active'];
             $this->slug = $ad['slug'];
@@ -352,7 +350,6 @@ class Ad extends AbstractModel
                 $searchValue = '%' . $searchValue . '%';
             }
             $db->andWhere($searchField, $searchValue, $searchOperator);
-            Logger::log($searchOperator.'<-that');
         }
 
         if (isset($orderMethod) && isset($orderField)) {
@@ -400,8 +397,7 @@ class Ad extends AbstractModel
             if ($searchOperator == 'LIKE') {
                 $searchValue = '%' . $searchValue . '%';
             }
-            $db->andWhere($searchField, $searchValue, $searchOperator);
-            Logger::log($searchOperator.'<-that');
+            $db->where($searchField, $searchValue, $searchOperator);
         }
 
         if (isset($orderMethod) && isset($orderField)) {

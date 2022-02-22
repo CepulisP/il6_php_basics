@@ -138,6 +138,11 @@ class User extends AbstractModel
         $this->roleId = $roleId;
     }
 
+    public function getAds()
+    {
+        return Ad::getAllAds($this->id, 'user_id', '=');
+    }
+
     protected function assignData()
     {
         $this->data = [
@@ -155,6 +160,7 @@ class User extends AbstractModel
 
     public function load($id)
     {
+        $ads = new Ad();
         $city = new City();
         $db = new DBHelper();
 
@@ -202,6 +208,21 @@ class User extends AbstractModel
     {
         $db = new DBHelper();
         $data = $db->select()->from('users')->get();
+        $users = [];
+
+        foreach ($data as $element) {
+            $user = new User();
+            $user->load($element['id']);
+            $users[] = $user;
+        }
+
+        return $users;
+    }
+
+    public static function getUser($id)
+    {
+        $db = new DBHelper();
+        $data = $db->select()->from('users')->where('id', $id)->get();
         $users = [];
 
         foreach ($data as $element) {
