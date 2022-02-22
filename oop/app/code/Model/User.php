@@ -30,9 +30,12 @@ class User extends AbstractModel
 
     private $roleId;
 
-    public function __construct()
+    public function __construct($id = null)
     {
         $this->table = 'users';
+        if ($id !== null){
+            $this->load($id);
+        }
     }
 
     public function getName()

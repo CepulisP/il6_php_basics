@@ -347,6 +347,27 @@ class Admin extends AbstractController
         Url::redirect('admin/ads');
     }
 
+    public function changeUserStatus()
+    {
+        $action = $_POST['action'];
+        unset($_POST['action']);
+
+        if ($action == 'Deactivate'){
+            foreach ($_POST as $key => $value) {
+                $ad = new UserModel($key);
+                $ad->setActive(0);
+                $ad->save();
+            }
+        }elseif($action == 'Activate'){
+            foreach ($_POST as $key => $value) {
+                $ad = new UserModel($key);
+                $ad->setActive(1);
+                $ad->save();
+            }
+        }
+        Url::redirect('admin/users');
+    }
+
     public function changeAdStatus()
     {
         $action = $_POST['action'];
