@@ -19,10 +19,34 @@ class Catalog extends AbstractController
         $form = new FormHelper('catalog/', 'GET');
         $form->label('sort', 'Sort by: ', 0);
         $this->sortForm($form);
-        $ads = Ad::getAds();
 
-        $adCount = count($ads);
+        $showSelect = [
+            'name' => 'show',
+            'id' => 'show',
+            'options' => [
+                '5' => '5',
+                '10' => '10',
+                '20' => '20',
+                '50' => '50',
+                '100' => '100'
+            ]
+        ];
+
+
+        if (isset($_GET['show'])) {
+            $showSelect['selected'] = $_GET['show'];
+        }
+
+        $form->label('show', ' Ads per page: ', 0);
+        $form->select($showSelect, 0);
+
+        $adCount = Ad::count('ads');
         $adsPerPage = 5;
+
+        if (!empty($_GET['show'])){
+            $adsPerPage = $_GET['show'];
+        }
+
         $pageCount = ceil($adCount / $adsPerPage);
         $options = [];
 
@@ -47,8 +71,11 @@ class Catalog extends AbstractController
             'value' => 'Enter'
         ]);
 
+        $ads = Ad::getAds(null, null, null, 'DESC', 'created_at', $adsPerPage, 0);
+
         switch ($ads) {
             case !empty($_GET['sort']) && !empty($_GET['p']):
+                Logger::log(print_r($_GET, true));
                 $firstAd = ($_GET['p'] - 1) * $adsPerPage;
                 $sort = explode('_', $_GET['sort'], 2);
                 $ads = Ad::getAds(null, null, null, $sort[0], strtoupper($sort[1]), $adsPerPage, $firstAd);
@@ -62,7 +89,6 @@ class Catalog extends AbstractController
                 $ads = Ad::getAds(null, null, null, $sort[0], strtoupper($sort[1]));
                 break;
             default:
-                $ads = Ad::getAds(null, null, null, 'DESC', 'created_at', $adsPerPage, 0);
                 break;
         }
 
@@ -74,10 +100,6 @@ class Catalog extends AbstractController
     public function show($slug)
     {
         $ad = new Ad();
-        $user = new UserModel();
-        $manufacturer = new Manufacturer();
-        $model = new Model();
-        $type = new Type();
 
         $ad->load($slug, 'slug');
 
@@ -115,13 +137,6 @@ class Catalog extends AbstractController
         }
 
         $this->data['ad'] = $ad;
-        $this->data['user_name'] = ucfirst($user->load($ad->getUserId())->getName());
-        $this->data['user_last_name'] = ucfirst($user->load($ad->getUserId())->getLastName());
-        $this->data['manufacturer'] = ucfirst($manufacturer->load($ad->getManufacturerId())->getName());
-        $this->data['model'] = ucfirst($model->load($ad->getModelId())->getName());
-        $this->data['type'] = ucfirst($type->load($ad->getTypeId())->getName());
-        $this->data['meta_description'] = ucfirst($ad->getDescription());
-        $this->data['title'] = ucfirst($ad->getTitle());
 
         $this->render('catalog/show');
     }
@@ -170,11 +185,10 @@ class Catalog extends AbstractController
             'name' => 'sort',
             'id' => 'sort',
             'options' => [
-                null => '',
-                'asc_created_at' => 'Older to newer',
                 'desc_created_at' => 'Newer to older',
-                'asc_price' => 'Price: Low to high',
+                'asc_created_at' => 'Older to newer',
                 'desc_price' => 'Price: High to low',
+                'asc_price' => 'Price: Low to high',
                 'asc_title' => 'A - Z',
                 'desc_title' => 'Z - A'
             ],
@@ -197,7 +211,6 @@ class Catalog extends AbstractController
             'name' => 'field',
             'id' => 'search_field',
             'options' => [
-                null => '',
                 'title' => 'Title',
                 'description' => 'Description',
             ]
@@ -410,13 +423,41 @@ class Catalog extends AbstractController
         $this->render('catalog/edit');
     }
 
-    private function setPostData($slug = null, $active = null, $userId = null, $loadId = null)
+    public function create()
     {
+        $slug = Url::generateSlug($_POST['title']);
+
+        while (!Ad::isValueUniq('slug', $slug, 'ads')) {
+            $slug .= '-' . rand(0, 999999);
+        }
+
         $ad = new Ad();
 
-        if (isset($loadId)) {
-            $ad->load($loadId, 'id');
-        }
+        $ad->setTitle($_POST['title']);
+        $ad->setDescription($_POST['description']);
+        $ad->setManufacturerId($_POST['manufacturer_id']);
+        $ad->setModelId($_POST['model_id']);
+        $ad->setPrice($_POST['price']);
+        $ad->setYear($_POST['year']);
+        $ad->setTypeId($_POST['type_id']);
+        $ad->setImage($_POST['image']);
+        $ad->setVin($_POST['vin']);
+        $ad->setUserId($_SESSION['user_id']);
+        $ad->setSlug($slug);
+        $ad->setActive(1);
+
+        $ad->save();
+
+        Url::redirect('');
+    }
+
+    public function update()
+    {
+        $adId = $_POST['id'];
+
+        $ad = new Ad();
+
+        $ad->load($adId, 'id');
 
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);
@@ -428,37 +469,7 @@ class Catalog extends AbstractController
         $ad->setImage($_POST['image']);
         $ad->setVin($_POST['vin']);
 
-        if (isset($userId)) {
-            $ad->setUserId($userId);
-        }
-        if (isset($slug)) {
-            $ad->setSlug($slug);
-        }
-        if ($active) {
-            $ad->setActive(1);
-        }
-
         $ad->save();
-    }
-
-    public function create()
-    {
-        $slug = Url::generateSlug($_POST['title']);
-
-        while (!Ad::isValueUniq('slug', $slug, 'ads')) {
-            $slug .= '-' . rand(0, 999999);
-        }
-
-        $this->setPostData($slug, 1, $_SESSION['user_id']);
-
-        Url::redirect('');
-    }
-
-    public function update()
-    {
-        $adId = $_POST['id'];
-
-        $this->setPostData(null, null, null, $adId);
 
         Url::redirect('');
     }

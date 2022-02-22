@@ -14,7 +14,11 @@ class Ad extends AbstractModel
 
     private $manufacturerId;
 
+    private $manufacturer;
+
     private $modelId;
+
+    private $model;
 
     private $price;
 
@@ -22,7 +26,11 @@ class Ad extends AbstractModel
 
     private $typeId;
 
+    private $type;
+
     private $userId;
+
+    private $user;
 
     private $image;
 
@@ -90,6 +98,11 @@ class Ad extends AbstractModel
         $this->manufacturerId = $manufacturerId;
     }
 
+    public function getManufacturer()
+    {
+        return $this->manufacturer;
+    }
+
     public function getModelId()
     {
         return $this->modelId;
@@ -98,6 +111,11 @@ class Ad extends AbstractModel
     public function setModelId($modelId)
     {
         $this->modelId = $modelId;
+    }
+
+    public function getModel()
+    {
+        return $this->model;
     }
 
     public function getPrice()
@@ -130,6 +148,11 @@ class Ad extends AbstractModel
         $this->typeId = $typeId;
     }
 
+    public function getType()
+    {
+        return $this->type;
+    }
+
     public function getUserId()
     {
         return $this->userId;
@@ -138,6 +161,11 @@ class Ad extends AbstractModel
     public function setUserId($userId)
     {
         $this->userId = $userId;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
     }
 
     public function getImage()
@@ -197,7 +225,12 @@ class Ad extends AbstractModel
 
     public function load($value, $field)
     {
+        $man = new Manufacturer();
+        $model = new Model();
+        $type = new Type();
+        $user = new User();
         $db = new DBHelper();
+
         $ad = $db->select()->from($this->table)->where($field, $value)->getOne();
 
         if (!empty($ad)) {
@@ -205,11 +238,15 @@ class Ad extends AbstractModel
             $this->title = $ad['title'];
             $this->description = $ad['description'];
             $this->manufacturerId = $ad['manufacturer_id'];
+            $this->manufacturer = $man->load($this->manufacturerId)->getName();
             $this->modelId = $ad['model_id'];
+            $this->model = $model->load($this->modelId)->getName();
             $this->price = $ad['price'];
             $this->year = $ad['year'];
             $this->typeId = $ad['type_id'];
+            $this->type = $type->load($this->typeId)->getName();
             $this->userId = $ad['user_id'];
+            $this->user = $user->load($this->userId);
             $this->image = $ad['image'];
             $this->active = $ad['active'];
             $this->slug = $ad['slug'];

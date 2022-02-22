@@ -35,21 +35,6 @@ class User extends AbstractModel
         $this->table = 'users';
     }
 
-    protected function assignData()
-    {
-        $this->data = [
-            'name' => $this->name,
-            'last_name' => $this->lastName,
-            'email' => $this->email,
-            'password' => $this->password,
-            'phone' => $this->phone,
-            'city_id' => $this->cityId,
-            'active' => $this->active,
-            'login_attempts' => $this->loginAttempts,
-            'role_id' => $this->roleId
-        ];
-    }
-
     public function getName()
     {
         return $this->name;
@@ -148,6 +133,21 @@ class User extends AbstractModel
     public function setRoleId($roleId)
     {
         $this->roleId = $roleId;
+    }
+
+    protected function assignData()
+    {
+        $this->data = [
+            'name' => $this->name,
+            'last_name' => $this->lastName,
+            'email' => $this->email,
+            'password' => $this->password,
+            'phone' => $this->phone,
+            'city_id' => $this->cityId,
+            'active' => $this->active,
+            'login_attempts' => $this->loginAttempts,
+            'role_id' => $this->roleId
+        ];
     }
 
     public function load($id)

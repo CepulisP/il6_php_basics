@@ -292,8 +292,8 @@ class Admin extends AbstractController
                     if ($emailUniq) {
                         $user->setEmail(strtolower(trim($_POST['email'])));
                     } else {
-                        echo 'Email is not unique';
-                        die();
+                        $_SESSION['admin_edit_error'] = 'Email is not unique';
+                        Url::redirect('admin/useredit/'.$userId);
                     }
                 }
 
@@ -305,10 +305,12 @@ class Admin extends AbstractController
 
                 Url::redirect('admin/users');
             } else {
-                echo 'Passwords did not match';
+                $_SESSION['admin_edit_error'] = 'Passwords did not match';
+                Url::redirect('admin/useredit/'.$userId);
             }
         } else {
-            echo 'Email is not valid (must contain "@")';
+            $_SESSION['admin_edit_error'] = 'Email is not valid (must contain "@")';
+            Url::redirect('admin/useredit/'.$userId);
         }
     }
 

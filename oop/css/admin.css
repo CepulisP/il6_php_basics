@@ -56,3 +56,7 @@ table, th, td{
 tr:hover{
     background-color: #181818;
 }
+
+td:first-letter{
+    text-transform:capitalize;
+}

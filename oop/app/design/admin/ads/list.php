@@ -26,12 +26,16 @@
             <td><?= $ad->getId() ?></td>
             <td><?= $ad->getTitle() ?></td>
             <td><?= $ad->getDescription() ?></td>
-            <td><?= $ad->getManufacturerId() ?></td>
-            <td><?= $ad->getModelId() ?></td>
+            <td><?= $ad->getManufacturer() ?></td>
+            <td><?= $ad->getModel() ?></td>
             <td><?= $ad->getPrice() ?></td>
             <td><?= $ad->getYear() ?></td>
-            <td><?= $ad->getTypeId() ?></td>
-            <td><?= $ad->getUserId() ?></td>
+            <td><?= $ad->getType() ?></td>
+            <td>
+                <a href="<?= $this->link('admin/useredit', $ad->getUserId()) ?>">
+                    <?= $ad->getUser()->getName().' '.$ad->getUser()->getLastName() ?>
+                </a>
+            </td>
             <td><img src="<?= IMAGE_PATH . $ad->getImage() ?>"></td>
             <td><?= $ad->getCreatedAt() ?></td>
             <td><?= $ad->getVin() ?></td>

@@ -7,21 +7,23 @@
     </div>
     <div class="description">
         <p>
-            <?= $this->data['ad']->getDescription() ?>
+            <?= ucfirst($this->data['ad']->getDescription()) ?>
         </p>
     </div>
     <div class="details">
-        Manufacturer: <?= $this->data['manufacturer'] ?>
+        Manufacturer: <?= ucfirst($this->data['ad']->getManufacturer()) ?>
         <br>
-        Model: <?= $this->data['model'] ?>
+        Model: <?= ucfirst($this->data['ad']->getModel()) ?>
         <br>
-        Year of manufacture: <?= $this->data['ad']->getYear() ?>
+        Year of manufacture: <?= ucfirst($this->data['ad']->getYear()) ?>
         <br>
-        Type: <?= $this->data['type'] ?>
+        Type: <?= ucfirst($this->data['ad']->getType()) ?>
         <br>
-        VIN: <?= $this->data['ad']->getVin() ?>
+        VIN: <?= ucfirst($this->data['ad']->getVin()) ?>
         <br>
-        Created by: <?= $this->data['user_name'] ?> <?= $this->data['user_last_name'] ?>
+        Created by:
+        <?= ucfirst($this->data['ad']->getUser()->getName()) ?>
+        <?= ucfirst($this->data['ad']->getUser()->getLastName()) ?>
         <br>
     </div>
 </div>

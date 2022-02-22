@@ -204,7 +204,8 @@ class User extends AbstractController
 
             Url::redirect('user/login');
         } else {
-            echo 'Check email and password';
+            $_SESSION['register_error'] = 'Check email and password';
+            Url::redirect('user/register');
         }
     }
 
@@ -234,8 +235,8 @@ class User extends AbstractController
                     if ($emailUniq) {
                         $user->setEmail(strtolower(trim($_POST['email'])));
                     } else {
-                        echo 'Email is not unique';
-                        die();
+                        $_SESSION['edit_error'] = 'Email is not unique';
+                        Url::redirect('user/edit');
                     }
                 }
 
@@ -249,10 +250,12 @@ class User extends AbstractController
 
                 Url::redirect('');
             } else {
-                echo 'Passwords did not match';
+                $_SESSION['edit_error'] = 'Passwords did not match';
+                Url::redirect('user/edit');
             }
         } else {
-            echo 'Email is not valid (must contain "@")';
+            $_SESSION['edit_error'] = 'Email is not valid (must contain "@")';
+            Url::redirect('user/edit');
         }
     }
 
@@ -271,36 +274,36 @@ class User extends AbstractController
                 $loginCount = $user->getLoginAttempts();
                 $loginCount++;
                 $user->setLoginAttempts($loginCount);
-                if ($loginCount > 5) {
-                    $_SESSION['message'] = 'User locked';
+
+                if ($user->isActive()) {
+                    if ($loginCount > 5) {
+                        $user->setActive(0);
+                        $user->save();
+                        $_SESSION['login_error'] = 'Too many attempts, user is now locked';
+
+                    }
+                }else{
+                    $_SESSION['login_error'] = 'User is locked';
+                    Url::redirect('user/login');
                 }
+
                 $user->save();
             }
         }
 
-        if (!empty($user) && $user->getLoginAttempts() <= 5) {
-            if ($userId) {
-                $user = new UserModel();
-                $user->load($userId);
-                $user->setLoginAttempts(0);
-                $user->save();
+        if ($userId) {
+            $user = new UserModel();
+            $user->load($userId);
+            $user->setLoginAttempts(0);
+            $user->save();
 
-                $_SESSION['logged'] = true;
-                $_SESSION['user_id'] = $userId;
-                $_SESSION['user'] = $user;
+            $_SESSION['logged'] = true;
+            $_SESSION['user_id'] = $userId;
+            $_SESSION['user'] = $user;
 
-                Url::redirect('');
-            } else {
-                Url::redirect('user/login');
-            }
+            Url::redirect('');
         } else {
-            if (isset($id)) {
-                $user = new UserModel();
-                $user->load($id);
-                $user->setActive(0);
-                $user->save();
-                Url::redirect('user/login');
-            }
+            Url::redirect('user/login');
         }
     }
 
