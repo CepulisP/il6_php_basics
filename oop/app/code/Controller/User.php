@@ -202,6 +202,7 @@ class User extends AbstractController
             $user->setRoleId(0);
             $user->save();
 
+            unset($_SESSION['register_error']);
             Url::redirect('user/login');
         } else {
             $_SESSION['register_error'] = 'Check email and password';
@@ -248,6 +249,7 @@ class User extends AbstractController
                 $user->load($_SESSION['user_id']);
                 $_SESSION['user'] = $user;
 
+                unset($_SESSION['edit_error']);
                 Url::redirect('');
             } else {
                 $_SESSION['edit_error'] = 'Passwords did not match';
@@ -301,6 +303,7 @@ class User extends AbstractController
             $_SESSION['user_id'] = $userId;
             $_SESSION['user'] = $user;
 
+            unset($_SESSION['login_error']);
             Url::redirect('');
         } else {
             Url::redirect('user/login');

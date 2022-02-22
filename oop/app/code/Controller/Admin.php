@@ -303,6 +303,7 @@ class Admin extends AbstractController
 
                 $user->save();
 
+                unset($_SESSION['admin_edit_error']);
                 Url::redirect('admin/users');
             } else {
                 $_SESSION['admin_edit_error'] = 'Passwords did not match';
