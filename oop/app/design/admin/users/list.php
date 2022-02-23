@@ -3,7 +3,7 @@
  * @var \Model\User $user ;
  */
 ?>
-<form action="'<?= BASE_URL ?>'admin/changeuserstatus" method="POST">
+<form action="<?= $this->link('admin/massuserpdate') ?>" method="POST">
     <table>
         <tr>
             <th>#</th>
@@ -21,7 +21,7 @@
         </tr>
         <?php foreach ($this->data['users'] as $user) : ?>
             <tr>
-                <td><input name="<?= $user->getId() ?>" type="checkbox"></td>
+                <td><input name="selected[]" value="<?= $user->getId() ?>" type="checkbox"></td>
                 <td><?= $user->getId() ?></td>
                 <td><?= $user->getName() ?></td>
                 <td><?= $user->getLastName() ?></td>
@@ -38,6 +38,12 @@
             </tr>
         <?php endforeach; ?>
     </table>
-    <input type="submit" name="action" value="Activate">
-    <input type="submit" name="action" value="Deactivate">
+    <select name="action" id="action">
+        <option value="">Select action</option>
+        <option value="0">Deactivate</option>
+        <option value="1">Activate</option>
+        <option value="2">Delete</option>
+    </select>
+    <label for="action"> selected users</label>
+    <input name="submit" type="submit" value="Enter">
 </form>

@@ -2,8 +2,10 @@
 
 namespace Controller;
 
+use Core\AbstractModel;
 use Helper\FormHelper;
 use Helper\Logger;
+use Model\Comment;
 use Model\Manufacturer;
 use Model\Model;
 use Model\Type;
@@ -40,7 +42,7 @@ class Catalog extends AbstractController
         $form->label('show', ' Ads per page: ', 0);
         $form->select($showSelect, 0);
 
-        $adCount = Ad::count('ads');
+        $adCount = Ad::count();
         $adsPerPage = 5;
 
         if (!empty($_GET['show'])){
@@ -100,8 +102,23 @@ class Catalog extends AbstractController
     public function show($slug)
     {
         $ad = new Ad();
-
         $ad->load($slug, 'slug');
+        $adId = $ad->getId();
+
+        $form = new FormHelper('catalog/addcomment/'.$adId, 'POST');
+
+        $form->input([
+            'name' => 'slug',
+            'type' => 'hidden',
+            'value' => $slug
+        ]);
+        $form->label('comment', 'Add comment: ');
+        $form->textArea('comment', null, 'Add comment', 'comment', 255);
+        $form->input([
+            'name' => 'submit',
+            'type' => 'submit',
+            'value' => 'Comment'
+        ]);
 
         if (!$ad->isActive()) {
             Url::redirect('catalog/all');
@@ -137,6 +154,8 @@ class Catalog extends AbstractController
         }
 
         $this->data['ad'] = $ad;
+        $this->data['comment_box'] = $form->getForm();
+        $this->data['comments'] = Comment::getAdComments($adId);
 
         $this->render('catalog/show');
     }
@@ -227,6 +246,25 @@ class Catalog extends AbstractController
         $form->input($searchBox, 0);
         $form->label('search_field', ' in ', 0);
         $form->select($searchField, 0);
+    }
+
+    public function addComment($id)
+    {
+        if (!isset($_POST['comment'])){
+            Url::redirect('catalog/show');
+        }
+        if (!isset($_SESSION['user_id'])){
+            $_SESSION['comment_error'] = 'You need to be logged in to comment';
+            Url::redirect('catalog/show');
+        }
+
+        $comment = new Comment();
+        $comment->setComment($_POST['comment']);
+        $comment->setAdId($id);
+        $comment->setUserId($_SESSION['user_id']);
+        $comment->save();
+
+        Url::redirect('catalog/show/'.$_POST['slug']);
     }
 
     public function add()
@@ -427,7 +465,7 @@ class Catalog extends AbstractController
     {
         $slug = Url::generateSlug($_POST['title']);
 
-        while (!Ad::isValueUniq('slug', $slug, 'ads')) {
+        while (!Ad::isValueUniq('slug', $slug)) {
             $slug .= '-' . rand(0, 999999);
         }
 

@@ -3,7 +3,7 @@
  * @var \Model\Ad $ad;
  */
 ?>
-<form action="http://localhost/pamokos/oop/index.php/admin/changeadstatus" method="POST">
+<form action="<?= $this->link('admin/massadupdate') ?>" method="POST">
     <table>
         <tr>
             <th>#</th>
@@ -26,7 +26,7 @@
         </tr>
             <?php foreach ($this->data['ads'] as $ad) : ?>
                 <tr>
-                    <td><input name="<?= $ad->getId() ?>" type="checkbox"></td>
+                    <td><input name="selected[]" value="<?= $ad->getId() ?>" type="checkbox"></td>
                     <td><?= $ad->getId() ?></td>
                     <td><?= $ad->getTitle() ?></td>
                     <td><?= $ad->getDescription() ?></td>
@@ -52,6 +52,12 @@
                 </tr>
             <?php endforeach; ?>
     </table>
-    <input type="submit" name="action" value="Activate">
-    <input type="submit" name="action" value="Deactivate">
+    <select name="action" id="action">
+        <option value="">Select action</option>
+        <option value="0">Deactivate</option>
+        <option value="1">Activate</option>
+        <option value="2">Delete</option>
+    </select>
+    <label for="action"> selected ads</label>
+    <input name="submit" type="submit" value="Enter">
 </form>

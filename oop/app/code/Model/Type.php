@@ -10,6 +10,8 @@ class Type
 
     private $name;
 
+    protected const TABLE = 'types';
+
     public function getId()
     {
         return $this->id;
@@ -23,7 +25,7 @@ class Type
     public function load($id)
     {
         $db = new DBHelper();
-        $type = $db->select()->from('types')->where('id', $id)->getOne();
+        $type = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
         $this->id = $type['id'];
         $this->name = $type['name'];
         return $this;
@@ -32,7 +34,7 @@ class Type
     public static function getTypes()
     {
         $db = new DBHelper();
-        $data = $db->select()->from('types')->get();
+        $data = $db->select()->from(self::TABLE)->get();
         $types = [];
 
         foreach ($data as $element) {

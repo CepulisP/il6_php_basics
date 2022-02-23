@@ -11,6 +11,8 @@
         </p>
     </div>
     <div class="details">
+        Price: <?= ucfirst($this->data['ad']->getPrice()) ?> Eur
+        <br>
         Manufacturer: <?= ucfirst($this->data['ad']->getManufacturer()) ?>
         <br>
         Model: <?= ucfirst($this->data['ad']->getModel()) ?>
@@ -25,6 +27,29 @@
         <?= ucfirst($this->data['ad']->getUser()->getName()) ?>
         <?= ucfirst($this->data['ad']->getUser()->getLastName()) ?>
         <br>
+    </div>
+</div>
+<div class="comments-wrapper">
+    <?= $this->data['comment_box'] ?>
+    <?php if (isset($_SESSION['comment_error'])) : ?>
+        <?= $_SESSION['comment_error']; ?>
+    <?php endif; ?>
+    <div class="comments">
+        <h3>Comments</h3>
+        <?php foreach ($this->data['comments'] as $comment) : ?>
+            <div class="comment">
+                <div class="comment_user">
+                    <?= $comment->getUser()->getName() ?>
+                    <?= $comment->getUser()->getLastName() ?>
+                </div>
+                <div class="comment_date">
+                    <?= $comment->getCreatedAt() ?>
+                </div>
+                <div class="comment_content">
+                    <p><?= $comment->getComment() ?></p>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
 </div>
 <?php if (!empty($this->data['related'])) : ?>

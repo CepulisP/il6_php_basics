@@ -45,7 +45,14 @@ class FormHelper
         }
     }
 
-    public function textArea($name, $value = null, $placeholder = null, $id = null, $br = 1)
+    public function textArea(
+        $name,
+        $value = null,
+        $placeholder = null,
+        $id = null,
+        $limit = null,
+        $br = 1
+    )
     {
         $this->form .= '<textarea name ="' . $name . '"';
         if (isset($placeholder)) {
@@ -53,6 +60,9 @@ class FormHelper
         }
         if (isset($id)) {
             $this->form .= ' id="' . $id . '"';
+        }
+        if (isset($limit)) {
+            $this->form .= ' maxlength="' . $limit . '"';
         }
         $this->form .= '>' . $value . '</textarea>';
         if ($br) {

@@ -10,6 +10,8 @@ class Manufacturer
 
     private $name;
 
+    protected const TABLE = 'manufacturers';
+
     public function getId()
     {
         return $this->id;
@@ -23,7 +25,7 @@ class Manufacturer
     public function load($id)
     {
         $db = new DBHelper();
-        $manufacturer = $db->select()->from('manufacturers')->where('id', $id)->getOne();
+        $manufacturer = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
         $this->id = $manufacturer['id'];
         $this->name = $manufacturer['name'];
         return $this;
@@ -32,7 +34,7 @@ class Manufacturer
     public static function getManufacturers()
     {
         $db = new DBHelper();
-        $data = $db->select()->from('manufacturers')->get();
+        $data = $db->select()->from(self::TABLE)->get();
         $manufacturers = [];
 
         foreach ($data as $element) {

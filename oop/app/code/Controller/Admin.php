@@ -3,7 +3,6 @@
 namespace Controller;
 
 use Core\AbstractController;
-use Couchbase\IndexFailureException;
 use Helper\FormHelper;
 use Helper\Logger;
 use Helper\Url;
@@ -18,6 +17,13 @@ use Helper\Validator;
 
 class Admin extends AbstractController
 {
+    public const NOT_ACTIVE = 0;
+
+    public const ACTIVE = 1;
+
+    public const DELETE = 1;
+
+
     public function __construct()
     {
         parent::__construct();
@@ -276,7 +282,7 @@ class Admin extends AbstractController
     public function userUpdate()
     {
         $emailValid = Validator::checkEmail($_POST['email']);
-        $emailUniq = UserModel::isValueUniq('email', $_POST['email'], 'users');
+        $emailUniq = UserModel::isValueUniq('email', $_POST['email']);
         $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
         $passSet = !empty($_POST['password']);
         $userId = $_POST['id'];
@@ -347,45 +353,53 @@ class Admin extends AbstractController
         Url::redirect('admin/ads');
     }
 
-    public function changeUserStatus()
+    public function massUserUpdate()
     {
-        $action = $_POST['action'];
-        unset($_POST['action']);
+        if (!isset($_POST['selected'])){
+            Url::redirect('admin/users');
+        }
 
-        if ($action == 'Deactivate'){
-            foreach ($_POST as $key => $value) {
-                $ad = new UserModel($key);
-                $ad->setActive(0);
+        $action = $_POST['action'];
+        $ids = $_POST['selected'];
+
+        if ($action == self::ACTIVE || self::NOT_ACTIVE){
+            foreach ($ids as $id){
+                $ad = new UserModel($id);
+                $ad->setActive($action);
                 $ad->save();
             }
-        }elseif($action == 'Activate'){
-            foreach ($_POST as $key => $value) {
-                $ad = new UserModel($key);
-                $ad->setActive(1);
-                $ad->save();
+        }elseif ($action == self::DELETE){
+            foreach ($ids as $id){
+                $ad = new UserModel($id);
+                $ad->delete();
             }
         }
+
         Url::redirect('admin/users');
     }
 
-    public function changeAdStatus()
+    public function massAdUpdate()
     {
-        $action = $_POST['action'];
-        unset($_POST['action']);
+        if (!isset($_POST['selected'])){
+            Url::redirect('admin/ads');
+        }
 
-        if ($action == 'Deactivate'){
-            foreach ($_POST as $key => $value) {
-                $ad = new Ad($key);
-                $ad->setActive(0);
+        $action = $_POST['action'];
+        $ids = $_POST['selected'];
+
+        if ($action == self::ACTIVE || self::NOT_ACTIVE){
+            foreach ($ids as $id){
+                $ad = new Ad($id);
+                $ad->setActive($action);
                 $ad->save();
             }
-        }elseif($action == 'Activate'){
-            foreach ($_POST as $key => $value) {
-                $ad = new Ad($key);
-                $ad->setActive(1);
-                $ad->save();
+        }elseif ($action == self::DELETE){
+            foreach ($ids as $id){
+                $ad = new Ad($id);
+                $ad->delete();
             }
         }
+
         Url::redirect('admin/ads');
     }
 }

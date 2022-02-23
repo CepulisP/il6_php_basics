@@ -42,9 +42,10 @@ class Ad extends AbstractModel
 
     private $views;
 
+    protected const TABLE = 'ads';
+
     public function __construct($id = null)
     {
-        $this->table = 'ads';
         if ($id !== null){
             $this->load($id, 'id');
         }
@@ -233,7 +234,7 @@ class Ad extends AbstractModel
         $user = new User();
         $db = new DBHelper();
 
-        $ad = $db->select()->from($this->table)->where($field, $value)->getOne();
+        $ad = $db->select()->from(self::TABLE)->where($field, $value)->getOne();
 
         if (!empty($ad)) {
             $this->id = $ad['id'];
@@ -342,7 +343,7 @@ class Ad extends AbstractModel
     {
         $db = new DBHelper();
 
-        $db->select()->from('ads')->where('active', 1);
+        $db->select()->from(self::TABLE)->where('active', 1);
 
         if (isset($searchField) && isset($searchValue)) {
 
@@ -390,7 +391,7 @@ class Ad extends AbstractModel
     {
         $db = new DBHelper();
 
-        $db->select()->from('ads');
+        $db->select()->from(self::TABLE);
 
         if (isset($searchField) && isset($searchValue)) {
 

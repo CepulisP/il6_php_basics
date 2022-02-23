@@ -8,9 +8,9 @@ class AbstractModel
 {
     protected $data;
 
-    protected $table;
-
     protected $id;
+
+    protected const TABLE = '';
 
     public function getId()
     {
@@ -30,13 +30,13 @@ class AbstractModel
     protected function update()
     {
         $db = new DBHelper();
-        $db->update($this->table, $this->data)->where('id', $this->id)->exec();
+        $db->update(static::TABLE, $this->data)->where('id', $this->id)->exec();
     }
 
     protected function create()
     {
         $db = new DBHelper();
-        $db->insert($this->table, $this->data)->exec();
+        $db->insert(static::TABLE, $this->data)->exec();
     }
 
     protected function assignData()
@@ -44,24 +44,24 @@ class AbstractModel
         $this->data = [];
     }
 
-    protected function delete()
+    public function delete()
     {
         $db = new DBHelper();
-        $db->delete()->from($this->table)->where('id', $this->id)->exec();
+        $db->delete()->from(static::TABLE)->where('id', $this->id)->exec();
     }
 
-    public static function isValueUniq($field, $value, $table)
+    public static function isValueUniq($field, $value)
     {
         $value = strtolower(trim($value));
         $db = new DBHelper();
-        $rez = $db->select()->from($table)->where($field, $value)->get();
+        $rez = $db->select()->from(static::TABLE)->where($field, $value)->get();
         return empty($rez);
     }
 
-    public static function count($table)
+    public static function count()
     {
         $db = new DBHelper();
-        $rez = $db->select('count(*)')->from($table)->where('active', 1)->get();
+        $rez = $db->select('count(*)')->from(static::TABLE)->where('active', 1)->get();
         return $rez[0][0];
     }
 }

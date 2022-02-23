@@ -12,6 +12,8 @@ class Model
 
     private $manufacturerId;
 
+    protected const TABLE = 'models';
+
     public function getId()
     {
         return $this->id;
@@ -30,7 +32,7 @@ class Model
     public function load($id)
     {
         $db = new DBHelper();
-        $model = $db->select()->from('models')->where('id', $id)->getOne();
+        $model = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
         $this->id = $model['id'];
         $this->name = $model['name'];
         $this->manufacturerId = $model['manufacturer_id'];
@@ -40,7 +42,7 @@ class Model
     public static function getModels()
     {
         $db = new DBHelper();
-        $data = $db->select()->from('models')->get();
+        $data = $db->select()->from(self::TABLE)->get();
         $models = [];
 
         foreach ($data as $element) {
@@ -55,7 +57,7 @@ class Model
     public static function getModelsByManufacturer($id)
     {
         $db = new DBHelper();
-        $data = $db->select()->from('models')->where('manufacturer_id', $id)->get();
+        $data = $db->select()->from(self::TABLE)->where('manufacturer_id', $id)->get();
         $models = [];
 
         foreach ($data as $element) {
