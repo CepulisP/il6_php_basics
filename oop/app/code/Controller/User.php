@@ -95,9 +95,7 @@ class User extends AbstractController
         }
 
         $form = new FormHelper('user/update/', 'POST');
-        $user = new UserModel();
-
-        $user->load($_SESSION['user_id']);
+        $user = new UserModel($_SESSION['user_id']);
 
         $form->input([
             'name' => 'name',
@@ -218,9 +216,8 @@ class User extends AbstractController
         $passSet = !empty($_POST['password']);
         $userId = $_SESSION['user_id'];
 
-        $user = new UserModel();
+        $user = new UserModel($userId);
 
-        $user->load($userId);
         $userEmail = $user->getEmail();
         $inputEmail = strtolower(trim($_POST['email']));
 
@@ -271,8 +268,7 @@ class User extends AbstractController
         if (!empty($email)) {
             $id = UserModel::getIdByEmail($email);
             if (!empty($id)) {
-                $user = new UserModel();
-                $user->load($id);
+                $user = new UserModel($id);
                 $loginCount = $user->getLoginAttempts();
                 $loginCount++;
                 $user->setLoginAttempts($loginCount);
@@ -294,16 +290,15 @@ class User extends AbstractController
         }
 
         if ($userId) {
-            $user = new UserModel();
-            $user->load($userId);
+            $user = new UserModel($userId);
             $user->setLoginAttempts(0);
             $user->save();
 
+            session_destroy();
             $_SESSION['logged'] = true;
             $_SESSION['user_id'] = $userId;
             $_SESSION['user'] = $user;
 
-            unset($_SESSION['login_error']);
             Url::redirect('');
         } else {
             Url::redirect('user/login');

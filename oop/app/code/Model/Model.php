@@ -2,21 +2,22 @@
 
 namespace Model;
 
+use Core\AbstractModel;
 use Helper\DBHelper;
 
-class Model
+class Model extends AbstractModel
 {
-    private $id;
-
     private $name;
 
     private $manufacturerId;
 
     protected const TABLE = 'models';
 
-    public function getId()
+    public function __construct($id = null)
     {
-        return $this->id;
+        if ($id !== null){
+            $this->load($id);
+        }
     }
 
     public function getName()
@@ -46,8 +47,7 @@ class Model
         $models = [];
 
         foreach ($data as $element) {
-            $model = new Model();
-            $model->load($element['id']);
+            $model = new Model($element['id']);
             $models[] = $model;
         }
 
@@ -61,8 +61,7 @@ class Model
         $models = [];
 
         foreach ($data as $element) {
-            $model = new Model();
-            $model->load($element['id']);
+            $model = new Model($element['id']);
             $models[] = $model;
         }
 

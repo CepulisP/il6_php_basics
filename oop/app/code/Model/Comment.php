@@ -17,6 +17,13 @@ class Comment extends AbstractModel
 
     protected const TABLE = 'comments';
 
+    public function __construct($id = null)
+    {
+        if ($id !== null){
+            $this->load($id);
+        }
+    }
+
     public function getComment()
     {
         return $this->comment;
@@ -54,8 +61,12 @@ class Comment extends AbstractModel
 
     public function getUser()
     {
-        $array = User::getUser($this->userId);
-        return $array[0];
+        return new User($this->userId);
+    }
+
+    public function getAd()
+    {
+        return new Ad($this->adId);
     }
 
     protected function assignData()
@@ -72,6 +83,7 @@ class Comment extends AbstractModel
         $db = new DBHelper();
         $comment = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
         if (!empty($comment)) {
+            $this->id = $comment['id'];
             $this->comment = $comment['comment'];
             $this->adId = $comment['ad_id'];
             $this->userId = $comment['user_id'];
@@ -87,23 +99,27 @@ class Comment extends AbstractModel
         $comments = [];
 
         foreach ($data as $element) {
-            $comment = new Comment();
-            $comment->load($element['id']);
+            $comment = new Comment($element['id']);
             $comments[] = $comment;
         }
 
         return $comments;
     }
 
-    public static function getAdComments($adId)
+    public static function getAdComments($adId, $limit = null)
     {
         $db = new DBHelper();
-        $data = $db->select()->from(self::TABLE)->where('ad_id', $adId)->orderby('created_at', 'DESC')->get();
+        $db->select()->from(self::TABLE)->where('ad_id', $adId)->orderby('created_at', 'DESC');
+
+        if (isset($limit)){
+            $db->limit($limit);
+        }
+
+        $data = $db->get();
         $comments = [];
 
         foreach ($data as $element) {
-            $comment = new Comment();
-            $comment->load($element['id']);
+            $comment = new Comment($element['id']);
             $comments[] = $comment;
         }
 
@@ -117,8 +133,7 @@ class Comment extends AbstractModel
         $comments = [];
 
         foreach ($data as $element) {
-            $comment = new Comment();
-            $comment->load($element['id']);
+            $comment = new Comment($element['id']);
             $comments[] = $comment;
         }
 

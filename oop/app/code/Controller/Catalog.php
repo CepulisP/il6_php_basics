@@ -45,7 +45,7 @@ class Catalog extends AbstractController
         $adCount = Ad::count();
         $adsPerPage = 5;
 
-        if (!empty($_GET['show'])){
+        if (!empty($_GET['show'])) {
             $adsPerPage = $_GET['show'];
         }
 
@@ -73,22 +73,21 @@ class Catalog extends AbstractController
             'value' => 'Enter'
         ]);
 
-        $ads = Ad::getAds(null, null, null, 'DESC', 'created_at', $adsPerPage, 0);
+        $ads = Ad::getOrderedAds('created_at', 'DESC', true, $adsPerPage);
 
         switch ($ads) {
             case !empty($_GET['sort']) && !empty($_GET['p']):
-                Logger::log(print_r($_GET, true));
                 $firstAd = ($_GET['p'] - 1) * $adsPerPage;
                 $sort = explode('_', $_GET['sort'], 2);
-                $ads = Ad::getAds(null, null, null, $sort[0], strtoupper($sort[1]), $adsPerPage, $firstAd);
+                $ads = Ad::getOrderedAds($sort[1], strtoupper($sort[0]), true, $adsPerPage, $firstAd);
                 break;
             case !empty($_GET['p']):
                 $firstAd = ($_GET['p'] - 1) * $adsPerPage;
-                $ads = Ad::getAds(null, null, null, null, null, $adsPerPage, $firstAd);
+                $ads = Ad::getAllAds(true, $adsPerPage, $firstAd);
                 break;
             case !empty($_GET['sort']):
                 $sort = explode('_', $_GET['sort'], 2);
-                $ads = Ad::getAds(null, null, null, $sort[0], strtoupper($sort[1]));
+                $ads = Ad::getOrderedAds($sort[1], strtoupper($sort[0]), true, $adsPerPage);
                 break;
             default:
                 break;
@@ -102,10 +101,10 @@ class Catalog extends AbstractController
     public function show($slug)
     {
         $ad = new Ad();
-        $ad->load($slug, 'slug');
+        $ad->loadBySlug($slug);
         $adId = $ad->getId();
 
-        $form = new FormHelper('catalog/addcomment/'.$adId, 'POST');
+        $form = new FormHelper('catalog/addcomment/' . $adId, 'POST');
 
         $form->input([
             'name' => 'slug',
@@ -137,25 +136,26 @@ class Catalog extends AbstractController
 //            $relatedAds[] = Ad::getAds($title[$i], 'title', 'DESC', 'views', 5);
 //        }
 
-        $related = Ad::getAds($ad->getModelId(), 'model_id', '=', null, null, 5);
-
-        if (!empty($related)) {
-            foreach ($related as $element) {
-                if ($element->getSlug() !== $slug) {
-                    $relatedAds[] = $element;
-                }
-            }
-        }
-
-        if (!empty($relatedAds)){
-            $this->data['related'] = $relatedAds;
-        }else{
-            $this->data['related'] = [];
-        }
+//        $related = Ad::getAds($ad->getModelId(), 'model_id', '=', null, null, 5);
+//
+//        if (!empty($related)) {
+//            foreach ($related as $element) {
+//                if ($element->getSlug() !== $slug) {
+//                    $relatedAds[] = $element;
+//                }
+//            }
+//        }
+//
+//        if (!empty($relatedAds)){
+//            $this->data['related'] = $relatedAds;
+//        }else{
+//            $this->data['related'] = [];
+//        }
 
         $this->data['ad'] = $ad;
+        $this->data['author'] = $ad->getUser();
         $this->data['comment_box'] = $form->getForm();
-        $this->data['comments'] = Comment::getAdComments($adId);
+        $this->data['comments'] = Comment::getAdComments($adId, 10);
 
         $this->render('catalog/show');
     }
@@ -167,7 +167,7 @@ class Catalog extends AbstractController
         $this->searchForm($form);
 
         if (isset($_GET['search']) && isset($_GET['field'])) {
-            $ads = Ad::getAds($_GET['search'], $_GET['field'], 'LIKE');
+            $ads = Ad::getAdsLike($_GET['field'], $_GET['search']);
 
             if (!empty($ads)) {
                 $form->label('sort', ' Sort by: ', 0);
@@ -176,13 +176,7 @@ class Catalog extends AbstractController
                 if (!empty($_GET['sort'])) {
                     $sort = explode('_', $_GET['sort'], 2);
 
-                    $ads = Ad::getAds(
-                        $_GET['search'],
-                        $_GET['field'],
-                        'LIKE',
-                        strtoupper($sort[0]),
-                        $sort[1]
-                    );
+                    $ads = Ad::getOrderedAdsLike($sort[1], strtoupper($sort[0]), $_GET['field'], $_GET['search']);
                 }
                 $this->data['ads'] = $ads;
             }
@@ -250,12 +244,12 @@ class Catalog extends AbstractController
 
     public function addComment($id)
     {
-        if (!isset($_POST['comment'])){
-            Url::redirect('catalog/show');
+        if (!isset($_POST['comment'])) {
+            Url::redirect('catalog/show/' . $_POST['slug']);
         }
-        if (!isset($_SESSION['user_id'])){
+        if (!isset($_SESSION['user_id'])) {
             $_SESSION['comment_error'] = 'You need to be logged in to comment';
-            Url::redirect('catalog/show');
+            Url::redirect('catalog/show/' . $_POST['slug']);
         }
 
         $comment = new Comment();
@@ -264,7 +258,7 @@ class Catalog extends AbstractController
         $comment->setUserId($_SESSION['user_id']);
         $comment->save();
 
-        Url::redirect('catalog/show/'.$_POST['slug']);
+        Url::redirect('catalog/show/' . $_POST['slug']);
     }
 
     public function add()
@@ -360,8 +354,7 @@ class Catalog extends AbstractController
             Url::redirect('user/login');
         }
 
-        $ad = new Ad();
-        $ad->load($id, 'id');
+        $ad = new Ad($id);
 
         if ($_SESSION['user_id'] !== $ad->getUserId()) {
             Url::redirect('');
@@ -491,11 +484,7 @@ class Catalog extends AbstractController
 
     public function update()
     {
-        $adId = $_POST['id'];
-
-        $ad = new Ad();
-
-        $ad->load($adId, 'id');
+        $ad = new Ad($_POST['id']);
 
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);

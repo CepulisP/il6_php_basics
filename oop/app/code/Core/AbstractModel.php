@@ -58,10 +58,16 @@ class AbstractModel
         return empty($rez);
     }
 
-    public static function count()
+    public static function count($activeOnly = true)
     {
         $db = new DBHelper();
-        $rez = $db->select('count(*)')->from(static::TABLE)->where('active', 1)->get();
+        $db->select('count(*)')->from(static::TABLE);
+
+        if ($activeOnly) {
+            $db->where('active', 1);
+        }
+        $rez = $db->get();
+
         return $rez[0][0];
     }
 }

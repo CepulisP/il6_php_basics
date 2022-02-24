@@ -99,7 +99,8 @@ a{
 
 .comment_date{
     font-style: italic;
-    font-size: 8pt;
+    font-size: 10pt;
+    margin-left: auto;
 }
 
 .comment_content{

@@ -34,7 +34,7 @@ class User extends AbstractModel
 
     public function __construct($id = null)
     {
-        if ($id !== null){
+        if ($id !== null) {
             $this->load($id);
         }
     }
@@ -139,9 +139,13 @@ class User extends AbstractModel
         $this->roleId = $roleId;
     }
 
-    public function getAds()
+    public function getAds(
+        $activeOnly = null,
+        $limit = null,
+        $offset = null
+    )
     {
-        return Ad::getAllAds($this->id, 'user_id', '=');
+        return Ad::getUserAds($this->id, $activeOnly, $limit, $offset);
     }
 
     protected function assignData()
@@ -205,30 +209,33 @@ class User extends AbstractModel
 //        return isset($rez['id']) ? $rez['id'] : false;
     }
 
-    public static function getAllUsers()
+    public static function getAllUsers(
+        $activeOnly = true,
+        $limit = null,
+        $offset = null
+    )
     {
         $db = new DBHelper();
-        $data = $db->select()->from(self::TABLE)->get();
-        $users = [];
+        $db->select()->from(self::TABLE);
 
-        foreach ($data as $element) {
-            $user = new User();
-            $user->load($element['id']);
-            $users[] = $user;
+        if ($activeOnly) {
+            $db->where('active', 1);
         }
 
-        return $users;
-    }
+        if (isset($limit)) {
+            $db->limit($limit);
+        }
 
-    public static function getUser($id)
-    {
-        $db = new DBHelper();
-        $data = $db->select()->from(self::TABLE)->where('id', $id)->get();
+        if (isset($offset)) {
+            $db->offset($offset);
+        }
+
+        $data = $db->get();
+
         $users = [];
 
         foreach ($data as $element) {
-            $user = new User();
-            $user->load($element['id']);
+            $user = new User($element['id']);
             $users[] = $user;
         }
 

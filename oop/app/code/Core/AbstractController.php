@@ -43,15 +43,9 @@ class AbstractController
 
     protected function isUserAdmin()
     {
-        if ($this->isUserLoggedIn()){
-            $user = new UserModel();
-            $user->load($_SESSION['user_id']);
-
-            if ($user->getRoleId() == 1){
-                return true;
-            }
+        if ($this->isUserLoggedIn() && $_SESSION['user']->getRoleId() == 1){
+            return true;
         }
-
         return false;
     }
 }

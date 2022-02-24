@@ -2,15 +2,21 @@
 
 namespace Model;
 
+use Core\AbstractModel;
 use Helper\DBHelper;
 
-class City
+class City extends AbstractModel
 {
-    private $id;
-
     private $name;
 
     protected const TABLE = 'cities';
+
+    public function __construct($id = null)
+    {
+        if ($id !== null){
+            $this->load($id);
+        }
+    }
 
     public function getId()
     {
@@ -38,8 +44,7 @@ class City
         $cities = [];
 
         foreach ($data as $element) {
-            $city = new City();
-            $city->load($element['id']);
+            $city = new City($element['id']);
             $cities[] = $city;
         }
 

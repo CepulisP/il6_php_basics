@@ -40,13 +40,13 @@ class Admin extends AbstractController
 
     public function users()
     {
-        $this->data['users'] = UserModel::getAllUsers();
+        $this->data['users'] = UserModel::getAllUsers(false);
         $this->renderAdmin('users\list');
     }
 
     public function ads()
     {
-        $this->data['ads'] = Ad::getAllAds();
+        $this->data['ads'] = Ad::getAllAds(false);
         $this->renderAdmin('ads\list');
     }
 
@@ -174,10 +174,8 @@ class Admin extends AbstractController
 
     public function userEdit($id)
     {
-        $user = new UserModel();
+        $user = new UserModel($id);
         $form = new FormHelper('admin/userupdate', 'POST');
-
-        $user->load($id);
 
         $form->input([
             'name' => 'id',
@@ -287,9 +285,8 @@ class Admin extends AbstractController
         $passSet = !empty($_POST['password']);
         $userId = $_POST['id'];
 
-        $user = new UserModel();
+        $user = new UserModel($userId);
 
-        $user->load($userId);
         $userEmail = $user->getEmail();
         $inputEmail = strtolower(trim($_POST['email']));
 
@@ -332,11 +329,7 @@ class Admin extends AbstractController
 
     public function adUpdate()
     {
-        $adId = $_POST['id'];
-
-        $ad = new Ad();
-
-        $ad->load($adId, 'id');
+        $ad = new Ad($_POST['id']);
 
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);

@@ -2,19 +2,21 @@
 
 namespace Model;
 
+use Core\AbstractController;
+use Core\AbstractModel;
 use Helper\DBHelper;
 
-class Manufacturer
+class Manufacturer extends AbstractModel
 {
-    private $id;
-
     private $name;
 
     protected const TABLE = 'manufacturers';
 
-    public function getId()
+    public function __construct($id = null)
     {
-        return $this->id;
+        if ($id !== null){
+            $this->load($id);
+        }
     }
 
     public function getName()
@@ -38,8 +40,7 @@ class Manufacturer
         $manufacturers = [];
 
         foreach ($data as $element) {
-            $manufacturer = new Manufacturer();
-            $manufacturer->load($element['id']);
+            $manufacturer = new Manufacturer($element['id']);
             $manufacturers[] = $manufacturer;
         }
 

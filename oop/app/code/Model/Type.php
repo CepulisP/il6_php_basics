@@ -2,19 +2,20 @@
 
 namespace Model;
 
+use Core\AbstractModel;
 use Helper\DBHelper;
 
-class Type
+class Type extends AbstractModel
 {
-    private $id;
-
     private $name;
 
     protected const TABLE = 'types';
 
-    public function getId()
+    public function __construct($id = null)
     {
-        return $this->id;
+        if ($id !== null){
+            $this->load($id);
+        }
     }
 
     public function getName()
@@ -38,8 +39,7 @@ class Type
         $types = [];
 
         foreach ($data as $element) {
-            $type = new Type();
-            $type->load($element['id']);
+            $type = new Type($element['id']);
             $types[] = $type;
         }
 

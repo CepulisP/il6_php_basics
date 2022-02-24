@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title><?= $this->data['title']; ?> | Auto-Market</title>
+    <title><?= $this->data['title']; ?></title>
     <meta name="description" content="<?= $this->data['meta_description']; ?>">
     <link rel="stylesheet" href="<?= BASE_URL_WITHOUT_INDEX_PHP . 'css/style.css'; ?>"
 </head>

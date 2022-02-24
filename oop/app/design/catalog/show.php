@@ -24,8 +24,8 @@
         VIN: <?= ucfirst($this->data['ad']->getVin()) ?>
         <br>
         Created by:
-        <?= ucfirst($this->data['ad']->getUser()->getName()) ?>
-        <?= ucfirst($this->data['ad']->getUser()->getLastName()) ?>
+        <?= ucfirst($this->data['author']->getName()) ?>
+        <?= ucfirst($this->data['author']->getLastName()) ?>
         <br>
     </div>
 </div>
@@ -39,8 +39,9 @@
         <?php foreach ($this->data['comments'] as $comment) : ?>
             <div class="comment">
                 <div class="comment_user">
-                    <?= $comment->getUser()->getName() ?>
-                    <?= $comment->getUser()->getLastName() ?>
+                    <?php $author = $comment->getUser() ?>
+                    <?= $author->getName() ?>
+                    <?= $author->getLastName() ?>
                 </div>
                 <div class="comment_date">
                     <?= $comment->getCreatedAt() ?>
