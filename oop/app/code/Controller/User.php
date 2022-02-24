@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Helper\FormHelper;
+use Helper\Logger;
 use Helper\Validator;
 use Model\User as UserModel;
 use Model\City;
@@ -295,6 +296,8 @@ class User extends AbstractController
             $user->save();
 
             session_destroy();
+            session_start();
+            Logger::log($userId);
             $_SESSION['logged'] = true;
             $_SESSION['user_id'] = $userId;
             $_SESSION['user'] = $user;

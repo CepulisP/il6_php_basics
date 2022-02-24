@@ -104,15 +104,25 @@ class Catalog extends AbstractController
         $ad->loadBySlug($slug);
         $adId = $ad->getId();
 
-        $form = new FormHelper('catalog/addcomment/' . $adId, 'POST');
+        $form = new FormHelper('catalog/addcomment/?id=' . $adId . '&back=' . $slug, 'POST');
 
-        $form->input([
-            'name' => 'slug',
-            'type' => 'hidden',
-            'value' => $slug
-        ]);
         $form->label('comment', 'Add comment: ');
         $form->textArea('comment', null, 'Add comment', 'comment', 255);
+
+        $nr1 = rand(0, 10);
+        $nr2 = rand(0, 10);
+
+        $form->input([
+            'name' => 'answer',
+            'type' => 'hidden',
+            'value' => $nr1 + $nr2
+        ]);
+        $form->label('human_check', 'What\'s ' . $nr1 . '+' . $nr2 . '? ', 0);
+        $form->input([
+            'name' => 'human_check',
+            'id' => 'human_check',
+            'type' => 'number'
+        ]);
         $form->input([
             'name' => 'submit',
             'type' => 'submit',
@@ -136,6 +146,7 @@ class Catalog extends AbstractController
 //            $relatedAds[] = Ad::getAds($title[$i], 'title', 'DESC', 'views', 5);
 //        }
 
+//        Working related ads, but it sucks
 //        $related = Ad::getAds($ad->getModelId(), 'model_id', '=', null, null, 5);
 //
 //        if (!empty($related)) {
@@ -242,23 +253,30 @@ class Catalog extends AbstractController
         $form->select($searchField, 0);
     }
 
-    public function addComment($id)
+    public function addComment()
     {
-        if (!isset($_POST['comment'])) {
-            Url::redirect('catalog/show/' . $_POST['slug']);
+        Logger::log(print_r($_POST, true));
+        if (empty($_POST['comment'])) {
+            Url::redirect('catalog/show/' . $_GET['back']);
         }
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['comment_error'] = 'You need to be logged in to comment';
-            Url::redirect('catalog/show/' . $_POST['slug']);
+            Url::redirect('catalog/show/' . $_GET['back']);
+        }
+        if ($_POST['human_check'] !== $_POST['answer']){
+            $_SESSION['comment_error'] = 'Human check failed';
+            Url::redirect('catalog/show/' . $_GET['back']);
         }
 
         $comment = new Comment();
         $comment->setComment($_POST['comment']);
-        $comment->setAdId($id);
+        $comment->setAdId($_GET['id']);
         $comment->setUserId($_SESSION['user_id']);
+        $comment->setUserIp($_SERVER['REMOTE_ADDR']);
         $comment->save();
 
-        Url::redirect('catalog/show/' . $_POST['slug']);
+        unset($_SESSION['comment_error']);
+        Url::redirect('catalog/show/' . $_GET['back']);
     }
 
     public function add()
