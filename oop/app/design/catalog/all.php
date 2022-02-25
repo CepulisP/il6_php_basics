@@ -14,7 +14,7 @@
                     <?= ucfirst($ad->getTitle()) ?>
                 </b>
                 <br>
-                <img src="<?= IMAGE_PATH . $ad->getImage() ?>">
+                <img src="<?= $ad->getImage() ?>">
                 <br>
                 <?= $ad->getPrice() ?> Eur
             </a>

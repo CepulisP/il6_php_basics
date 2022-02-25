@@ -8,7 +8,8 @@ class Url
 {
     public static function generateSlug($title)
     {
-        return trim(strtolower(str_replace(' ', '-', $title)));
+        $slug = trim(strtolower(str_replace([' ', ',', '.'], '-', $title)));
+        return str_replace(['--', '---', '----'], '-', $slug);
     }
 
     public static function redirect($route)

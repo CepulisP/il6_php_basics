@@ -18,7 +18,14 @@
                 <ul>
                     <li><a href='<?= $this->link('') ?>'>Home</a></li>
                     <li><a href='<?= $this->link('catalog/') ?>'>All ads</a></li>
-                    <li><a href='<?= $this->link('catalog/search/') ?>'>Search</a></li>
+                    <li>
+                        <form action="<?= $this->link('catalog/search') ?>">
+                            <label for="search">Search: </label>
+                            <input name="search" id="search" type="text" placeholder="Search">
+                            <input name="field" type="hidden" value="title">
+                            <input name="submit" type="submit" value="Search">
+                        </form>
+                    </li>
                     <?php if ($this->isUserLoggedIn()) : ?>
                         <li><a href='<?= $this->link('catalog/add/') ?>'>New ad</a></li>
                         <li><a href='<?= $this->link('user/edit/') ?>'>Edit user</a></li>

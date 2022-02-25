@@ -146,11 +146,6 @@ class Ad extends AbstractModel
         $this->userId = $userId;
     }
 
-    public function getUser()
-    {
-        return new User($this->userId);
-    }
-
     public function getImage()
     {
         return $this->image;
@@ -204,6 +199,16 @@ class Ad extends AbstractModel
     public function setViews($views)
     {
         $this->views = $views;
+    }
+
+    public function getUser()
+    {
+        return new User($this->userId);
+    }
+
+    public function getComments($limit = null)
+    {
+        return Comment::getAdComments($this->id, $limit);
     }
 
     protected function assignData()
@@ -381,7 +386,7 @@ class Ad extends AbstractModel
             $db->where('active', 1);
         }
 
-        $db->andWhere($searchField, $searchValue, 'LIKE');
+        $db->andWhere($searchField, '%' . $searchValue . '%', 'LIKE');
 
         if (isset($limit)) {
             $db->limit($limit);
@@ -421,7 +426,7 @@ class Ad extends AbstractModel
             $db->where('active', 1);
         }
 
-        $db->andWhere($searchField, $searchValue, 'LIKE')->orderby($orderField, $orderMethod);
+        $db->andWhere($searchField, '%' . $searchValue . '%', 'LIKE')->orderby($orderField, $orderMethod);
 
         if (isset($limit)) {
             $db->limit($limit);

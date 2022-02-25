@@ -2,99 +2,33 @@
 
 namespace Controller;
 
-use Core\AbstractModel;
 use Helper\FormHelper;
 use Helper\Logger;
 use Model\Comment;
 use Model\Manufacturer;
 use Model\Model;
 use Model\Type;
-use Model\User as UserModel;
 use Helper\Url;
 use Model\Ad;
 use Core\AbstractController;
 
 class Catalog extends AbstractController
 {
+    private const ITEMS_PER_PAGE = 10;
+
     public function index()
     {
         $form = new FormHelper('catalog/', 'GET');
-        $form->label('sort', 'Sort by: ', 0);
+
         $this->sortForm($form);
-
-        $showSelect = [
-            'name' => 'show',
-            'id' => 'show',
-            'options' => [
-                '5' => '5',
-                '10' => '10',
-                '20' => '20',
-                '50' => '50',
-                '100' => '100'
-            ]
-        ];
-
-
-        if (isset($_GET['show'])) {
-            $showSelect['selected'] = $_GET['show'];
-        }
-
-        $form->label('show', ' Ads per page: ', 0);
-        $form->select($showSelect, 0);
-
-        $adCount = Ad::count();
-        $adsPerPage = 5;
-
-        if (!empty($_GET['show'])) {
-            $adsPerPage = $_GET['show'];
-        }
-
-        $pageCount = ceil($adCount / $adsPerPage);
-        $options = [];
-
-        for ($i = 1; $i <= $pageCount; $i++) {
-            $options[$i] = $i;
-        }
-
-        $pageSelect = [
-            'name' => 'p',
-            'id' => 'page',
-            'options' => $options
-        ];
-
-        if (!empty($_GET['p'])) {
-            $pageSelect['selected'] = $_GET['p'];
-        }
-
-        $form->label('page', ' Page: ', 0);
-        $form->select($pageSelect, 0);
+        $this->pageForm($form, Ad::count());
         $form->input([
             'type' => 'submit',
             'value' => 'Enter'
         ]);
 
-        $ads = Ad::getOrderedAds('created_at', 'DESC', true, $adsPerPage);
-
-        switch ($ads) {
-            case !empty($_GET['sort']) && !empty($_GET['p']):
-                $firstAd = ($_GET['p'] - 1) * $adsPerPage;
-                $sort = explode('_', $_GET['sort'], 2);
-                $ads = Ad::getOrderedAds($sort[1], strtoupper($sort[0]), true, $adsPerPage, $firstAd);
-                break;
-            case !empty($_GET['p']):
-                $firstAd = ($_GET['p'] - 1) * $adsPerPage;
-                $ads = Ad::getAllAds(true, $adsPerPage, $firstAd);
-                break;
-            case !empty($_GET['sort']):
-                $sort = explode('_', $_GET['sort'], 2);
-                $ads = Ad::getOrderedAds($sort[1], strtoupper($sort[0]), true, $adsPerPage);
-                break;
-            default:
-                break;
-        }
-
         $this->data['form'] = $form->getForm();
-        $this->data['ads'] = $ads;
+        $this->data['ads'] = Catalog::getRequestedAds();
         $this->render('catalog/all');
     }
 
@@ -166,7 +100,7 @@ class Catalog extends AbstractController
         $this->data['ad'] = $ad;
         $this->data['author'] = $ad->getUser();
         $this->data['comment_box'] = $form->getForm();
-        $this->data['comments'] = Comment::getAdComments($adId, 10);
+        $this->data['comments'] = $ad->getComments();
 
         $this->render('catalog/show');
     }
@@ -176,21 +110,12 @@ class Catalog extends AbstractController
         $form = new FormHelper('catalog/search', 'GET');
 
         $this->searchForm($form);
+        $this->sortForm($form);
 
         if (isset($_GET['search']) && isset($_GET['field'])) {
-            $ads = Ad::getAdsLike($_GET['field'], $_GET['search']);
-
-            if (!empty($ads)) {
-                $form->label('sort', ' Sort by: ', 0);
-                $this->sortForm($form);
-
-                if (!empty($_GET['sort'])) {
-                    $sort = explode('_', $_GET['sort'], 2);
-
-                    $ads = Ad::getOrderedAdsLike($sort[1], strtoupper($sort[0]), $_GET['field'], $_GET['search']);
-                }
-                $this->data['ads'] = $ads;
-            }
+            $ads = Catalog::getRequestedAds(true);
+            $this->pageForm($form, $ads['ad_count']);
+            $this->data['ads'] = $ads['ads'];
         }
 
         $form->input([
@@ -199,7 +124,6 @@ class Catalog extends AbstractController
         ]);
 
         $this->data['form'] = $form->getForm();
-
         $this->render('catalog/search');
     }
 
@@ -209,18 +133,19 @@ class Catalog extends AbstractController
             'name' => 'sort',
             'id' => 'sort',
             'options' => [
-                'desc_created_at' => 'Newer to older',
-                'asc_created_at' => 'Older to newer',
-                'desc_price' => 'Price: High to low',
-                'asc_price' => 'Price: Low to high',
-                'asc_title' => 'A - Z',
-                'desc_title' => 'Z - A'
+                'DESC_created_at' => 'Newer to older',
+                'ASC_created_at' => 'Older to newer',
+                'DESC_price' => 'Price: High to low',
+                'ASC_price' => 'Price: Low to high',
+                'ASC_title' => 'A - Z',
+                'DESC_title' => 'Z - A'
             ],
         ];
         if (isset($_GET['sort'])) {
             $sort['selected'] = $_GET['sort'];
         }
-        $form->select($sort, 0);
+        $form->label('sort', 'Sort by: ', 0);
+        $form->select($sort);
     }
 
     private function searchForm($form)
@@ -250,12 +175,60 @@ class Catalog extends AbstractController
         $form->label('search_box', 'Keyword or phrase: ', 0);
         $form->input($searchBox, 0);
         $form->label('search_field', ' in ', 0);
-        $form->select($searchField, 0);
+        $form->select($searchField);
+    }
+
+    private function pageForm($form, $adCount)
+    {
+        $showSelect = [
+            'name' => 'show',
+            'id' => 'show',
+            'selected' => self::ITEMS_PER_PAGE,
+            'options' => [
+                '5' => '5',
+                '10' => '10',
+                '20' => '20',
+                '50' => '50',
+                '100' => '100'
+            ]
+        ];
+
+        if (!empty($_GET['show'])) {
+            $showSelect['selected'] = $_GET['show'];
+        }
+
+        $adsPerPage = self::ITEMS_PER_PAGE;
+
+        if (!empty($_GET['show'])) {
+            $adsPerPage = $_GET['show'];
+        }
+
+        $pageCount = ceil($adCount / $adsPerPage);
+        $options = [];
+
+        for ($i = 1; $i <= $pageCount; $i++) {
+            $options[$i] = $i;
+        }
+
+        $pageSelect = [
+            'name' => 'p',
+            'id' => 'page',
+            'selected' => 1,
+            'options' => $options
+        ];
+
+        if (!empty($_GET['p'])) {
+            $pageSelect['selected'] = $_GET['p'];
+        }
+
+        $form->label('show', ' Ads per page: ', 0);
+        $form->select($showSelect, 0);
+        $form->label('page', ' Page: ', 0);
+        $form->select($pageSelect);
     }
 
     public function addComment()
     {
-        Logger::log(print_r($_POST, true));
         if (empty($_POST['comment'])) {
             Url::redirect('catalog/show/' . $_GET['back']);
         }
@@ -349,7 +322,7 @@ class Catalog extends AbstractController
         $form->input([
             'name' => 'image',
             'type' => 'text',
-            'placeholder' => 'Image.png'
+            'placeholder' => 'Image url'
         ]);
         $form->input([
             'name' => 'vin',
@@ -517,5 +490,31 @@ class Catalog extends AbstractController
         $ad->save();
 
         Url::redirect('');
+    }
+
+    private static function getRequestedAds($returnCount = false)
+    {
+        $page = !empty($_GET['p']) ? $_GET['p'] : 1;
+        $adsPerPage = !empty($_GET['show']) ? $_GET['show'] : self::ITEMS_PER_PAGE;
+        $firstAd = ($page - 1) * $adsPerPage;
+        $sort = !empty($_GET['sort']) ? explode('_', $_GET['sort'], 2) : ['DESC', 'created_at'];
+        $orderField = $sort[1];
+        $orderMethod = $sort[0];
+        $searchField = !empty($_GET['field']) ? $_GET['field'] : null;
+        $searchValue = !empty($_GET['search']) ? $_GET['search'] : null;
+
+        if (!empty($searchField) && !empty($searchValue)) {
+            $ads = Ad::getOrderedAdsLike($orderField, $orderMethod, $searchField, $searchValue, true, $adsPerPage, $firstAd);
+            if ($returnCount){
+                return ['ads' => $ads, 'ad_count' => count(Ad::getOrderedAdsLike($orderField, $orderMethod, $searchField, $searchValue))];
+            }
+            return $ads;
+        }else{
+            $ads = Ad::getOrderedAds($orderField, $orderMethod, true, $adsPerPage, $firstAd);
+            if ($returnCount){
+                return ['ads' => $ads, 'ad_count' => count(Ad::getOrderedAds($orderField, $orderMethod))];
+            }
+            return $ads;
+        }
     }
 }

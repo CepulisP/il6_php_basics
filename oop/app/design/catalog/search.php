@@ -5,7 +5,7 @@
     <div class="form">
         <?= $this->data['form']; ?>
     </div>
-    <?php if (isset($this->data['ads'])) : ?>
+    <?php if (!empty($this->data['ads'])) : ?>
         <div class="content-wrapper">
             <?php foreach ($this->data['ads'] as $ad) : ?>
                 <a href="<?= $this->link('catalog/show', $ad->getSlug()) ?>">
@@ -13,7 +13,7 @@
                         <?= ucfirst($ad->getTitle()) ?>
                     </b>
                     <br>
-                    <img src="<?= IMAGE_PATH . $ad->getImage() ?>">
+                    <img src="<?= $ad->getImage() ?>">
                     <br>
                     <?= $ad->getPrice() ?> Eur
                 </a>

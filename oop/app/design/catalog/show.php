@@ -3,7 +3,7 @@
         <h2><?= ucfirst($this->data['ad']->getTitle()); ?></h2>
     </div>
     <div class="image">
-        <img src="<?= IMAGE_PATH . $this->data['ad']->getImage() ?>">
+        <img src="<?= $this->data['ad']->getImage() ?>">
     </div>
     <div class="description">
         <p>
@@ -66,7 +66,7 @@
                             <?= ucfirst($ad->getTitle()) ?>
                         </b>
                         <br>
-                        <img src="<?= IMAGE_PATH . $ad->getImage() ?>">
+                        <img src="<?= $ad->getImage() ?>">
                         <br>
                         <?= $ad->getPrice() ?> Eur
                     </a>

@@ -40,7 +40,7 @@
                             <?= $ad->getUser()->getName().' '.$ad->getUser()->getLastName() ?>
                         </a>
                     </td>
-                    <td><img src="<?= IMAGE_PATH . $ad->getImage() ?>"></td>
+                    <td><img src="<?= $ad->getImage() ?>"></td>
                     <td><?= $ad->getSlug() ?></td>
                     <td><?= $ad->getCreatedAt() ?></td>
                     <td><?= $ad->getVin() ?></td>

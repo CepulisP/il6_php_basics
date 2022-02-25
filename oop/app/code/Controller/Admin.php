@@ -138,7 +138,7 @@ class Admin extends AbstractController
             'options' => $options,
             'selected' => $ad->getTypeId()
         ]);
-        $form->label('image', 'Image name: ', 0);
+        $form->label('image', 'Image url: ', 0);
         $form->input([
             'name' => 'image',
             'type' => 'text',
