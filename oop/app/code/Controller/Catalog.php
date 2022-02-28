@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Core\Interfaces\ControllerInterface;
 use Helper\FormHelper;
 use Helper\Logger;
 use Model\Comment;
@@ -12,7 +13,7 @@ use Helper\Url;
 use Model\Ad;
 use Core\AbstractController;
 
-class Catalog extends AbstractController
+class Catalog extends AbstractController implements ControllerInterface
 {
     private const ITEMS_PER_PAGE = 10;
 

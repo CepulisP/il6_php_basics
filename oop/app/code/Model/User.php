@@ -3,10 +3,11 @@
 namespace Model;
 
 use Core\AbstractModel;
+use Core\Interfaces\ModelInterface;
 use Helper\DBHelper;
 use Helper\Logger;
 
-class User extends AbstractModel
+class User extends AbstractModel implements ModelInterface
 {
     private $name;
 
@@ -148,7 +149,7 @@ class User extends AbstractModel
         return Ad::getUserAds($this->id, $activeOnly, $limit, $offset);
     }
 
-    protected function assignData()
+    public function assignData()
     {
         $this->data = [
             'name' => $this->name,
