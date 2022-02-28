@@ -19,10 +19,7 @@ class Type extends AbstractModel implements ModelInterface
         }
     }
 
-    public function assignData()
-    {
-        // TODO: Implement assignData() method.
-    }
+    public function assignData(){}
 
     public function getName()
     {
