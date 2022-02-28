@@ -3,8 +3,9 @@
 namespace Controller;
 
 use Core\AbstractController;
+use Core\Interfaces\ControllerInterface;
 
-class Error extends AbstractController
+class Error extends AbstractController implements ControllerInterface
 {
     public function index()
     {

@@ -3,10 +3,11 @@
 namespace Model;
 
 use Core\AbstractModel;
+use Core\Interfaces\ModelInterface;
 use Helper\DBHelper;
 use Helper\Logger;
 
-class Ad extends AbstractModel
+class Ad extends AbstractModel implements ModelInterface
 {
     private $title;
 
@@ -211,7 +212,7 @@ class Ad extends AbstractModel
         return Comment::getAdComments($this->id, $limit);
     }
 
-    protected function assignData()
+    public function assignData()
     {
         $this->data = [
             'title' => $this->title,
