@@ -21,7 +21,7 @@ class Admin extends AbstractController
 
     public const ACTIVE = 1;
 
-    public const DELETE = 1;
+    public const DELETE = 2;
 
 
     public function __construct()
@@ -380,6 +380,7 @@ class Admin extends AbstractController
         $action = $_POST['action'];
         $ids = $_POST['selected'];
 
+        Logger::log($action.'delete');
         if ($action == self::ACTIVE || self::NOT_ACTIVE){
             foreach ($ids as $id){
                 $ad = new Ad($id);
