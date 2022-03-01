@@ -3,6 +3,8 @@
 namespace Core;
 
 use Helper\Url;
+use Model\Ad;
+use Model\Message;
 use Model\User as UserModel;
 use Helper\Logger;
 
@@ -47,5 +49,10 @@ class AbstractController
             return true;
         }
         return false;
+    }
+
+    public function getNewMessageCount()
+    {
+        return Message::countNewMessages($_SESSION['user_id']);
     }
 }

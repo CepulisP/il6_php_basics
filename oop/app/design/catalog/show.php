@@ -26,6 +26,7 @@
         Created by:
         <?= ucfirst($this->data['author']->getName()) ?>
         <?= ucfirst($this->data['author']->getLastName()) ?>
+        <a href="<?= $this->link('message/send', $this->data['author']->getId()) ?>">Send a message</a>
         <br>
     </div>
 </div>
