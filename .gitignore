@@ -2,7 +2,7 @@
 /oop/var/
 /oop/vendor/
 /oop/config.php
-/oop/images/
+/oop/pub/images/
 /.idea/
 /shop/products.csv
 /subscribe/emails.csv
