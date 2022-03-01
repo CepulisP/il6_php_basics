@@ -21,20 +21,18 @@ class User extends AbstractController implements ControllerInterface
 
     public function show($id = null)
     {
-        $this->data['content'] = '';
-        if ($id !== null) {
-            $this->data['content'] .= 'User controller ID ' . $id;
-        } else {
-            $this->data['content'] .= '404 no id';
+        if ($id == null){
+            $error = new Error();
+            $error->error404();
+        }else {
+            $this->data['user'] = new UserModel($id);
+            $this->render('user/show');
         }
-        $this->render('user/show');
     }
 
     public function register()
     {
-        if (isset($_SESSION['user_id'])) {
-            $this->logout();
-        }
+        if (isset($_SESSION['user_id'])) $this->logout();
 
         $form = new FormHelper('user/create/', 'POST');
 
@@ -92,9 +90,7 @@ class User extends AbstractController implements ControllerInterface
 
     public function edit()
     {
-        if (!isset($_SESSION['user_id'])) {
-            Url::redirect('user/login');
-        }
+        if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
 
         $form = new FormHelper('user/update/', 'POST');
         $user = new UserModel($_SESSION['user_id']);
@@ -158,9 +154,7 @@ class User extends AbstractController implements ControllerInterface
 
     public function login()
     {
-        if (isset($_SESSION['user_id'])) {
-            $this->logout();
-        }
+        if (isset($_SESSION['user_id'])) $this->logout();
 
         $form = new FormHelper('user/check/', 'POST');
 
@@ -240,9 +234,7 @@ class User extends AbstractController implements ControllerInterface
                     }
                 }
 
-                if ($passSet) {
-                    $user->setPassword(md5(strtolower(trim($_POST['password']))));
-                }
+                if ($passSet) $user->setPassword(md5(strtolower(trim($_POST['password']))));
 
                 $user->save();
                 $user->load($_SESSION['user_id']);
@@ -298,7 +290,7 @@ class User extends AbstractController implements ControllerInterface
 
             session_destroy();
             session_start();
-            Logger::log($userId);
+
             $_SESSION['logged'] = true;
             $_SESSION['user_id'] = $userId;
             $_SESSION['user'] = $user;

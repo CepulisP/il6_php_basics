@@ -39,6 +39,8 @@ class Catalog extends AbstractController implements ControllerInterface
         $ad->loadBySlug($slug);
         $adId = $ad->getId();
 
+        if (!$ad->isActive()) Url::redirect('catalog/all');
+
         $form = new FormHelper('catalog/addcomment/?id=' . $adId . '&back=' . $slug, 'POST');
 
         $form->label('comment', 'Add comment: ');
@@ -64,40 +66,12 @@ class Catalog extends AbstractController implements ControllerInterface
             'value' => 'Comment'
         ]);
 
-        if (!$ad->isActive()) {
-            Url::redirect('catalog/all');
-        }
-
         $adViews = $ad->getViews();
         $adViews++;
         $ad->setViews($adViews);
         $ad->save();
 
-//        Nesekmingas bandymas gaut related pagal title
-//        $title = explode(' ', $ad->getTitle());
-//        $relatedAds = [];
-//
-//        for ($i = 0; $i < count($title); $i++){
-//            $relatedAds[] = Ad::getAds($title[$i], 'title', 'DESC', 'views', 5);
-//        }
-
-//        Working related ads, but it sucks
-//        $related = Ad::getAds($ad->getModelId(), 'model_id', '=', null, null, 5);
-//
-//        if (!empty($related)) {
-//            foreach ($related as $element) {
-//                if ($element->getSlug() !== $slug) {
-//                    $relatedAds[] = $element;
-//                }
-//            }
-//        }
-//
-//        if (!empty($relatedAds)){
-//            $this->data['related'] = $relatedAds;
-//        }else{
-//            $this->data['related'] = [];
-//        }
-
+        $this->data['related'] = Ad::getRelatedAds($adId, 5);
         $this->data['ad'] = $ad;
         $this->data['author'] = $ad->getUser();
         $this->data['comment_box'] = $form->getForm();
@@ -142,9 +116,7 @@ class Catalog extends AbstractController implements ControllerInterface
                 'DESC_title' => 'Z - A'
             ],
         ];
-        if (isset($_GET['sort'])) {
-            $sort['selected'] = $_GET['sort'];
-        }
+        if (isset($_GET['sort'])) $sort['selected'] = $_GET['sort'];
         $form->label('sort', 'Sort by: ', 0);
         $form->select($sort);
     }
@@ -166,12 +138,8 @@ class Catalog extends AbstractController implements ControllerInterface
             ]
         ];
 
-        if (isset($_GET['search'])) {
-            $searchBox['value'] = $_GET['search'];
-        }
-        if (isset($_GET['field'])) {
-            $searchField['selected'] = $_GET['field'];
-        }
+        if (isset($_GET['search'])) $searchBox['value'] = $_GET['search'];
+        if (isset($_GET['field'])) $searchField['selected'] = $_GET['field'];
 
         $form->label('search_box', 'Keyword or phrase: ', 0);
         $form->input($searchBox, 0);
@@ -194,15 +162,11 @@ class Catalog extends AbstractController implements ControllerInterface
             ]
         ];
 
-        if (!empty($_GET['show'])) {
-            $showSelect['selected'] = $_GET['show'];
-        }
+        if (!empty($_GET['show'])) $showSelect['selected'] = $_GET['show'];
 
         $adsPerPage = self::ITEMS_PER_PAGE;
 
-        if (!empty($_GET['show'])) {
-            $adsPerPage = $_GET['show'];
-        }
+        if (!empty($_GET['show'])) $adsPerPage = $_GET['show'];
 
         $pageCount = ceil($adCount / $adsPerPage);
         $options = [];
@@ -218,9 +182,7 @@ class Catalog extends AbstractController implements ControllerInterface
             'options' => $options
         ];
 
-        if (!empty($_GET['p'])) {
-            $pageSelect['selected'] = $_GET['p'];
-        }
+        if (!empty($_GET['p'])) $pageSelect['selected'] = $_GET['p'];
 
         $form->label('show', ' Ads per page: ', 0);
         $form->select($showSelect, 0);
@@ -230,9 +192,7 @@ class Catalog extends AbstractController implements ControllerInterface
 
     public function addComment()
     {
-        if (empty($_POST['comment'])) {
-            Url::redirect('catalog/show/' . $_GET['back']);
-        }
+        if (empty($_POST['comment'])) Url::redirect('catalog/show/' . $_GET['back']);
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['comment_error'] = 'You need to be logged in to comment';
             Url::redirect('catalog/show/' . $_GET['back']);
@@ -255,9 +215,7 @@ class Catalog extends AbstractController implements ControllerInterface
 
     public function add()
     {
-        if (!isset($_SESSION['user_id'])) {
-            Url::redirect('user/login');
-        }
+        if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
 
         $form = new FormHelper('catalog/create/', 'POST');
 
@@ -342,15 +300,11 @@ class Catalog extends AbstractController implements ControllerInterface
 
     public function edit($id)
     {
-        if (!isset($_SESSION['user_id'])) {
-            Url::redirect('user/login');
-        }
+        if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
 
         $ad = new Ad($id);
 
-        if ($_SESSION['user_id'] !== $ad->getUserId()) {
-            Url::redirect('');
-        }
+        if ($_SESSION['user_id'] !== $ad->getUserId()) Url::redirect('');
 
         $form = new FormHelper('catalog/update', 'POST');
 

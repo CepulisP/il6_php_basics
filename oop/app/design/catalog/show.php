@@ -29,6 +29,30 @@
         <br>
     </div>
 </div>
+<div class="related">
+    <div class="title">
+        <h3>Related ads</h3>
+    </div>
+    <div class="related-list">
+        <?php if (!empty($this->data['related'])) : ?>
+            <?php foreach ($this->data['related'] as $ad) : ?>
+                <div class="element">
+                    <a href="<?= $this->link('catalog/show', $ad->getSlug()) ?>">
+                        <b>
+                            <?= ucfirst($ad->getTitle()) ?>
+                        </b>
+                        <br>
+                        <img src="<?= $ad->getImage() ?>">
+                        <br>
+                        <?= $ad->getPrice() ?> Eur
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php else : ?>
+            No related ads found
+        <?php endif; ?>
+    </div>
+</div>
 <div class="comments-wrapper">
     <?= $this->data['comment_box'] ?>
     <?php if (isset($_SESSION['comment_error'])) : ?>
@@ -53,25 +77,3 @@
         <?php endforeach; ?>
     </div>
 </div>
-<?php if (!empty($this->data['related'])) : ?>
-    <div class="related">
-        <div class="title">
-            <h3>Related ads</h3>
-        </div>
-        <div class="related-list">
-            <?php foreach ($this->data['related'] as $ad) : ?>
-                <div class="element">
-                    <a href="<?= $this->link('catalog/show', $ad->getSlug()) ?>">
-                        <b>
-                            <?= ucfirst($ad->getTitle()) ?>
-                        </b>
-                        <br>
-                        <img src="<?= $ad->getImage() ?>">
-                        <br>
-                        <?= $ad->getPrice() ?> Eur
-                    </a>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-<?php endif; ?>

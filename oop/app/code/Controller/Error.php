@@ -7,10 +7,7 @@ use Core\Interfaces\ControllerInterface;
 
 class Error extends AbstractController implements ControllerInterface
 {
-    public function index()
-    {
-        echo 'under construction';
-    }
+    public function index(){}
 
     public function error404()
     {

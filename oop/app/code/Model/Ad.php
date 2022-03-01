@@ -484,4 +484,30 @@ class Ad extends AbstractModel implements ModelInterface
 
         return $ads;
     }
+
+    public static function getRelatedAds($id, $limit)
+    {
+        $db = new DBHelper();
+        $ad = new Ad($id);
+        $data = $db
+            ->select()
+            ->from(self::TABLE)
+            ->where('active', 1)
+            ->andWhere('id', $id, '<>')
+            ->andWhere('model_id', $ad->getModelId())
+            ->orWhere('active', 1)
+            ->andWhere('id', $id, '<>')
+            ->andWhere('manufacturer_id', $ad->getManufacturerId())
+            ->limit($limit)
+            ->get();
+
+        $ads = [];
+
+        foreach ($data as $element) {
+            $ad = new Ad($element['id']);
+            $ads[] = $ad;
+        }
+
+        return $ads;
+    }
 }

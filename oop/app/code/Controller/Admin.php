@@ -29,9 +29,7 @@ class Admin extends AbstractController implements ControllerInterface
     {
         parent::__construct();
 
-        if (!$this->isUserAdmin()){
-            Url::redirect('');
-        }
+        if (!$this->isUserAdmin()) Url::redirect('');
     }
 
     public function index()
@@ -310,9 +308,7 @@ class Admin extends AbstractController implements ControllerInterface
                     }
                 }
 
-                if ($passSet) {
-                    $user->setPassword(md5(strtolower(trim($_POST['password']))));
-                }
+                if ($passSet) $user->setPassword(md5(strtolower(trim($_POST['password']))));
 
                 $user->save();
 
@@ -349,9 +345,7 @@ class Admin extends AbstractController implements ControllerInterface
 
     public function massUserUpdate()
     {
-        if (!isset($_POST['selected'])){
-            Url::redirect('admin/users');
-        }
+        if (!isset($_POST['selected'])) Url::redirect('admin/users');
 
         $action = $_POST['action'];
         $ids = $_POST['selected'];
@@ -374,14 +368,11 @@ class Admin extends AbstractController implements ControllerInterface
 
     public function massAdUpdate()
     {
-        if (!isset($_POST['selected'])){
-            Url::redirect('admin/ads');
-        }
+        if (!isset($_POST['selected'])) Url::redirect('admin/ads');
 
         $action = $_POST['action'];
         $ids = $_POST['selected'];
 
-        Logger::log($action.'delete');
         if ($action == self::ACTIVE || self::NOT_ACTIVE){
             foreach ($ids as $id){
                 $ad = new Ad($id);
