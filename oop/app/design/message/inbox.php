@@ -5,9 +5,7 @@
     <?php foreach ($this->data['new_messages'] as $message) : ?>
         <div class="message">
             <div class="message_user">
-                <?php $author = $message->getUser() ?>
-                <?= $author->getName() ?>
-                <?= $author->getLastName() ?>
+                <?= $message->getUser()->getNickname() ?>
             </div>
             <div class="message_date">
                 <?= $message->getCreatedAt() ?>
@@ -25,9 +23,7 @@
     <?php foreach ($this->data['old_messages'] as $message) : ?>
         <div class="message">
             <div class="message_user">
-                <?php $author = $message->getUser() ?>
-                <?= $author->getName() ?>
-                <?= $author->getLastName() ?>
+                <?= $message->getUser()->getNickname() ?>
             </div>
             <div class="message_date">
                 <?= $message->getCreatedAt() ?>

@@ -10,6 +10,7 @@
             <th>Id</th>
             <th>Name</th>
             <th>Last Name</th>
+            <th>Nickname</th>
             <th>Email</th>
             <th>Phone</th>
             <th>City</th>
@@ -25,6 +26,7 @@
                 <td><?= $user->getId() ?></td>
                 <td><?= $user->getName() ?></td>
                 <td><?= $user->getLastName() ?></td>
+                <td><?= $user->getNickname() ?></td>
                 <td><?= $user->getEmail() ?></td>
                 <td><?= $user->getPhone() ?></td>
                 <td><?= $user->getCity() ?></td>

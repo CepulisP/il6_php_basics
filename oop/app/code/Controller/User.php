@@ -47,6 +47,11 @@ class User extends AbstractController implements ControllerInterface
             'placeholder' => 'Last name'
         ]);
         $form->input([
+            'name' => 'nickname',
+            'type' => 'text',
+            'placeholder' => 'Nickname'
+        ]);
+        $form->input([
             'name' => 'email',
             'type' => 'email',
             'placeholder' => 'name@mail.com'
@@ -106,6 +111,12 @@ class User extends AbstractController implements ControllerInterface
             'type' => 'text',
             'placeholder' => 'Last name',
             'value' => $user->getLastName()
+        ]);
+        $form->input([
+            'name' => 'nickname',
+            'type' => 'text',
+            'placeholder' => 'Nickname',
+            'value' => $user->getNickname()
         ]);
         $form->input([
             'name' => 'email',
@@ -183,11 +194,13 @@ class User extends AbstractController implements ControllerInterface
         $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
         $emailValid = Validator::checkEmail($_POST['email']);
         $emailUniq = UserModel::isValueUniq('email', $_POST['email']);
+        $nickUniq = UserModel::isValueUniq('nickname', $_POST['nickname']);
 
-        if ($passMatch && $emailValid && $emailUniq) {
+        if ($passMatch && $emailValid && $emailUniq && $nickUniq) {
             $user = new UserModel();
             $user->setName($_POST['name']);
             $user->setLastName($_POST['last_name']);
+            $user->setNickname(trim($_POST['nickname']));
             $user->setEmail(strtolower(trim($_POST['email'])));
             $user->setPassword(md5(strtolower(trim($_POST['password']))));
             $user->setPhone($_POST['phone']);
@@ -199,7 +212,7 @@ class User extends AbstractController implements ControllerInterface
             unset($_SESSION['register_error']);
             Url::redirect('user/login');
         } else {
-            $_SESSION['register_error'] = 'Check email and password';
+            $_SESSION['register_error'] = 'Error: Email/Nickname taken or passwords didn\'t match';
             Url::redirect('user/register');
         }
     }
@@ -208,6 +221,7 @@ class User extends AbstractController implements ControllerInterface
     {
         $emailValid = Validator::checkEmail($_POST['email']);
         $emailUniq = UserModel::isValueUniq('email', $_POST['email']);
+        $nickUniq = UserModel::isValueUniq('nickname', $_POST['nickname']);
         $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
         $passSet = !empty($_POST['password']);
         $userId = $_SESSION['user_id'];
@@ -216,6 +230,8 @@ class User extends AbstractController implements ControllerInterface
 
         $userEmail = $user->getEmail();
         $inputEmail = strtolower(trim($_POST['email']));
+        $userNick = $user->getNickname();
+        $inputNick = strtolower(trim($_POST['nickname']));
 
         $user->setName($_POST['name']);
         $user->setLastName($_POST['last_name']);
@@ -230,6 +246,15 @@ class User extends AbstractController implements ControllerInterface
                         $user->setEmail(strtolower(trim($_POST['email'])));
                     } else {
                         $_SESSION['edit_error'] = 'Email is not unique';
+                        Url::redirect('user/edit');
+                    }
+                }
+
+                if ($userNick !== $inputNick) {
+                    if ($nickUniq) {
+                        $user->setNickname(trim($_POST['nickname']));
+                    } else {
+                        $_SESSION['edit_error'] = 'Nickname is not unique';
                         Url::redirect('user/edit');
                     }
                 }

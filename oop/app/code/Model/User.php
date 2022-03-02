@@ -6,12 +6,15 @@ use Core\AbstractModel;
 use Core\Interfaces\ModelInterface;
 use Helper\DBHelper;
 use Helper\Logger;
+use Helper\Url;
 
 class User extends AbstractModel implements ModelInterface
 {
     private $name;
 
     private $lastName;
+
+    private $nickname;
 
     private $email;
 
@@ -58,6 +61,16 @@ class User extends AbstractModel implements ModelInterface
     public function setLastName($lastName)
     {
         $this->lastName = $lastName;
+    }
+
+    public function getNickname()
+    {
+        return $this->nickname;
+    }
+
+    public function setNickname($nickname)
+    {
+        $this->nickname = $nickname;
     }
 
     public function getEmail()
@@ -154,6 +167,7 @@ class User extends AbstractModel implements ModelInterface
         $this->data = [
             'name' => $this->name,
             'last_name' => $this->lastName,
+            'nickname' => $this->nickname,
             'email' => $this->email,
             'password' => $this->password,
             'phone' => $this->phone,
@@ -175,6 +189,7 @@ class User extends AbstractModel implements ModelInterface
         $this->id = $data['id'];
         $this->name = $data['name'];
         $this->lastName = $data['last_name'];
+        $this->nickname = $data['nickname'];
         $this->email = $data['email'];
         $this->password = $data['password'];
         $this->phone = $data['phone'];
@@ -253,10 +268,25 @@ class User extends AbstractModel implements ModelInterface
             ->where('email', $email)
             ->getOne();
 
-        if (isset($rez['id'])) {
-            return $rez['id'];
-        } else {
-            return false;
-        }
+        return $rez['id'] ?? false;
+    }
+
+    public static function getIdByNickname($nick)
+    {
+        $db = new DBHelper();
+
+        $rez = $db
+            ->select('id')
+            ->from(self::TABLE)
+            ->where('nickname', $nick)
+            ->getOne();
+
+        return $rez['id'] ?? false;
+    }
+
+    public static function getNicknameById($id)
+    {
+        $user = new User($id);
+        return $user->getNickname();
     }
 }
