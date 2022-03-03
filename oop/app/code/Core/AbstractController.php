@@ -51,8 +51,8 @@ class AbstractController
         return false;
     }
 
-    public function getNewMessageCount()
+    public function getNewMessageCount($senderId = null)
     {
-        return Message::countNewMessages($_SESSION['user_id']);
+        return Message::countNewMessages($_SESSION['user_id'], $senderId);
     }
 }

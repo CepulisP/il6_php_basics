@@ -258,6 +258,15 @@ class User extends AbstractModel implements ModelInterface
         return $users;
     }
 
+    public static function getUsers($ids)
+    {
+        $users = [];
+        foreach ($ids as $id){
+            $users[] = new User($id);
+        }
+        return $users;
+    }
+
     public static function getIdByEmail($email)
     {
         $db = new DBHelper();

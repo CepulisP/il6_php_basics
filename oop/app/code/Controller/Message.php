@@ -4,6 +4,7 @@ namespace Controller;
 
 use Core\AbstractController;
 use Core\Interfaces\ControllerInterface;
+use Helper\Logger;
 use Helper\Url;
 use Helper\FormHelper;
 use Model\Message as MessageModel;
@@ -19,28 +20,42 @@ class Message extends AbstractController implements ControllerInterface
 
     public function index()
     {
-        $messages = MessageModel::getNewMessages($_SESSION['user_id']);
+        $conversers = MessageModel::getSenders($_SESSION['user_id']);
 
-        foreach ($messages as $message){
-            $seen = new MessageModel($message->getId());
-            $seen->setSeen(1);
-            $seen->save();
+        $senders = [];
+        foreach ($conversers as $converser){
+            $senders[] = [
+                'id' => $converser->getId(),
+                'nickname' => $converser->getNickname(),
+                'new_msg_count' => MessageModel::countNewMessages($_SESSION['user_id'], $converser->getId())
+            ];
         }
 
-        $this->data['new_messages'] = $messages;
-        $this->data['old_messages'] = MessageModel::getOldMessages($_SESSION['user_id']);
+        usort($senders, function($b, $a) {
+            return $a['new_msg_count'] <=> $b['new_msg_count'];
+        });
+
+        $this->data['senders'] = $senders;
         $this->render('message/inbox');
     }
 
-    public function chat()
+    public function chat($senderId)
     {
-        // chat under construction
+        $chat = MessageModel::getChat($_SESSION['user_id'], $senderId);
+
+        foreach ($chat as $item){
+            $msg = new MessageModel($item->getId());
+            $msg->setSeen(1);
+            $msg->save();
+        }
+
+        $this->data['sender'] = new User($senderId);
+        $this->data['chat'] = $chat;
+        $this->render('message/chat');
     }
 
     public function send($recipientId = null)
     {
-
-
         $form = new FormHelper('message/sendmessage', 'POST');
 
         $recipientInput = [
@@ -54,11 +69,6 @@ class Message extends AbstractController implements ControllerInterface
 
         $form->label('recipient', 'Send to:');
         $form->input($recipientInput);
-        $form->input([
-            'name' => 'sender_id',
-            'value' => $_SESSION['user_id'],
-            'type' => 'hidden'
-        ]);
         $form->label('message', 'Message:');
         $form->textArea('message', null, 'Your message', 'message', 255);
         $form->input([
@@ -71,9 +81,9 @@ class Message extends AbstractController implements ControllerInterface
         $this->render('message/send');
     }
 
-    public function sendMessage()
+    public function sendMessage($recipientId = null)
     {
-        $recipientId = User::getIdByNickname($_POST['recipient']);
+        if (!isset($recipientId)) $recipientId = User::getIdByNickname($_POST['recipient']);
 
         if (empty($recipientId)) {
             $_SESSION['send_error'] = 'Recipient not found';
@@ -83,11 +93,11 @@ class Message extends AbstractController implements ControllerInterface
 
         $message = new MessageModel();
         $message->setMessage($_POST['message']);
-        $message->setSenderId($_POST['sender_id']);
+        $message->setSenderId($_SESSION['user_id']);
         $message->setRecipientId($recipientId);
         $message->setSeen(0);
         $message->save();
 
-        Url::redirect('');
+        Url::redirect('message/chat/' . $recipientId);
     }
 }
