@@ -5,6 +5,7 @@ namespace Model;
 use Core\AbstractModel;
 use Core\Interfaces\ModelInterface;
 use Helper\DBHelper;
+use Helper\Logger;
 
 class Message extends AbstractModel implements ModelInterface
 {
@@ -105,14 +106,13 @@ class Message extends AbstractModel implements ModelInterface
     public static function getNewMessages($userId)
     {
         $db = new DBHelper();
-        $data = $db->select()->from(self::TABLE)->where('recipient_id', $userId)->andWhere('seen', 0)->get();
+        $data = $db->select()->from(self::TABLE)->where('recipient_id', $userId)->andWhere('seen', 1)->get();
         $messages = [];
 
         foreach ($data as $element) {
             $message = new Message($element['id']);
             $messages[] = $message;
         }
-
         return $messages;
     }
 
@@ -130,10 +130,54 @@ class Message extends AbstractModel implements ModelInterface
         return $messages;
     }
 
-    public static function countNewMessages($userId)
+    public static function countNewMessages($userId, $senderId = null)
     {
         $db = new DBHelper();
-        $rez = $db->select('count(*)')->from(self::TABLE)->where('recipient_id', $userId)->andWhere('seen', 0)->get();
+        $db->select('count(*)')->from(self::TABLE)->where('recipient_id', $userId)->andWhere('seen', 0);
+
+        if (isset($senderId)) $db->andWhere('sender_id', $senderId);
+
+        $rez = $db->get();
         return $rez[0][0];
+    }
+
+    public static function getSenders($userId)
+    {
+        $db = new DBHelper();
+        $rez = $db
+            ->select('DISTINCT sender_id')
+            ->from(self::TABLE)
+            ->where('recipient_id', $userId)
+            ->andWhere('sender_id', $userId, '<>')
+            ->orderby('seen', 'ASC')
+            ->get();
+        $ids = [];
+
+        foreach ($rez as $element)
+        {
+            $ids[] = $element['sender_id'];
+        }
+
+        return User::getUsers($ids);
+    }
+
+    public static function getChat($userId, $senderId)
+    {
+        $db = new DBHelper();
+        $rez = $db
+            ->select()
+            ->from(self::TABLE)
+            ->where('recipient_id', $userId)
+            ->andWhere('sender_id', $senderId)
+            ->orWhere('recipient_id', $senderId)
+            ->andWhere('sender_id', $userId)
+            ->get();
+
+        $chat = [];
+
+        foreach ($rez as $item){
+            $chat[] = new Message($item['id']);
+        }
+        return $chat;
     }
 }

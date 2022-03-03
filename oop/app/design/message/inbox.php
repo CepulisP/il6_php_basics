@@ -1,36 +1,28 @@
-<div class="new-messages">
-    <div class="message-title">
-        <h3>New messages</h3>
+<div>
+    <div class="chat-title">
+        <h3>Your conversations</h3>
     </div>
-    <?php foreach ($this->data['new_messages'] as $message) : ?>
-        <div class="message">
-            <div class="message_user">
-                <?= $message->getUser()->getNickname() ?>
+    <div class="conversations">
+        <?php if (!empty($this->data['senders'])) : ?>
+            <div class="conversation-wrapper">
+
+                <?php foreach ($this->data['senders'] as $sender) : ?>
+
+
+
+                            <div class="sender">
+                                <a href="<?= $this->link('message/chat', $sender['id']) ?>">
+                                <?= $sender['nickname'] . '(' . $sender['new_msg_count'] . ')' ?>
+                                </a>
+                            </div>
+
+
+                <?php endforeach; ?>
             </div>
-            <div class="message_date">
-                <?= $message->getCreatedAt() ?>
+        <?php else : ?>
+            <div>
+                No conversations yet
             </div>
-            <div class="message_content">
-                <p><?= $message->getMessage() ?></p>
-            </div>
-        </div>
-    <?php endforeach; ?>
-</div>
-<div class="old-messages">
-    <div class="message-title">
-        <h3>Old messages</h3>
+        <?php endif; ?>
     </div>
-    <?php foreach ($this->data['old_messages'] as $message) : ?>
-        <div class="message">
-            <div class="message_user">
-                <?= $message->getUser()->getNickname() ?>
-            </div>
-            <div class="message_date">
-                <?= $message->getCreatedAt() ?>
-            </div>
-            <div class="message_content">
-                <p><?= $message->getMessage() ?></p>
-            </div>
-        </div>
-    <?php endforeach; ?>
 </div>
