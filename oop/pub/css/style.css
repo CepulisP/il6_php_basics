@@ -135,15 +135,17 @@ a{
 
 .sender-message{
     margin-right: auto;
+    max-width: 50%;
     border: 1px solid;
     border-radius: 25px;
     padding: 10px;
-    font-size: 14pt;
+    font-size: 18pt;
     background-color: #202020;
 }
 
 .user-message{
     margin-left: auto;
+    max-width: 50%;
     text-align: right;
     border: 1px solid;
     border-radius: 25px;

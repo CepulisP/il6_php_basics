@@ -28,7 +28,7 @@
     <form action="<?= $this->link('message/sendmessage', $this->data['sender']->getId()) ?>" method="POST">
         <div class="chat-input">
             <div class="chat-input-text">
-                <textarea name="message" placeholder="Your message"></textarea>
+                <textarea name="message" placeholder="Your message" maxlength="255"></textarea>
             </div>
             <div class="chat-input-submit">
                 <input type="submit" name="submit" value="send">

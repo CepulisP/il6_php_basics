@@ -45,8 +45,10 @@ class Message extends AbstractController implements ControllerInterface
 
         foreach ($chat as $item){
             $msg = new MessageModel($item->getId());
-            $msg->setSeen(1);
-            $msg->save();
+            if ($msg->getSenderId() !== $_SESSION['user_id']) {
+                $msg->setSeen(1);
+                $msg->save();
+            }
         }
 
         $this->data['sender'] = new User($senderId);
