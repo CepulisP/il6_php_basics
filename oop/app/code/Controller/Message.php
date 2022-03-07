@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Controller;
 
 use Core\AbstractController;
@@ -18,16 +20,16 @@ class Message extends AbstractController implements ControllerInterface
         if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
     }
 
-    public function index()
+    public function index(): void
     {
-        $conversers = MessageModel::getSenders($_SESSION['user_id']);
+        $conversers = MessageModel::getSenders((int)$_SESSION['user_id']);
 
         $senders = [];
         foreach ($conversers as $converser){
             $senders[] = [
                 'id' => $converser->getId(),
                 'nickname' => $converser->getNickname(),
-                'new_msg_count' => MessageModel::countNewMessages($_SESSION['user_id'], $converser->getId())
+                'new_msg_count' => MessageModel::countNewMessages((int)$_SESSION['user_id'], (int)$converser->getId())
             ];
         }
 
@@ -39,12 +41,12 @@ class Message extends AbstractController implements ControllerInterface
         $this->render('message/inbox');
     }
 
-    public function chat($senderId)
+    public function chat(int $senderId): void
     {
-        $chat = MessageModel::getChat($_SESSION['user_id'], $senderId);
+        $chat = MessageModel::getChat((int)$_SESSION['user_id'], $senderId);
 
         foreach ($chat as $item){
-            $msg = new MessageModel($item->getId());
+            $msg = new MessageModel((int)$item->getId());
             if ($msg->getSenderId() !== $_SESSION['user_id']) {
                 $msg->setSeen(1);
                 $msg->save();
@@ -56,7 +58,7 @@ class Message extends AbstractController implements ControllerInterface
         $this->render('message/chat');
     }
 
-    public function send($recipientId = null)
+    public function send(?int $recipientId = null): void
     {
         $form = new FormHelper('message/sendmessage', 'POST');
 
@@ -83,7 +85,7 @@ class Message extends AbstractController implements ControllerInterface
         $this->render('message/send');
     }
 
-    public function sendMessage($recipientId = null)
+    public function sendMessage(?int $recipientId = null): void
     {
         if (!isset($recipientId)) $recipientId = User::getIdByNickname($_POST['recipient']);
 
@@ -95,8 +97,8 @@ class Message extends AbstractController implements ControllerInterface
 
         $message = new MessageModel();
         $message->setMessage($_POST['message']);
-        $message->setSenderId($_SESSION['user_id']);
-        $message->setRecipientId($recipientId);
+        $message->setSenderId((int)$_SESSION['user_id']);
+        $message->setRecipientId((int)$recipientId);
         $message->setSeen(0);
         $message->save();
 

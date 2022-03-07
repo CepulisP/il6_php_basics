@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Model;
 
 use Core\AbstractModel;
@@ -8,63 +10,63 @@ use Helper\DBHelper;
 
 class Model extends AbstractModel implements ModelInterface
 {
-    private $name;
+    private string $name;
 
-    private $manufacturerId;
+    private int $manufacturerId;
 
     protected const TABLE = 'models';
 
-    public function __construct($id = null)
+    public function __construct(?int $id = null)
     {
         if ($id !== null){
             $this->load($id);
         }
     }
 
-    public function assignData(){}
+    public function assignData(): void {}
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getManufacturerId()
+    public function getManufacturerId(): int
     {
         return $this->manufacturerId;
     }
 
-    public function load($id)
+    public function load(int $id): Model
     {
         $db = new DBHelper();
         $model = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
-        $this->id = $model['id'];
+        $this->id = (int)$model['id'];
         $this->name = $model['name'];
-        $this->manufacturerId = $model['manufacturer_id'];
+        $this->manufacturerId = (int)$model['manufacturer_id'];
         return $this;
     }
 
-    public static function getModels()
+    public static function getModels(): array
     {
         $db = new DBHelper();
         $data = $db->select()->from(self::TABLE)->get();
         $models = [];
 
         foreach ($data as $element) {
-            $model = new Model($element['id']);
+            $model = new Model((int)$element['id']);
             $models[] = $model;
         }
 
         return $models;
     }
 
-    public static function getModelsByManufacturer($id)
+    public static function getModelsByManufacturer(int $id): array
     {
         $db = new DBHelper();
         $data = $db->select()->from(self::TABLE)->where('manufacturer_id', $id)->get();
         $models = [];
 
         foreach ($data as $element) {
-            $model = new Model($element['id']);
+            $model = new Model((int)$element['id']);
             $models[] = $model;
         }
 

@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Helper;
 
 class FormHelper
 {
-    private $form;
+    private string $form;
 
-    public function __construct($action, $method)
+    public function __construct(string $action, string $method)
     {
         $this->form = '<form action="' . BASE_URL . $action . '" method="' . $method . '">';
     }
 
-    public function input($data, $br = 1)
+    public function input(array $data, bool $br = true): void
     {
         $this->form .= '<input ';
         foreach ($data as $attribute => $value) {
@@ -23,7 +25,7 @@ class FormHelper
         }
     }
 
-    public function select($data, $br = 1)
+    public function select(array $data, bool $br = true): void
     {
         $this->form .= '<select name="' . $data['name'] . '"';
         if (isset($data['id'])) {
@@ -46,13 +48,13 @@ class FormHelper
     }
 
     public function textArea(
-        $name,
-        $value = null,
-        $placeholder = null,
-        $id = null,
-        $limit = null,
-        $br = 1
-    )
+        string $name,
+        ?string $value = null,
+        ?string $placeholder = null,
+        ?string $id = null,
+        ?int $limit = null,
+        bool $br = true
+    ): void
     {
         $this->form .= '<textarea name ="' . $name . '"';
         if (isset($placeholder)) {
@@ -70,7 +72,7 @@ class FormHelper
         }
     }
 
-    public function label($id, $label, $br = 1)
+    public function label(string $id, string $label, bool $br = true): void
     {
         $this->form .= '<label for="' . $id . '">' . $label . '</label>';
         if ($br) {
@@ -78,7 +80,7 @@ class FormHelper
         }
     }
 
-    public function getForm()
+    public function getForm(): string
     {
         $this->form .= '</form>';
         return $this->form;

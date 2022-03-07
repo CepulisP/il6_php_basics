@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Controller;
 
 use Core\Interfaces\ControllerInterface;
@@ -13,24 +15,24 @@ use Core\AbstractController;
 
 class User extends AbstractController implements ControllerInterface
 {
-    public function index()
+    public function index(): void
     {
         $this->data['users'] = UserModel::getAllUsers();
         $this->render('user/all');
     }
 
-    public function show($id = null)
+    public function show(?string $id = null): void
     {
         if ($id == null){
             $error = new Error();
             $error->error404();
         }else {
-            $this->data['user'] = new UserModel($id);
+            $this->data['user'] = new UserModel((int)$id);
             $this->render('user/show');
         }
     }
 
-    public function register()
+    public function register(): void
     {
         if (isset($_SESSION['user_id'])) $this->logout();
 
@@ -93,12 +95,12 @@ class User extends AbstractController implements ControllerInterface
         $this->render('user/register');
     }
 
-    public function edit()
+    public function edit(): void
     {
         if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
 
         $form = new FormHelper('user/update/', 'POST');
-        $user = new UserModel($_SESSION['user_id']);
+        $user = new UserModel((int)$_SESSION['user_id']);
 
         $form->input([
             'name' => 'name',
@@ -163,7 +165,7 @@ class User extends AbstractController implements ControllerInterface
         $this->render('user/edit');
     }
 
-    public function login()
+    public function login(): void
     {
         if (isset($_SESSION['user_id'])) $this->logout();
 
@@ -189,7 +191,7 @@ class User extends AbstractController implements ControllerInterface
         $this->render('user/login');
     }
 
-    public function create()
+    public function create(): void
     {
         $passMatch = Validator::checkPassword($_POST['password'], $_POST['password2']);
         $emailValid = Validator::checkEmail($_POST['email']);
@@ -204,8 +206,9 @@ class User extends AbstractController implements ControllerInterface
             $user->setEmail(strtolower(trim($_POST['email'])));
             $user->setPassword(md5(strtolower(trim($_POST['password']))));
             $user->setPhone($_POST['phone']);
-            $user->setCityId($_POST['city_id']);
+            $user->setCityId((int)$_POST['city_id']);
             $user->setActive(1);
+            $user->setLoginAttempts(0);
             $user->setRoleId(0);
             $user->save();
 
@@ -217,7 +220,7 @@ class User extends AbstractController implements ControllerInterface
         }
     }
 
-    public function update()
+    public function update(): void
     {
         $emailValid = Validator::checkEmail($_POST['email']);
         $emailUniq = UserModel::isValueUniq('email', $_POST['email']);
@@ -226,7 +229,7 @@ class User extends AbstractController implements ControllerInterface
         $passSet = !empty($_POST['password']);
         $userId = $_SESSION['user_id'];
 
-        $user = new UserModel($userId);
+        $user = new UserModel((int)$userId);
 
         $userEmail = $user->getEmail();
         $inputEmail = strtolower(trim($_POST['email']));
@@ -236,7 +239,7 @@ class User extends AbstractController implements ControllerInterface
         $user->setName($_POST['name']);
         $user->setLastName($_POST['last_name']);
         $user->setPhone($_POST['phone']);
-        $user->setCityId($_POST['city_id']);
+        $user->setCityId((int)$_POST['city_id']);
         $user->setActive(1);
 
         if ($emailValid) {
@@ -262,7 +265,7 @@ class User extends AbstractController implements ControllerInterface
                 if ($passSet) $user->setPassword(md5(strtolower(trim($_POST['password']))));
 
                 $user->save();
-                $user->load($_SESSION['user_id']);
+                $user->load((int)$_SESSION['user_id']);
                 $_SESSION['user'] = $user;
 
                 unset($_SESSION['edit_error']);
@@ -277,7 +280,7 @@ class User extends AbstractController implements ControllerInterface
         }
     }
 
-    public function check()
+    public function check(): void
     {
         $email = strtolower(trim($_POST['email']));
         $password = md5(strtolower(trim($_POST['password'])));
@@ -308,7 +311,7 @@ class User extends AbstractController implements ControllerInterface
             }
         }
 
-        if ($userId) {
+        if (!empty($userId)) {
             $user = new UserModel($userId);
             $user->setLoginAttempts(0);
             $user->save();
@@ -326,7 +329,7 @@ class User extends AbstractController implements ControllerInterface
         }
     }
 
-    public function logout()
+    public function logout(): void
     {
         session_destroy();
         Url::redirect('');

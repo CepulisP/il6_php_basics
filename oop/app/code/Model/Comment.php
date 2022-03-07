@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Model;
 
 use Core\AbstractModel;
@@ -8,81 +10,81 @@ use Helper\DBHelper;
 
 class Comment extends AbstractModel implements ModelInterface
 {
-    private $comment;
+    private string $comment;
 
-    private $adId;
+    private int $adId;
 
-    private $userId;
+    private int $userId;
 
-    private $userIp;
+    private string $userIp;
 
-    private $createdAt;
+    private string $createdAt;
 
     protected const TABLE = 'comments';
 
-    public function __construct($id = null)
+    public function __construct(?int $id = null)
     {
         if ($id !== null){
             $this->load($id);
         }
     }
 
-    public function getComment()
+    public function getComment(): string
     {
         return $this->comment;
     }
 
-    public function setComment($comment)
+    public function setComment(string $comment): void
     {
         $this->comment = $comment;
     }
 
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
 
-    public function setUserId($id)
+    public function setUserId(int $id): void
     {
         $this->userId = $id;
     }
 
-    public function getUserIp()
+    public function getUserIp(): string
     {
         return $this->userIp;
     }
 
-    public function setUserIp($ip)
+    public function setUserIp(string $ip): void
     {
         $this->userIp = $ip;
     }
 
-    public function getAdId()
+    public function getAdId(): int
     {
         return $this->adId;
     }
 
-    public function setAdId($id)
+    public function setAdId(int $id): void
     {
         $this->adId = $id;
     }
 
-    public function getCreatedAt()
+    public function getCreatedAt(): string
     {
         return $this->createdAt;
     }
 
-    public function getUser()
+    public function getUser(): User
     {
         return new User($this->userId);
     }
 
-    public function getAd()
+    public function getAd(): Ad
     {
         return new Ad($this->adId);
     }
 
-    public function assignData()
+    public function assignData(): void
     {
         $this->data = [
             'comment' => $this->comment,
@@ -92,36 +94,36 @@ class Comment extends AbstractModel implements ModelInterface
         ];
     }
 
-    public function load($id)
+    public function load(int $id): Comment
     {
         $db = new DBHelper();
         $comment = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
         if (!empty($comment)) {
-            $this->id = $comment['id'];
+            $this->id = (int)$comment['id'];
             $this->comment = $comment['comment'];
-            $this->adId = $comment['ad_id'];
-            $this->userId = $comment['user_id'];
+            $this->adId = (int)$comment['ad_id'];
+            $this->userId = (int)$comment['user_id'];
             $this->userIp = $comment['user_ip'];
             $this->createdAt = $comment['created_at'];
         }
         return $this;
     }
 
-    public static function getAllComments()
+    public static function getAllComments(): array
     {
         $db = new DBHelper();
         $data = $db->select()->from(self::TABLE)->get();
         $comments = [];
 
         foreach ($data as $element) {
-            $comment = new Comment($element['id']);
+            $comment = new Comment((int)$element['id']);
             $comments[] = $comment;
         }
 
         return $comments;
     }
 
-    public static function getAdComments($adId, $limit = null)
+    public static function getAdComments(int $adId, ?int $limit = null): array
     {
         $db = new DBHelper();
         $db->select()->from(self::TABLE)->where('ad_id', $adId)->orderby('created_at', 'DESC');
@@ -134,21 +136,21 @@ class Comment extends AbstractModel implements ModelInterface
         $comments = [];
 
         foreach ($data as $element) {
-            $comment = new Comment($element['id']);
+            $comment = new Comment((int)$element['id']);
             $comments[] = $comment;
         }
 
         return $comments;
     }
 
-    public static function getUserComments($userId)
+    public static function getUserComments(int $userId): array
     {
         $db = new DBHelper();
         $data = $db->select()->from(self::TABLE)->where('user_id', $userId)->get();
         $comments = [];
 
         foreach ($data as $element) {
-            $comment = new Comment($element['id']);
+            $comment = new Comment((int)$element['id']);
             $comments[] = $comment;
         }
 

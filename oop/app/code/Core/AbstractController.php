@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core;
 
 use Helper\Url;
@@ -10,7 +12,7 @@ use Helper\Logger;
 
 class AbstractController
 {
-    protected $data;
+    protected array $data;
 
     public function __construct()
     {
@@ -19,31 +21,31 @@ class AbstractController
         $this->data['meta_description'] = '';
     }
 
-    protected function render($template)
+    protected function render($template): void
     {
         include_once PROJECT_ROOT_DIR . '\app\design\parts\header.php';
         include_once PROJECT_ROOT_DIR . '\app\design\\' . $template . '.php';
         include_once PROJECT_ROOT_DIR . '\app\design\parts\footer.php';
     }
 
-    protected function renderAdmin($template)
+    protected function renderAdmin($template): void
     {
         include_once PROJECT_ROOT_DIR . '\app\design\admin\parts\header.php';
         include_once PROJECT_ROOT_DIR . '\app\design\admin\\' . $template . '.php';
         include_once PROJECT_ROOT_DIR . '\app\design\admin\parts\footer.php';
     }
 
-    protected function isUserLoggedIn()
+    protected function isUserLoggedIn(): bool
     {
         return isset($_SESSION['user_id']);
     }
 
-    public function link($path, $param = null)
+    public function link(string $path, ?string $param = null): string
     {
         return Url::link($path, $param);
     }
 
-    protected function isUserAdmin()
+    protected function isUserAdmin(): bool
     {
         if ($this->isUserLoggedIn() && $_SESSION['user']->getRoleId() == 1){
             return true;
@@ -51,8 +53,8 @@ class AbstractController
         return false;
     }
 
-    public function getNewMessageCount($senderId = null)
+    public function getNewMessageCount(?int $senderId = null): int
     {
-        return Message::countNewMessages($_SESSION['user_id'], $senderId);
+        return Message::countNewMessages((int)$_SESSION['user_id'], $senderId);
     }
 }
