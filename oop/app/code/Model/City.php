@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Model;
 
 use Core\AbstractModel;
@@ -8,46 +10,41 @@ use Helper\DBHelper;
 
 class City extends AbstractModel implements ModelInterface
 {
-    private $name;
+    private string $name;
 
     protected const TABLE = 'cities';
 
-    public function __construct($id = null)
+    public function __construct(?int $id = null)
     {
         if ($id !== null){
             $this->load($id);
         }
     }
 
-    public function assignData(){}
+    public function assignData(): void {}
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function load($id)
+    public function load(int $id): City
     {
         $db = new DBHelper();
         $city = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
-        $this->id = $city['id'];
+        $this->id = (int)$city['id'];
         $this->name = $city['name'];
         return $this;
     }
 
-    public static function getCities()
+    public static function getCities(): array
     {
         $db = new DBHelper();
         $data = $db->select()->from(self::TABLE)->get();
         $cities = [];
 
         foreach ($data as $element) {
-            $city = new City($element['id']);
+            $city = new City((int)$element['id']);
             $cities[] = $city;
         }
 

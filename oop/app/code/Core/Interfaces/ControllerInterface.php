@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core\Interfaces;
 
 interface ControllerInterface
 {
-    public function index();
+    public function index(): void;
 }

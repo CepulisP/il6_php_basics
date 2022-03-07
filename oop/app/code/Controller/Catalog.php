@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Controller;
 
 use Core\Interfaces\ControllerInterface;
@@ -17,7 +19,7 @@ class Catalog extends AbstractController implements ControllerInterface
 {
     private const ITEMS_PER_PAGE = 10;
 
-    public function index()
+    public function index(): void
     {
         $form = new FormHelper('catalog/', 'GET');
 
@@ -33,7 +35,7 @@ class Catalog extends AbstractController implements ControllerInterface
         $this->render('catalog/all');
     }
 
-    public function show($slug)
+    public function show(string $slug): void
     {
         $ad = new Ad();
         $ad->loadBySlug($slug);
@@ -54,7 +56,7 @@ class Catalog extends AbstractController implements ControllerInterface
             'type' => 'hidden',
             'value' => $nr1 + $nr2
         ]);
-        $form->label('human_check', 'What\'s ' . $nr1 . '+' . $nr2 . '? ', 0);
+        $form->label('human_check', 'What\'s ' . $nr1 . '+' . $nr2 . '? ', false);
         $form->input([
             'name' => 'human_check',
             'id' => 'human_check',
@@ -80,7 +82,7 @@ class Catalog extends AbstractController implements ControllerInterface
         $this->render('catalog/show');
     }
 
-    public function search()
+    public function search(): void
     {
         $form = new FormHelper('catalog/search', 'GET');
 
@@ -102,7 +104,7 @@ class Catalog extends AbstractController implements ControllerInterface
         $this->render('catalog/search');
     }
 
-    private function sortForm($form)
+    private function sortForm(object $form): void
     {
         $sort = [
             'name' => 'sort',
@@ -117,11 +119,11 @@ class Catalog extends AbstractController implements ControllerInterface
             ],
         ];
         if (isset($_GET['sort'])) $sort['selected'] = $_GET['sort'];
-        $form->label('sort', 'Sort by: ', 0);
+        $form->label('sort', 'Sort by: ', false);
         $form->select($sort);
     }
 
-    private function searchForm($form)
+    private function searchForm(object $form): void
     {
 
         $searchBox = [
@@ -141,13 +143,13 @@ class Catalog extends AbstractController implements ControllerInterface
         if (isset($_GET['search'])) $searchBox['value'] = $_GET['search'];
         if (isset($_GET['field'])) $searchField['selected'] = $_GET['field'];
 
-        $form->label('search_box', 'Keyword or phrase: ', 0);
-        $form->input($searchBox, 0);
-        $form->label('search_field', ' in ', 0);
+        $form->label('search_box', 'Keyword or phrase: ', false);
+        $form->input($searchBox, false);
+        $form->label('search_field', ' in ', false);
         $form->select($searchField);
     }
 
-    private function pageForm($form, $adCount)
+    private function pageForm(object $form, int $adCount): void
     {
         $showSelect = [
             'name' => 'show',
@@ -184,13 +186,13 @@ class Catalog extends AbstractController implements ControllerInterface
 
         if (!empty($_GET['p'])) $pageSelect['selected'] = $_GET['p'];
 
-        $form->label('show', ' Ads per page: ', 0);
-        $form->select($showSelect, 0);
-        $form->label('page', ' Page: ', 0);
+        $form->label('show', ' Ads per page: ', false);
+        $form->select($showSelect, false);
+        $form->label('page', ' Page: ', false);
         $form->select($pageSelect);
     }
 
-    public function addComment()
+    public function addComment(): void
     {
         if (empty($_POST['comment'])) Url::redirect('catalog/show/' . $_GET['back']);
         if (!isset($_SESSION['user_id'])) {
@@ -204,8 +206,8 @@ class Catalog extends AbstractController implements ControllerInterface
 
         $comment = new Comment();
         $comment->setComment($_POST['comment']);
-        $comment->setAdId($_GET['id']);
-        $comment->setUserId($_SESSION['user_id']);
+        $comment->setAdId((int)$_GET['id']);
+        $comment->setUserId((int)$_SESSION['user_id']);
         $comment->setUserIp($_SERVER['REMOTE_ADDR']);
         $comment->save();
 
@@ -213,7 +215,7 @@ class Catalog extends AbstractController implements ControllerInterface
         Url::redirect('catalog/show/' . $_GET['back']);
     }
 
-    public function add()
+    public function add(): void
     {
         if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
 
@@ -298,7 +300,7 @@ class Catalog extends AbstractController implements ControllerInterface
         $this->render('catalog/add');
     }
 
-    public function edit($id)
+    public function edit(int $id): void
     {
         if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
 
@@ -393,14 +395,14 @@ class Catalog extends AbstractController implements ControllerInterface
         $form->input([
             'name' => 'create',
             'type' => 'submit',
-            'value' => 'Create'
+            'value' => 'Save'
         ]);
 
         $this->data['form'] = $form->getForm();
         $this->render('catalog/edit');
     }
 
-    public function create()
+    public function create(): void
     {
         $slug = Url::generateSlug($_POST['title']);
 
@@ -412,15 +414,16 @@ class Catalog extends AbstractController implements ControllerInterface
 
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);
-        $ad->setManufacturerId($_POST['manufacturer_id']);
-        $ad->setModelId($_POST['model_id']);
-        $ad->setPrice($_POST['price']);
-        $ad->setYear($_POST['year']);
-        $ad->setTypeId($_POST['type_id']);
+        $ad->setManufacturerId((int)$_POST['manufacturer_id']);
+        $ad->setModelId((int)$_POST['model_id']);
+        $ad->setPrice((float)$_POST['price']);
+        $ad->setYear((int)$_POST['year']);
+        $ad->setTypeId((int)$_POST['type_id']);
         $ad->setImage($_POST['image']);
         $ad->setVin($_POST['vin']);
-        $ad->setUserId($_SESSION['user_id']);
+        $ad->setUserId((int)$_SESSION['user_id']);
         $ad->setSlug($slug);
+        $ad->setViews(0);
         $ad->setActive(1);
 
         $ad->save();
@@ -428,17 +431,17 @@ class Catalog extends AbstractController implements ControllerInterface
         Url::redirect('');
     }
 
-    public function update()
+    public function update(): void
     {
-        $ad = new Ad($_POST['id']);
+        $ad = new Ad((int)$_POST['id']);
 
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);
-        $ad->setManufacturerId($_POST['manufacturer_id']);
-        $ad->setModelId($_POST['model_id']);
-        $ad->setPrice($_POST['price']);
-        $ad->setYear($_POST['year']);
-        $ad->setTypeId($_POST['type_id']);
+        $ad->setManufacturerId((int)$_POST['manufacturer_id']);
+        $ad->setModelId((int)$_POST['model_id']);
+        $ad->setPrice((float)$_POST['price']);
+        $ad->setYear((int)$_POST['year']);
+        $ad->setTypeId((int)$_POST['type_id']);
         $ad->setImage($_POST['image']);
         $ad->setVin($_POST['vin']);
 
@@ -447,10 +450,10 @@ class Catalog extends AbstractController implements ControllerInterface
         Url::redirect('');
     }
 
-    private static function getRequestedAds($returnCount = false)
+    private static function getRequestedAds(bool $returnCount = false): array
     {
-        $page = !empty($_GET['p']) ? $_GET['p'] : 1;
-        $adsPerPage = !empty($_GET['show']) ? $_GET['show'] : self::ITEMS_PER_PAGE;
+        $page = !empty($_GET['p']) ? (int)$_GET['p'] : 1;
+        $adsPerPage = !empty($_GET['show']) ? (int)$_GET['show'] : self::ITEMS_PER_PAGE;
         $firstAd = ($page - 1) * $adsPerPage;
         $sort = !empty($_GET['sort']) ? explode('_', $_GET['sort'], 2) : ['DESC', 'created_at'];
         $orderField = $sort[1];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Controller;
 
 use Core\AbstractController;
@@ -32,24 +34,24 @@ class Admin extends AbstractController implements ControllerInterface
         if (!$this->isUserAdmin()) Url::redirect('');
     }
 
-    public function index()
+    public function index(): void
     {
         $this->renderAdmin('index');
     }
 
-    public function users()
+    public function users(): void
     {
         $this->data['users'] = UserModel::getAllUsers(false);
         $this->renderAdmin('users\list');
     }
 
-    public function ads()
+    public function ads(): void
     {
         $this->data['ads'] = Ad::getAllAds(false);
         $this->renderAdmin('ads\list');
     }
 
-    public function adEdit($id)
+    public function adEdit(int $id): void
     {
         $ad = new Ad($id);
 
@@ -61,7 +63,7 @@ class Admin extends AbstractController implements ControllerInterface
             'value' => $id
         ]);
 
-        $form->label('title', 'Title: ', 0);
+        $form->label('title', 'Title: ', false);
         $form->input([
             'name' => 'title',
             'type' => 'text',
@@ -78,7 +80,7 @@ class Admin extends AbstractController implements ControllerInterface
             $options[$manufacturer->getId()] = $manufacturer->getName();
         }
 
-        $form->label('manufacturer_id', 'Manufacturer: ', 0);
+        $form->label('manufacturer_id', 'Manufacturer: ', false);
         $form->select([
             'name' => 'manufacturer_id',
             'id' => 'manufacturer_id',
@@ -93,14 +95,14 @@ class Admin extends AbstractController implements ControllerInterface
             $options[$model->getId()] = $model->getName();
         }
 
-        $form->label('model_id', 'Model: ', 0);
+        $form->label('model_id', 'Model: ', false);
         $form->select([
             'name' => 'model_id',
             'id' => 'model_id',
             'options' => $options,
             'selected' => $ad->getModelId()
         ]);
-        $form->label('price', 'Price: ', 0);
+        $form->label('price', 'Price: ', false);
         $form->input([
             'name' => 'price',
             'type' => 'number',
@@ -115,7 +117,7 @@ class Admin extends AbstractController implements ControllerInterface
             $options[$i] = $i;
         }
 
-        $form->label('year', 'Year: ', 0);
+        $form->label('year', 'Year: ', false);
         $form->select([
             'name' => 'year',
             'id' => 'year',
@@ -130,21 +132,21 @@ class Admin extends AbstractController implements ControllerInterface
             $options[$type->getId()] = $type->getName();
         }
 
-        $form->label('type_id', 'Type: ', 0);
+        $form->label('type_id', 'Type: ', false);
         $form->select([
             'name' => 'type_id',
             'id' => 'type_id',
             'options' => $options,
             'selected' => $ad->getTypeId()
         ]);
-        $form->label('image', 'Image url: ', 0);
+        $form->label('image', 'Image url: ', false);
         $form->input([
             'name' => 'image',
             'type' => 'text',
             'id' => 'image',
             'value' => $ad->getImage()
         ]);
-        $form->label('active', 'Active: ', 0);
+        $form->label('active', 'Active: ', false);
         $form->select([
             'name' => 'active',
             'id' => 'active',
@@ -154,7 +156,7 @@ class Admin extends AbstractController implements ControllerInterface
                 '1' => 'Active'
             ]
         ]);
-        $form->label('vin', 'VIN: ', 0);
+        $form->label('vin', 'VIN: ', false);
         $form->input([
             'name' => 'vin',
             'type' => 'text',
@@ -171,7 +173,7 @@ class Admin extends AbstractController implements ControllerInterface
         $this->renderAdmin('ads\edit');
     }
 
-    public function userEdit($id)
+    public function userEdit(int $id): void
     {
         $user = new UserModel($id);
         $form = new FormHelper('admin/userupdate', 'POST');
@@ -182,42 +184,42 @@ class Admin extends AbstractController implements ControllerInterface
             'value' => $id
         ]);
 
-        $form->label('name', 'Name: ', 0);
+        $form->label('name', 'Name: ', false);
         $form->input([
             'name' => 'name',
             'type' => 'text',
             'id' => 'name',
             'value' => $user->getName()
         ]);
-        $form->label('last_name', 'Last name: ', 0);
+        $form->label('last_name', 'Last name: ', false);
         $form->input([
             'name' => 'last_name',
             'type' => 'text',
             'id' => 'last_name',
             'value' => $user->getLastName()
         ]);
-        $form->label('email', 'Email: ', 0);
+        $form->label('email', 'Email: ', false);
         $form->input([
             'name' => 'email',
             'type' => 'email',
             'id' => 'email',
             'value' => $user->getEmail()
         ]);
-        $form->label('password', 'Password: ', 0);
+        $form->label('password', 'Password: ', false);
         $form->input([
             'name' => 'password',
             'type' => 'password',
             'placeholder' => 'New password',
             'id' => 'password'
         ]);
-        $form->label('password2', 'Repeat password: ', 0);
+        $form->label('password2', 'Repeat password: ', false);
         $form->input([
             'name' => 'password2',
             'type' => 'password',
             'placeholder' => 'Repeat password',
             'id' => 'password2'
         ]);
-        $form->label('phone', 'Phone: ', 0);
+        $form->label('phone', 'Phone: ', false);
         $form->input([
             'name' => 'phone',
             'type' => 'text',
@@ -232,14 +234,14 @@ class Admin extends AbstractController implements ControllerInterface
             $options[$city->getId()] = $city->getName();
         }
 
-        $form->label('city', 'City: ', 0);
+        $form->label('city', 'City: ', false);
         $form->select([
             'name' => 'city_id',
             'id' => 'city',
             'options' => $options,
             'selected' => $user->getCityId()
         ]);
-        $form->label('active', 'Active: ', 0);
+        $form->label('active', 'Active: ', false);
         $form->select([
             'name' => 'active',
             'id' => 'active',
@@ -249,14 +251,14 @@ class Admin extends AbstractController implements ControllerInterface
                 '1' => 'Active'
             ]
         ]);
-        $form->label('login_attempts', 'Login attempts: ', 0);
+        $form->label('login_attempts', 'Login attempts: ', false);
         $form->input([
             'name' => 'login_attempts',
             'type' => 'text',
             'id' => 'login_attempts',
             'value' => $user->getLoginAttempts()
         ]);
-        $form->label('role_id', 'Role: ', 0);
+        $form->label('role_id', 'Role: ', false);
         $form->select([
             'name' => 'role_id',
             'id' => 'role_id',
@@ -276,7 +278,7 @@ class Admin extends AbstractController implements ControllerInterface
         $this->renderAdmin('users\edit');
     }
 
-    public function userUpdate()
+    public function userUpdate(): void
     {
         $emailValid = Validator::checkEmail($_POST['email']);
         $emailUniq = UserModel::isValueUniq('email', $_POST['email']);
@@ -284,7 +286,7 @@ class Admin extends AbstractController implements ControllerInterface
         $passSet = !empty($_POST['password']);
         $userId = $_POST['id'];
 
-        $user = new UserModel($userId);
+        $user = new UserModel((int)$userId);
 
         $userEmail = $user->getEmail();
         $inputEmail = strtolower(trim($_POST['email']));
@@ -292,10 +294,10 @@ class Admin extends AbstractController implements ControllerInterface
         $user->setName($_POST['name']);
         $user->setLastName($_POST['last_name']);
         $user->setPhone($_POST['phone']);
-        $user->setCityId($_POST['city_id']);
-        $user->setActive($_POST['active']);
-        $user->setLoginAttempts($_POST['login_attempts']);
-        $user->setRoleId($_POST['role_id']);
+        $user->setCityId((int)$_POST['city_id']);
+        $user->setActive((int)$_POST['active']);
+        $user->setLoginAttempts((int)$_POST['login_attempts']);
+        $user->setRoleId((int)$_POST['role_id']);
 
         if ($emailValid) {
             if ($passMatch) {
@@ -324,26 +326,26 @@ class Admin extends AbstractController implements ControllerInterface
         }
     }
 
-    public function adUpdate()
+    public function adUpdate(): void
     {
-        $ad = new Ad($_POST['id']);
+        $ad = new Ad((int)$_POST['id']);
 
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);
-        $ad->setManufacturerId($_POST['manufacturer_id']);
-        $ad->setModelId($_POST['model_id']);
-        $ad->setPrice($_POST['price']);
-        $ad->setYear($_POST['year']);
-        $ad->setTypeId($_POST['type_id']);
+        $ad->setManufacturerId((int)$_POST['manufacturer_id']);
+        $ad->setModelId((int)$_POST['model_id']);
+        $ad->setPrice((float)$_POST['price']);
+        $ad->setYear((int)$_POST['year']);
+        $ad->setTypeId((int)$_POST['type_id']);
         $ad->setImage($_POST['image']);
-        $ad->setActive($_POST['active']);
+        $ad->setActive((int)$_POST['active']);
         $ad->setVin($_POST['vin']);
         $ad->save();
 
         Url::redirect('admin/ads');
     }
 
-    public function massUserUpdate()
+    public function massUserUpdate(): void
     {
         if (!isset($_POST['selected'])) Url::redirect('admin/users');
 
@@ -352,13 +354,13 @@ class Admin extends AbstractController implements ControllerInterface
 
         if ($action == self::ACTIVE || self::NOT_ACTIVE){
             foreach ($ids as $id){
-                $ad = new UserModel($id);
-                $ad->setActive($action);
+                $ad = new UserModel((int)$id);
+                $ad->setActive((int)$action);
                 $ad->save();
             }
         }elseif ($action == self::DELETE){
             foreach ($ids as $id){
-                $ad = new UserModel($id);
+                $ad = new UserModel((int)$id);
                 $ad->delete();
             }
         }
@@ -366,7 +368,7 @@ class Admin extends AbstractController implements ControllerInterface
         Url::redirect('admin/users');
     }
 
-    public function massAdUpdate()
+    public function massAdUpdate(): void
     {
         if (!isset($_POST['selected'])) Url::redirect('admin/ads');
 
@@ -375,13 +377,13 @@ class Admin extends AbstractController implements ControllerInterface
 
         if ($action == self::ACTIVE || self::NOT_ACTIVE){
             foreach ($ids as $id){
-                $ad = new Ad($id);
-                $ad->setActive($action);
+                $ad = new Ad((int)$id);
+                $ad->setActive((int)$action);
                 $ad->save();
             }
         }elseif ($action == self::DELETE){
             foreach ($ids as $id){
-                $ad = new Ad($id);
+                $ad = new Ad((int)$id);
                 $ad->delete();
             }
         }
