@@ -6,15 +6,9 @@
         <?php foreach ($this->data['chat'] as $msg) : ?>
             <?php if ($msg->getSenderId() == $this->data['sender']->getId()) : ?>
                 <div class="sender-message">
-                    <div class="message_date">
-                        <?= $msg->getCreatedAt() ?>
-                    </div>
-                    <div class="message_content">
-                        <p><?= $msg->getMessage() ?></p>
-                    </div>
-                </div>
             <?php else : ?>
                 <div class="user-message">
+            <?php endif; ?>
                     <div class="message_date">
                         <?= $msg->getCreatedAt() ?>
                     </div>
@@ -22,7 +16,6 @@
                         <p><?= $msg->getMessage() ?></p>
                     </div>
                 </div>
-            <?php endif; ?>
         <?php endforeach; ?>
     </div>
     <form action="<?= $this->link('message/sendmessage', $this->data['sender']->getId()) ?>" method="POST">

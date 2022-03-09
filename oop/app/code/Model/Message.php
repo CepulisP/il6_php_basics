@@ -105,33 +105,6 @@ class Message extends AbstractModel implements ModelInterface
         return $this;
     }
 
-    public static function getNewMessages(int $userId): array
-    {
-        $db = new DBHelper();
-        $data = $db->select()->from(self::TABLE)->where('recipient_id', $userId)->andWhere('seen', 1)->get();
-        $messages = [];
-
-        foreach ($data as $element) {
-            $message = new Message((int)$element['id']);
-            $messages[] = $message;
-        }
-        return $messages;
-    }
-
-    public static function getOldMessages(int $userId): array
-    {
-        $db = new DBHelper();
-        $data = $db->select()->from(self::TABLE)->where('recipient_id', $userId)->andWhere('seen', 1)->get();
-        $messages = [];
-
-        foreach ($data as $element) {
-            $message = new Message((int)$element['id']);
-            $messages[] = $message;
-        }
-
-        return $messages;
-    }
-
     public static function countNewMessages(int $userId, ?int $senderId = null): int
     {
         $db = new DBHelper();
