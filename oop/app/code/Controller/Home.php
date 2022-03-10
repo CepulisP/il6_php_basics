@@ -6,7 +6,9 @@ namespace Controller;
 
 use Core\AbstractController;
 use Core\Interfaces\ControllerInterface;
+use Helper\Logger;
 use Model\Ad;
+use Model\Rating;
 
 class Home extends AbstractController implements ControllerInterface
 {

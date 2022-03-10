@@ -17,6 +17,12 @@
                 <img src="<?= $ad->getImage() ?>">
                 <br>
                 <?= $ad->getPrice() ?> Eur
+                <br>
+                <?php if ($ad->getRating() == 0){
+                    echo 'No rating';
+                }else{
+                    echo 'Rating: ' . $ad->getRating();
+                } ?>
             </a>
             <br>
             <?php if (isset($_SESSION['user_id'])) : ?>
