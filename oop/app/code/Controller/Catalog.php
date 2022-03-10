@@ -10,6 +10,7 @@ use Helper\Logger;
 use Model\Comment;
 use Model\Manufacturer;
 use Model\Model;
+use Model\Rating;
 use Model\Type;
 use Helper\Url;
 use Model\Ad;
@@ -78,6 +79,15 @@ class Catalog extends AbstractController implements ControllerInterface
         $this->data['author'] = $ad->getUser();
         $this->data['comment_box'] = $form->getForm();
         $this->data['comments'] = $ad->getComments();
+
+        if (!isset($_SESSION['user_id'])){
+            $this->data['rating'] = Rating::getAdRating($adId);
+        }elseif (!Rating::hasUserRated($_SESSION['user_id'], $adId)){
+            $this->data['rating'] = [];
+        }else{
+            $this->data['rating'] = Rating::getAdRating($adId);
+            $this->data['user_rating'] = Rating::getUserRating($_SESSION['user_id'], $adId);
+        }
 
         $this->render('catalog/show');
     }
@@ -448,6 +458,19 @@ class Catalog extends AbstractController implements ControllerInterface
         $ad->save();
 
         Url::redirect('');
+    }
+
+    public function rate(int $adId): void
+    {
+        $rating = new Rating();
+
+        $rating->setRating((int)$_POST['rating']);
+        $rating->setAdId($adId);
+        $rating->setUserId((int)$_SESSION['user_id']);
+
+        $rating->save();
+
+        Url::redirect('catalog/show/' . $_POST['slug']);
     }
 
     private static function getRequestedAds(bool $returnCount = false): array

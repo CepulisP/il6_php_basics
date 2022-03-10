@@ -214,6 +214,11 @@ class Ad extends AbstractModel implements ModelInterface
         return Comment::getAdComments($this->id, $limit);
     }
 
+    public function getRating(): float
+    {
+        return Rating::getAdRating($this->id);
+    }
+
     public function assignData(): void
     {
         $this->data = [

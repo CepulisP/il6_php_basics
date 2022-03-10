@@ -28,6 +28,22 @@
         <?= ucfirst($this->data['author']->getLastName()) ?>
         <a href="<?= $this->link('message/send', $this->data['author']->getId()) ?>">Send a message</a>
         <br>
+        <?php if (!empty($this->data['rating'])) : ?>
+            Rating: <?= $this->data['rating'] ?>
+            <?php if (!empty($this->data['user_rating'])) : ?>
+                (You rated : <?= $this->data['user_rating'] ?>)
+            <?php endif; ?>
+        <?php else : ?>
+            <form action="<?= $this->link('catalog/rate', $this->data['ad']->getId()) ?>" method="POST">
+                <input type="hidden" name="slug" value="<?= $this->data['ad']->getSlug() ?>">
+                <button type="submit" name="rating" value="1">1</button>
+                <button type="submit" name="rating" value="2">2</button>
+                <button type="submit" name="rating" value="3">3</button>
+                <button type="submit" name="rating" value="4">4</button>
+                <button type="submit" name="rating" value="5">5</button>
+            </form>
+        <?php endif; ?>
+        <br>
     </div>
 </div>
 <div class="related">
