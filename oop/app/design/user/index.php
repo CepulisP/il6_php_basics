@@ -1,0 +1,1 @@
+<a href="<?= $this->link('user/edit', $_SESSION['user_id']) ?>">Edit User</a>
