@@ -17,19 +17,8 @@ class User extends AbstractController implements ControllerInterface
 {
     public function index(): void
     {
-        $this->data['users'] = UserModel::getAllUsers();
-        $this->render('user/all');
-    }
-
-    public function show(?string $id = null): void
-    {
-        if ($id == null){
-            $error = new Error();
-            $error->error404();
-        }else {
-            $this->data['user'] = new UserModel((int)$id);
-            $this->render('user/show');
-        }
+        if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
+        $this->render('user/index');
     }
 
     public function register(): void
