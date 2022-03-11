@@ -12,10 +12,12 @@ use Model\Rating;
 
 class Home extends AbstractController implements ControllerInterface
 {
+    private const ITEMS_PER_PAGE = 5;
+
     public function index(): void
     {
-        $this->data['new_ads'] = Ad::getOrderedAds('created_at', 'DESC', true, 5);
-        $this->data['pop_ads'] = Ad::getOrderedAds('views', 'DESC', true, 5);
+        $this->data['new_ads'] = Ad::getOrderedAds('created_at', 'DESC', true, self::ITEMS_PER_PAGE);
+        $this->data['pop_ads'] = Ad::getOrderedAds('views', 'DESC', true, self::ITEMS_PER_PAGE);
 
         $this->render('parts/home');
     }

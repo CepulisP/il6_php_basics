@@ -17,7 +17,7 @@ class AbstractController
     public function __construct()
     {
         $this->data = [];
-        $this->data['title'] = 'Auto-Market | Auto ad portal';
+        $this->data['title'] = 'AutoMarket | Auto ad portal';
         $this->data['meta_description'] = '';
     }
 
