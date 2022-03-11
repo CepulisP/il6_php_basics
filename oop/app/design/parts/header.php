@@ -7,41 +7,55 @@
 <body>
 <header>
     <div class="main-header">
-        <div class="nav user-nav">
-            <?php if ($this->isUserLoggedIn()) : ?>
-                <li><a href='<?= $this->link('message') ?>'>Inbox(<?= $this->getNewMessageCount() ?>)</a></li>
-                <?php if ($this->isUserAdmin()) : ?>
-                    <li><a href='<?= $this->link('admin/') ?>'>Admin</a></li>
-                <?php endif; ?>
-                <li><a href='<?= $this->link('user/logout/') ?>'>Logout</a></li>
-            <?php else : ?>
-                <li><a href='<?= $this->link('user/register/') ?>'>Sign up</a></li>
-                <li><a href='<?= $this->link('user/login/') ?>'>Login</a></li>
-            <?php endif ?>
-        </div>
-        <div class="header-mid">
-            <img src="<?= IMAGE_PATH . 'car_logo.png'?>">
-            <h1 class="web-name big-web-name">Auto-Market</h1>
-            <form action="<?= $this->link('catalog/search') ?>">
-                <input name="search" id="search" type="text" placeholder="Search">
-                <select name="field">
-                    <option selected value="title">Title</option>
-                    <option value="description">Description</option>
-                </select>
-                <input name="submit" type="submit" value="Search">
-            </form>
-        </div>
-        <div class="nav site-nav">
-            <nav>
+        <div class="header-top">
+            <div class="web-logo">
+                <a href='<?= $this->link('') ?>'>
+                    <img src="<?= IMAGE_PATH . 'web_logo.png'?>">
+                </a>
+            </div>
+            <div class="search-bar">
+                <form class="search-form" action="<?= $this->link('catalog/search') ?>">
+                    <select class="search-field" name="field">
+                        <option selected value="title">Title</option>
+                        <option value="description">Description</option>
+                    </select>
+                    <input name="search" id="search" autocomplete="nope" type="text" placeholder="Search" class="search-term">
+                    <input name="submit" type="submit" value="&#x1F50E;&#xFE0E;" class="search-btn">
+                </form>
+            </div>
+            <nav class="nav user-nav">
                 <ul>
-                    <li><a href='<?= $this->link('') ?>'>Home</a></li>
-                    <li><a href='<?= $this->link('catalog/') ?>'>All ads</a></li>
                     <?php if ($this->isUserLoggedIn()) : ?>
-                        <li><a href='<?= $this->link('catalog/add/') ?>'>New ad</a></li>
+                        <?php if ($this->isUserAdmin()) : ?>
+                            <li><a class="btn btn-admin" href='<?= $this->link('admin/') ?>'>Admin</a></li>
+                        <?php endif; ?>
+                        <li><a class="btn-inbox" href='<?= $this->link('message') ?>'>
+                                <img src="<?= IMAGE_PATH . 'mail.png' ?>">
+                                <?php if (99 < $this->getNewMessageCount()) : ?>
+                                    <div class="mark inbox-full">99+</div>
+                                <?php elseif ($this->getNewMessageCount() > 0) : ?>
+                                    <div class="mark inbox-mid"><?= $this->getNewMessageCount() ?></div>
+                                <?php else : ?>
+                                    <div class="mark inbox-empty">0</div>
+                                <?php endif; ?>
+                            </a></li>
+                        <li><a class="btn btn-logout" href='<?= $this->link('user/logout/') ?>'>Logout</a></li>
+                    <?php else : ?>
+                        <a class="btn btn-signup" href='<?= $this->link('user/register/') ?>'>Register</a>
+                        <a class="btn btn-login" href='<?= $this->link('user/login/') ?>'>Sign in</a>
                     <?php endif ?>
                 </ul>
             </nav>
         </div>
+        <nav class="nav site-nav">
+            <ul>
+                <li><a href='<?= $this->link('') ?>'>Home</a></li>
+                <li><a href='<?= $this->link('catalog/') ?>'>Catalog</a></li>
+                <?php if ($this->isUserLoggedIn()) : ?>
+                    <li><a href='<?= $this->link('catalog/add/') ?>'>Create listing</a></li>
+                <?php endif ?>
+            </ul>
+        </nav>
     </div>
 </header>
 <div class="content">
