@@ -1,15 +1,272 @@
-html, body {
+* {
+    box-sizing: border-box;
+    font-family: Arial,sans-serif;
+}
+
+html, body, h1, h2, h3, h4, h5 {
     margin: 0;
     padding: 0;
+}
+
+html, body{
+    height: 100%;
 }
 
 body{
     background-color: #202020;
     color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
 }
 
-a {
+.main-header{
+    background-color: #181818;
+    margin: 0;
+    padding: 0;
+}
+
+.nav{
+    display: flex;
+}
+
+.btn{
+    display: inline-block;
+    outline: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 2px solid #FFF;
+    color: #FFF;
+    background: 0;
+    padding: 6px 7px;
+    font-weight: 550;
+}
+
+.btn-admin{
+    border: 2px solid #2141D5;
+}
+
+.btn-logout{
+    border: 2px solid #EE2E2E;
+}
+
+.btn-signup{
+    border: 2px solid #EEBA37;
+}
+
+.btn-login{
+    border: 2px solid #2141D5;
+}
+
+.btn:hover{
+    background: #FFFFFF;
+    color: #000000;
+}
+
+.btn-admin:hover{
+    background: #2141D560;
     color: #FFFFFF;
+}
+
+.btn-logout:hover{
+    background: #EE2E2E60;
+    color: #FFFFFF;
+}
+
+.btn-signup:hover{
+    background: #EEBA3760;
+    color: #FFFFFF;
+}
+
+.btn-login:hover{
+    background: #2141D560;
+    color: #FFFFFF;
+}
+
+.btn:active{
+    transform: scale(0.96);
+}
+
+.user-nav{
+    margin: 0;
+    flex-grow: 1;
+}
+
+.user-nav ul{
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 1em;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.nav ul{
+    list-style-type: none;
+    display: flex;
+}
+
+.user-nav li{
+    text-align: right;
+    padding: 0;
+}
+
+
+.user-nav img{
+    position: relative;
+    width: 40px;
+}
+
+.mark{
+    box-sizing: unset;
+    position: absolute;
+    top: 0.5em;
+    right: calc(2em + 72px - 0.675em);
+    border: 2px solid white;
+    border-radius: 50%;
+    padding: 0.25em;
+    height: 1.1em;
+    width: 1.1em;
+    text-align: center;
+}
+
+.inbox-empty{
+    background: #202020;
+}
+
+.inbox-mid{
+    background: red;
+}
+
+.inbox-full{
+    background: red;
+}
+
+.btn-inbox{
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.user-nav img:hover{
+    content: url("http://localhost/pamokos/oop/pub/images/mail_open.png");
+}
+
+.user-nav img:active{
+    transform: scale(0.96);
+}
+
+.header-top{
+    display: flex;
+    align-items: flex-end;
+    justify-content: left;
+    margin: 0;
+    padding: 0.5em 1em;
+}
+
+.search-bar{
+    margin: 0;
+    flex-grow: 2;
+}
+
+.search-form{
+    width: 100%;
+    position: relative;
+    display: flex;
+    margin: 0;
+}
+
+.search-field{
+    width: auto;
+    border: none;
+    border-right: 1px solid rgb(210,210,210);
+    text-align: left;
+    background: rgb(237,237,237);
+    border-radius: 4px 0 0 4px;
+    font-size: 1em;
+}
+
+.search-term{
+    width: 100%;
+    border: none;
+    padding: 5px;
+    height: 50px;
+    border-radius: 0;
+    outline: none;
+    font-size: 1em;
+}
+
+.search-term:focus{
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+}
+
+.search-btn{
+    width: auto;
+    height: 50px;
+    border: none;
+    padding: 0 0.7em;
+    background: #717171;
+    text-align: center;
+    color: #fff;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.search-btn:active{
+    transform: scale(0.96);
+}
+
+.web-logo{
+    margin: 0;
+    flex-grow: 1;
+}
+
+.web-logo img{
+    height: 50px;
+}
+
+.web-logo img:active{
+    transform: scale(0.98);
+}
+
+.site-nav a:active{
+    transform: scale(0.97);
+}
+
+.nav a{
+    text-decoration: none;
+    color: #FFFFFF;
+}
+
+.site-nav{
+    padding: 0 1em;
+    margin: 0;
+}
+
+.site-nav ul{
+    margin: 0;
+    padding-left: 0;
+    justify-content: left;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.site-nav li{
+    margin-right: 1%;
+    padding: 0;
+    font-size: 20px;
+}
+
+.site-nav a{
+    display: inline-block;
+    padding: 0.5em;
+}
+
+.site-nav a:hover{
+    background: #FFFFFF20;
+    box-shadow: inset 0 -10px 10px -10px rgb(210,210,210,0.8);
 }
 
 .content img{
@@ -17,9 +274,14 @@ a {
     height: 150px;
 }
 
+.content{
+    flex: 1 0 auto;
+}
+
 footer{
     background-color: #181818;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .home-content img{
