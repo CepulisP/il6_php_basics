@@ -204,29 +204,6 @@ class Ad extends AbstractModel implements ModelInterface
         $this->views = $views;
     }
 
-    public function getUser(): User
-    {
-        return new User($this->userId);
-    }
-
-    public function getComments(?int $limit = null): array
-    {
-        return Comment::getAdComments($this->id, $limit);
-    }
-
-    public function getRating(): ?float
-    {
-        $ratings = Rating::getAdRatings($this->id);
-        $result = 0;
-        $i = 0;
-
-        foreach ($ratings as $rating){
-            $result += $rating['rating'];
-            $i++;
-        }
-        return $i > 0 ? $result / $i : null;
-    }
-
     public function assignData(): void
     {
         $this->data = [
@@ -311,6 +288,34 @@ class Ad extends AbstractModel implements ModelInterface
         }
 
         return null;
+    }
+
+    public function getUser(): User
+    {
+        return new User($this->userId);
+    }
+
+    public function getComments(?int $limit = null): array
+    {
+        return Comment::getAdComments($this->id, $limit);
+    }
+
+    public function getRating(): ?float
+    {
+        $ratings = Rating::getAdRatings($this->id);
+        $result = 0;
+        $i = 0;
+
+        foreach ($ratings as $rating){
+            $result += $rating['rating'];
+            $i++;
+        }
+        return $i > 0 ? $result / $i : null;
+    }
+
+    public function hasUserSaved(): bool
+    {
+        return SavedAd::hasUserSaved($this->id, $_SESSION['user_id']);
     }
 
     public static function getAllAds(
@@ -523,5 +528,15 @@ class Ad extends AbstractModel implements ModelInterface
         }
 
         return $ads;
+    }
+
+    public static function getSavedUserAds(int $userId): array
+    {
+        $ads = SavedAd::getSavedUserAds($userId);
+        $savedAds = [];
+        foreach ($ads as $ad){
+            $savedAds[] = new Ad((int)$ad['ad_id']);
+        }
+        return $savedAds;
     }
 }

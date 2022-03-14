@@ -67,6 +67,14 @@ body{
     border: 1px solid #2141D5;
 }
 
+.btn-saved{
+    display: flex;
+}
+
+.btn-saved img{
+    height: 32px;
+}
+
 .btn:hover{
     background: #FFFFFF;
     color: #000000;
@@ -121,8 +129,7 @@ body{
 }
 
 
-.user-nav img{
-    position: relative;
+.btn-inbox img{
     width: 40px;
 }
 
@@ -153,13 +160,9 @@ body{
 
 .btn-inbox{
     display: flex;
-
-    align-items: center;
-    justify-content: center;
-    padding: 0;
 }
 
-.user-nav img:hover{
+.btn-inbox img:hover{
     content: url("http://localhost/pamokos/oop/pub/images/mail_open.png");
 }
 
@@ -177,7 +180,7 @@ body{
 
 .search-bar{
     margin: 0;
-    flex-grow: 2;
+    flex-grow: 3;
 }
 
 .search-form{
@@ -247,7 +250,6 @@ body{
 
 .nav a{
     text-decoration: none;
-    color: #FFFFFF;
 }
 
 .site-nav{

@@ -1,27 +1,28 @@
+<?php $ad = $this->data['ad'] ?>
 <div class="content-wrapper">
     <div class="title">
-        <h2><?= ucfirst($this->data['ad']->getTitle()); ?></h2>
+        <h2><?= ucfirst($ad->getTitle()); ?></h2>
     </div>
     <div class="image">
-        <img src="<?= $this->data['ad']->getImage() ?>">
+        <img src="<?= $ad->getImage() ?>">
     </div>
     <div class="description">
         <p>
-            <?= ucfirst($this->data['ad']->getDescription()) ?>
+            <?= ucfirst($ad->getDescription()) ?>
         </p>
     </div>
     <div class="details">
-        Price: <?= ucfirst($this->data['ad']->getPrice()) ?> Eur
+        Price: <?= ucfirst($ad->getPrice()) ?> Eur
         <br>
-        Manufacturer: <?= ucfirst($this->data['ad']->getManufacturer()) ?>
+        Manufacturer: <?= ucfirst($ad->getManufacturer()) ?>
         <br>
-        Model: <?= ucfirst($this->data['ad']->getModel()) ?>
+        Model: <?= ucfirst($ad->getModel()) ?>
         <br>
-        Year of manufacture: <?= ucfirst($this->data['ad']->getYear()) ?>
+        Year of manufacture: <?= ucfirst($ad->getYear()) ?>
         <br>
-        Type: <?= ucfirst($this->data['ad']->getType()) ?>
+        Type: <?= ucfirst($ad->getType()) ?>
         <br>
-        VIN: <?= ucfirst($this->data['ad']->getVin()) ?>
+        VIN: <?= ucfirst($ad->getVin()) ?>
         <br>
         Created by:
         <?= ucfirst($this->data['author']->getName()) ?>
@@ -34,8 +35,8 @@
                 (You rated : <?= $this->data['user_rating'] ?>)
             <?php endif; ?>
         <?php else : ?>
-            <form action="<?= $this->link('catalog/rate', $this->data['ad']->getId()) ?>" method="POST">
-                <input type="hidden" name="slug" value="<?= $this->data['ad']->getSlug() ?>">
+            <form action="<?= $this->link('catalog/rate', $ad->getId()) ?>" method="POST">
+                <input type="hidden" name="slug" value="<?= $ad->getSlug() ?>">
                 <button type="submit" name="rating" value="1">1</button>
                 <button type="submit" name="rating" value="2">2</button>
                 <button type="submit" name="rating" value="3">3</button>
@@ -44,6 +45,17 @@
             </form>
         <?php endif; ?>
         <br>
+        <?php if ($this->isUserLoggedIn()) : ?>
+            <?php if (!$ad->hasUserSaved()) : ?>
+                <div class="save">
+                    <a href="<?= $this->link('catalog/savead', '?id=' . $ad->getId() . '&back=' . $ad->getSlug()) ?>">&#9825;</a>
+                </div>
+            <?php else : ?>
+                <div class="unsave">
+                    <a href="<?= $this->link('catalog/unsavead', '?id=' . $ad->getId() . '&back=' . $ad->getSlug()) ?>">&hearts;</a>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
     </div>
 </div>
 <div class="related">
