@@ -26,7 +26,7 @@
         Created by:
         <?= ucfirst($this->data['author']->getName()) ?>
         <?= ucfirst($this->data['author']->getLastName()) ?>
-        <a href="<?= $this->link('message/send', $this->data['author']->getId()) ?>">Send a message</a>
+        <a href="<?= $this->link('message/send', $this->data['author']->getId()) ?>" class="btn">Send a message</a>
         <br>
         <?php if (!empty($this->data['rating'])) : ?>
             Rating: <?= $this->data['rating'] ?>
