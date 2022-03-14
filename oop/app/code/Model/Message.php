@@ -90,10 +90,11 @@ class Message extends AbstractModel implements ModelInterface
         ];
     }
 
-    public function load(int $id): Message
+    public function load(int $id): ?Message
     {
         $db = new DBHelper();
         $message = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
+
         if (!empty($message)) {
             $this->id = (int)$message['id'];
             $this->message = $message['message'];
@@ -101,8 +102,9 @@ class Message extends AbstractModel implements ModelInterface
             $this->recipientId = (int)$message['recipient_id'];
             $this->seen = (int)$message['seen'];
             $this->createdAt = $message['created_at'];
+            return $this;
         }
-        return $this;
+        return null;
     }
 
     public static function countNewMessages(int $userId, ?int $senderId = null): int

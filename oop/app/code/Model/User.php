@@ -180,28 +180,31 @@ class User extends AbstractModel implements ModelInterface
         ];
     }
 
-    public function load(int $id): User
+    public function load(int $id): ?User
     {
         $city = new City();
         $db = new DBHelper();
 
         $data = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
 
-        $this->id = (int)$data['id'];
-        $this->name = $data['name'];
-        $this->lastName = $data['last_name'];
-        $this->nickname = $data['nickname'];
-        $this->email = $data['email'];
-        $this->password = $data['password'];
-        $this->phone = $data['phone'];
-        $this->cityId = (int)$data['city_id'];
-        $this->active = (int)$data['active'];
-        $this->loginAttempts = (int)$data['login_attempts'];
-        $this->city = $city->load($this->cityId)->getName();
-        $this->createdAt = $data['created_at'];
-        $this->roleId = (int)$data['role_id'];
+        if (!empty($data)) {
+            $this->id = (int)$data['id'];
+            $this->name = $data['name'];
+            $this->lastName = $data['last_name'];
+            $this->nickname = $data['nickname'];
+            $this->email = $data['email'];
+            $this->password = $data['password'];
+            $this->phone = $data['phone'];
+            $this->cityId = (int)$data['city_id'];
+            $this->active = (int)$data['active'];
+            $this->loginAttempts = (int)$data['login_attempts'];
+            $this->city = $city->load($this->cityId)->getName();
+            $this->createdAt = $data['created_at'];
+            $this->roleId = (int)$data['role_id'];
 
-        return $this;
+            return $this;
+        }
+        return null;
     }
 
     public static function checkLoginCredentials(string $email, string $pass): ?int

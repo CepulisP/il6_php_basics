@@ -214,9 +214,17 @@ class Ad extends AbstractModel implements ModelInterface
         return Comment::getAdComments($this->id, $limit);
     }
 
-    public function getRating(): float
+    public function getRating(): ?float
     {
-        return Rating::getAdRating($this->id);
+        $ratings = Rating::getAdRatings($this->id);
+        $result = 0;
+        $i = 0;
+
+        foreach ($ratings as $rating){
+            $result += $rating['rating'];
+            $i++;
+        }
+        return $i > 0 ? $result / $i : null;
     }
 
     public function assignData(): void
@@ -238,7 +246,7 @@ class Ad extends AbstractModel implements ModelInterface
         ];
     }
 
-    public function load(int $id): Ad
+    public function load(int $id): ?Ad
     {
         $man = new Manufacturer();
         $model = new Model();
@@ -266,12 +274,12 @@ class Ad extends AbstractModel implements ModelInterface
             $this->createdAt = $ad['created_at'];
             $this->vin = $ad['vin'];
             $this->views = (int)$ad['views'];
+            return $this;
         }
-
-        return $this;
+        return null;
     }
 
-    public function loadBySlug(string $slug): Ad
+    public function loadBySlug(string $slug): ?Ad
     {
         $man = new Manufacturer();
         $model = new Model();
@@ -299,9 +307,10 @@ class Ad extends AbstractModel implements ModelInterface
             $this->createdAt = $ad['created_at'];
             $this->vin = $ad['vin'];
             $this->views = (int)$ad['views'];
+            return $this;
         }
 
-        return $this;
+        return null;
     }
 
     public static function getAllAds(

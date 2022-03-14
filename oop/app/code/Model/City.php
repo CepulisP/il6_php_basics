@@ -28,13 +28,17 @@ class City extends AbstractModel implements ModelInterface
         return $this->name;
     }
 
-    public function load(int $id): City
+    public function load(int $id): ?City
     {
         $db = new DBHelper();
         $city = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
-        $this->id = (int)$city['id'];
-        $this->name = $city['name'];
-        return $this;
+
+        if (!empty($city)) {
+            $this->id = (int)$city['id'];
+            $this->name = $city['name'];
+            return $this;
+        }
+        return null;
     }
 
     public static function getCities(): array
