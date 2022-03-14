@@ -29,13 +29,17 @@ class Manufacturer extends AbstractModel implements ModelInterface
         return $this->name;
     }
 
-    public function load(int $id): Manufacturer
+    public function load(int $id): ?Manufacturer
     {
         $db = new DBHelper();
         $manufacturer = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
-        $this->id = (int)$manufacturer['id'];
-        $this->name = $manufacturer['name'];
-        return $this;
+
+        if (!empty($manufacturer)) {
+            $this->id = (int)$manufacturer['id'];
+            $this->name = $manufacturer['name'];
+            return $this;
+        }
+        return null;
     }
 
     public static function getManufacturers(): array

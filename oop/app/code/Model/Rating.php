@@ -63,7 +63,7 @@ class Rating extends AbstractModel implements ModelInterface
         ];
     }
 
-    public function load(int $id): Rating
+    public function load(int $id): ?Rating
     {
         $db = new DBHelper();
         $rating = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
@@ -73,24 +73,16 @@ class Rating extends AbstractModel implements ModelInterface
             $this->rating = (int)$rating['rating'];
             $this->adId = (int)$rating['ad_id'];
             $this->userId = (int)$rating['user_id'];
+            return $this;
         }
 
-        return $this;
+        return null;
     }
 
-    public static function getAdRating(int $adId): float
+    public static function getAdRatings(int $adId): array
     {
         $db = new DBHelper();
-        $ratings = $db->select()->from(self::TABLE)->where('ad_id', $adId)->get();
-        $result = 0;
-        $i = 0;
-
-        foreach ($ratings as $rating){
-            $result += $rating['rating'];
-            $i++;
-        }
-
-        return $i > 0 ? $result / $i : 0;
+        return $db->select()->from(self::TABLE)->where('ad_id', $adId)->get();
     }
 
     public static function hasUserRated(int $userId, int $adId): bool

@@ -35,14 +35,18 @@ class Model extends AbstractModel implements ModelInterface
         return $this->manufacturerId;
     }
 
-    public function load(int $id): Model
+    public function load(int $id): ?Model
     {
         $db = new DBHelper();
         $model = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
-        $this->id = (int)$model['id'];
-        $this->name = $model['name'];
-        $this->manufacturerId = (int)$model['manufacturer_id'];
-        return $this;
+
+        if (!empty($model)) {
+            $this->id = (int)$model['id'];
+            $this->name = $model['name'];
+            $this->manufacturerId = (int)$model['manufacturer_id'];
+            return $this;
+        }
+        return null;
     }
 
     public static function getModels(): array

@@ -40,6 +40,13 @@ class Catalog extends AbstractController implements ControllerInterface
     {
         $ad = new Ad();
         $ad->loadBySlug($slug);
+
+        if ($ad->loadBySlug($slug) == null) {
+            $error = new Error();
+            $error->error404();
+            return;
+        }
+
         $adId = $ad->getId();
 
         if (!$ad->isActive()) Url::redirect('catalog/all');
@@ -81,11 +88,11 @@ class Catalog extends AbstractController implements ControllerInterface
         $this->data['comments'] = $ad->getComments();
 
         if (!isset($_SESSION['user_id'])){
-            $this->data['rating'] = Rating::getAdRating($adId);
+            $this->data['rating'] = $ad->getRating();
         }elseif (!Rating::hasUserRated($_SESSION['user_id'], $adId)){
             $this->data['rating'] = [];
         }else{
-            $this->data['rating'] = Rating::getAdRating($adId);
+            $this->data['rating'] = $ad->getRating();
             $this->data['user_rating'] = Rating::getUserRating($_SESSION['user_id'], $adId);
         }
 

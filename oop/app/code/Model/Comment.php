@@ -94,10 +94,11 @@ class Comment extends AbstractModel implements ModelInterface
         ];
     }
 
-    public function load(int $id): Comment
+    public function load(int $id): ?Comment
     {
         $db = new DBHelper();
         $comment = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
+
         if (!empty($comment)) {
             $this->id = (int)$comment['id'];
             $this->comment = $comment['comment'];
@@ -105,8 +106,9 @@ class Comment extends AbstractModel implements ModelInterface
             $this->userId = (int)$comment['user_id'];
             $this->userIp = $comment['user_ip'];
             $this->createdAt = $comment['created_at'];
+            return $this;
         }
-        return $this;
+        return null;
     }
 
     public static function getAllComments(): array

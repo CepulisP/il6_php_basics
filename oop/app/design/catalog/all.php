@@ -18,7 +18,7 @@
                 <br>
                 <?= $ad->getPrice() ?> Eur
                 <br>
-                <?php if ($ad->getRating() == 0){
+                <?php if ($ad->getRating() == null){
                     echo 'No rating';
                 }else{
                     echo 'Rating: ' . $ad->getRating();
