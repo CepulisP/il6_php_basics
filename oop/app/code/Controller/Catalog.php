@@ -11,6 +11,7 @@ use Model\Comment;
 use Model\Manufacturer;
 use Model\Model;
 use Model\Rating;
+use Model\SavedAd;
 use Model\Type;
 use Helper\Url;
 use Model\Ad;
@@ -97,6 +98,13 @@ class Catalog extends AbstractController implements ControllerInterface
         }
 
         $this->render('catalog/show');
+    }
+
+    public function savedAds(): void
+    {
+        if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
+        $this->data['ads'] = Ad::getSavedUserAds($_SESSION['user_id']);
+        $this->render('catalog/saved');
     }
 
     public function search(): void
@@ -478,6 +486,30 @@ class Catalog extends AbstractController implements ControllerInterface
         $rating->save();
 
         Url::redirect('catalog/show/' . $_POST['slug']);
+    }
+
+    public function saveAd(): void
+    {
+        if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
+
+        if (!SavedAd::hasUserSaved((int)$_GET['id'], (int)$_SESSION['user_id'])) {
+            $savedAd = new SavedAd();
+            $savedAd->setUserId((int)$_SESSION['user_id']);
+            $savedAd->setAdId((int)$_GET['id']);
+            $savedAd->save();
+        }
+        Url::redirect('catalog/show/' . $_GET['back']);
+    }
+
+    public function unsaveAd(): void
+    {
+        if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
+
+        $savedAd = new SavedAd();
+        $savedAd->loadByUserAndAd((int)$_GET['id'], (int)$_SESSION['user_id']);
+        $savedAd->delete();
+
+        Url::redirect('catalog/show/' . $_GET['back']);
     }
 
     private static function getRequestedAds(bool $returnCount = false): array

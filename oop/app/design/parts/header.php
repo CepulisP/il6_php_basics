@@ -25,6 +25,7 @@
         <nav class="nav user-nav">
             <ul>
                 <?php if ($this->isUserLoggedIn()) : ?>
+                    <li><a href="<?= $this->link('catalog/savedads') ?>" class="btn-saved"><img src="<?= IMAGE_PATH . 'heart.png' ?>"></a></li>
                     <?php if ($this->isUserAdmin()) : ?>
                         <li><a class="btn btn-admin" href='<?= $this->link('admin/') ?>'>Admin</a></li>
                     <?php endif; ?>
