@@ -19,7 +19,7 @@ use Core\AbstractController;
 
 class Catalog extends AbstractController implements ControllerInterface
 {
-    private const ITEMS_PER_PAGE = 10;
+    protected const ITEMS_PER_PAGE = 10;
 
     public function index(): void
     {
@@ -33,7 +33,7 @@ class Catalog extends AbstractController implements ControllerInterface
         ]);
 
         $this->data['form'] = $form->getForm();
-        $this->data['ads'] = Catalog::getRequestedAds();
+        $this->data['ads'] = $this->pageSplice(Catalog::getRequestedAds());
         $this->render('catalog/all');
     }
 
@@ -103,7 +103,18 @@ class Catalog extends AbstractController implements ControllerInterface
     public function savedAds(): void
     {
         if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
-        $this->data['ads'] = Ad::getSavedUserAds($_SESSION['user_id']);
+
+        $ads = Ad::getSavedUserAds($_SESSION['user_id']);
+        $form = new FormHelper('catalog/savedads', 'GET');
+
+        $this->pageForm($form, count($ads));
+        $form->input([
+            'type' => 'submit',
+            'value' => 'Enter'
+        ]);
+
+        $this->data['form'] = $form->getForm();
+        $this->data['ads'] = $this->pageSplice($ads);
         $this->render('catalog/saved');
     }
 
@@ -115,9 +126,9 @@ class Catalog extends AbstractController implements ControllerInterface
         $this->sortForm($form);
 
         if (isset($_GET['search']) && isset($_GET['field'])) {
-            $ads = Catalog::getRequestedAds(true);
-            $this->pageForm($form, $ads['ad_count']);
-            $this->data['ads'] = $ads['ads'];
+            $ads = Catalog::getRequestedAds();
+            $this->pageForm($form, count($ads));
+            $this->data['ads'] = $this->pageSplice($ads);
         }
 
         $form->input([
@@ -172,49 +183,6 @@ class Catalog extends AbstractController implements ControllerInterface
         $form->input($searchBox, false);
         $form->label('search_field', ' in ', false);
         $form->select($searchField);
-    }
-
-    private function pageForm(object $form, int $adCount): void
-    {
-        $showSelect = [
-            'name' => 'show',
-            'id' => 'show',
-            'selected' => self::ITEMS_PER_PAGE,
-            'options' => [
-                '5' => '5',
-                '10' => '10',
-                '20' => '20',
-                '50' => '50',
-                '100' => '100'
-            ]
-        ];
-
-        if (!empty($_GET['show'])) $showSelect['selected'] = $_GET['show'];
-
-        $adsPerPage = self::ITEMS_PER_PAGE;
-
-        if (!empty($_GET['show'])) $adsPerPage = $_GET['show'];
-
-        $pageCount = ceil($adCount / $adsPerPage);
-        $options = [];
-
-        for ($i = 1; $i <= $pageCount; $i++) {
-            $options[$i] = $i;
-        }
-
-        $pageSelect = [
-            'name' => 'p',
-            'id' => 'page',
-            'selected' => 1,
-            'options' => $options
-        ];
-
-        if (!empty($_GET['p'])) $pageSelect['selected'] = $_GET['p'];
-
-        $form->label('show', ' Ads per page: ', false);
-        $form->select($showSelect, false);
-        $form->label('page', ' Page: ', false);
-        $form->select($pageSelect);
     }
 
     public function addComment(): void
@@ -512,11 +480,8 @@ class Catalog extends AbstractController implements ControllerInterface
         Url::redirect('catalog/show/' . $_GET['back']);
     }
 
-    private static function getRequestedAds(bool $returnCount = false): array
+    private static function getRequestedAds(): array
     {
-        $page = !empty($_GET['p']) ? (int)$_GET['p'] : 1;
-        $adsPerPage = !empty($_GET['show']) ? (int)$_GET['show'] : self::ITEMS_PER_PAGE;
-        $firstAd = ($page - 1) * $adsPerPage;
         $sort = !empty($_GET['sort']) ? explode('_', $_GET['sort'], 2) : ['DESC', 'created_at'];
         $orderField = $sort[1];
         $orderMethod = $sort[0];
@@ -524,17 +489,9 @@ class Catalog extends AbstractController implements ControllerInterface
         $searchValue = !empty($_GET['search']) ? $_GET['search'] : null;
 
         if (!empty($searchField) && !empty($searchValue)) {
-            $ads = Ad::getOrderedAdsLike($orderField, $orderMethod, $searchField, $searchValue, true, $adsPerPage, $firstAd);
-            if ($returnCount){
-                return ['ads' => $ads, 'ad_count' => count(Ad::getOrderedAdsLike($orderField, $orderMethod, $searchField, $searchValue))];
-            }
-            return $ads;
+            return Ad::getOrderedAdsLike($orderField, $orderMethod, $searchField, $searchValue);
         }else{
-            $ads = Ad::getOrderedAds($orderField, $orderMethod, true, $adsPerPage, $firstAd);
-            if ($returnCount){
-                return ['ads' => $ads, 'ad_count' => count(Ad::getOrderedAds($orderField, $orderMethod))];
-            }
-            return $ads;
+            return Ad::getOrderedAds($orderField, $orderMethod);
         }
     }
 }

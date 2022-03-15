@@ -535,7 +535,10 @@ class Ad extends AbstractModel implements ModelInterface
         $ads = SavedAd::getSavedUserAds($userId);
         $savedAds = [];
         foreach ($ads as $ad){
-            $savedAds[] = new Ad((int)$ad['ad_id']);
+            $savedAd = new Ad((int)$ad['ad_id']);
+            if ($savedAd->isActive()){
+                $savedAds[] = $savedAd;
+            }
         }
         return $savedAds;
     }

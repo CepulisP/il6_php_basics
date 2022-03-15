@@ -26,6 +26,7 @@ class Admin extends AbstractController implements ControllerInterface
 
     public const DELETE = 2;
 
+    protected const ITEMS_PER_PAGE = 10;
 
     public function __construct()
     {
@@ -41,13 +42,35 @@ class Admin extends AbstractController implements ControllerInterface
 
     public function users(): void
     {
-        $this->data['users'] = UserModel::getAllUsers(false);
+        $users = UserModel::getAllUsers(false);
+        $form = new FormHelper('admin/users', 'GET');
+
+        $this->pageForm($form, count($users));
+
+        $form->input([
+            'type' => 'submit',
+            'value' => 'Enter'
+        ]);
+
+        $this->data['form'] = $form->getForm();
+        $this->data['users'] = $this->pageSplice($users);
         $this->renderAdmin('users\list');
     }
 
     public function ads(): void
     {
-        $this->data['ads'] = Ad::getAllAds(false);
+        $ads = Ad::getAllAds(false);
+        $form = new FormHelper('admin/ads', 'GET');
+
+        $this->pageForm($form, count($ads));
+
+        $form->input([
+            'type' => 'submit',
+            'value' => 'Enter'
+        ]);
+
+        $this->data['form'] = $form->getForm();
+        $this->data['ads'] = $this->pageSplice($ads);
         $this->renderAdmin('ads\list');
     }
 

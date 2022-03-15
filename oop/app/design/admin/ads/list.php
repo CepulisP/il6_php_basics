@@ -3,6 +3,9 @@
  * @var \Model\Ad $ad;
  */
 ?>
+<div class="form">
+    <?= $this->data['form']; ?>
+</div>
 <form action="<?= $this->link('admin/massadupdate') ?>" method="POST">
     <table>
         <tr>

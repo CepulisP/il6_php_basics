@@ -3,6 +3,9 @@
  * @var \Model\User $user ;
  */
 ?>
+<div class="form">
+    <?= $this->data['form']; ?>
+</div>
 <form action="<?= $this->link('admin/massuserpdate') ?>" method="POST">
     <table>
         <tr>
