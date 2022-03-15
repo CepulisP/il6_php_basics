@@ -14,6 +14,8 @@ class AbstractController
 {
     protected array $data;
 
+    protected const ITEMS_PER_PAGE = 10;
+
     public function __construct()
     {
         $this->data = [];
@@ -56,5 +58,52 @@ class AbstractController
     public function getNewMessageCount(?int $senderId = null): int
     {
         return Message::countNewMessages((int)$_SESSION['user_id'], $senderId);
+    }
+
+    protected function pageForm(object $form, int $itemCount): void
+    {
+        $itemsPerPage = !empty($_GET['show']) ? $_GET['show'] : static::ITEMS_PER_PAGE;
+
+        $itemsPerPageSelect = [
+            'name' => 'show',
+            'id' => 'show',
+            'selected' => $itemsPerPage,
+            'options' => [
+                '5' => '5',
+                '10' => '10',
+                '20' => '20',
+                '50' => '50',
+                '100' => '100'
+            ]
+        ];
+
+        $pageCount = ceil($itemCount / $itemsPerPage);
+        $options = [];
+
+        for ($i = 1; $i <= $pageCount; $i++) {
+            $options[$i] = $i;
+        }
+
+        $pageSelect = [
+            'name' => 'p',
+            'id' => 'page',
+            'selected' => 1,
+            'options' => $options
+        ];
+
+        if (!empty($_GET['p'])) $pageSelect['selected'] = $_GET['p'];
+
+        $form->label('show', ' Show per page: ', false);
+        $form->select($itemsPerPageSelect, false);
+        $form->label('page', ' Page: ', false);
+        $form->select($pageSelect);
+    }
+
+    public function pageSplice(array $data): array
+    {
+        $page = !empty($_GET['p']) ? (int)$_GET['p'] : 1;
+        $itemsPerPage = !empty($_GET['show']) ? (int)$_GET['show'] : static::ITEMS_PER_PAGE;
+        $firstItem = ($page - 1) * $itemsPerPage;
+        return array_splice($data, $firstItem, $itemsPerPage);
     }
 }

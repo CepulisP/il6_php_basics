@@ -166,8 +166,12 @@ body{
     content: url("http://localhost/pamokos/oop/pub/images/mail_open.png");
 }
 
+.btn-saved img:hover{
+    content: url("http://localhost/pamokos/oop/pub/images/heart_full.png");
+}
+
 .user-nav img:active{
-    transform: scale(0.99);
+    transform: scale(0.97);
 }
 
 .header-top{
@@ -195,7 +199,7 @@ body{
     border: none;
     border-right: 1px solid rgb(210,210,210);
     text-align: left;
-    background: rgb(237,237,237);
+    background: rgb(225,225,225);
     border-radius: 5px 0 0 5px;
     font-size: 1em;
 }

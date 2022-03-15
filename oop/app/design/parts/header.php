@@ -19,7 +19,7 @@
                     <option value="description">Description</option>
                 </select>
                 <input name="search" id="search" autocomplete="nope" type="text" placeholder="Search" class="search-term">
-                <input name="submit" type="submit" value="&#x1F50E;&#xFE0E;" class="search-btn">
+                <input type="submit" value="&#x1F50E;&#xFE0E;" class="search-btn">
             </form>
         </div>
         <nav class="nav user-nav">

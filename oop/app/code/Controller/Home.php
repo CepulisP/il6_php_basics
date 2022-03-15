@@ -12,7 +12,7 @@ use Model\Rating;
 
 class Home extends AbstractController implements ControllerInterface
 {
-    private const ITEMS_PER_PAGE = 5;
+    protected const ITEMS_PER_PAGE = 5;
 
     public function index(): void
     {
