@@ -313,6 +313,11 @@ class Ad extends AbstractModel implements ModelInterface
         return $i > 0 ? $result / $i : null;
     }
 
+    public function getRatingCount(): int
+    {
+        return Rating::countAdRatings($this->id);
+    }
+
     public function hasUserSaved(): bool
     {
         return SavedAd::hasUserSaved($this->id, $_SESSION['user_id']);

@@ -85,6 +85,13 @@ class Rating extends AbstractModel implements ModelInterface
         return $db->select()->from(self::TABLE)->where('ad_id', $adId)->get();
     }
 
+    public static function countAdRatings(int $adId): int
+    {
+        $db = new DBHelper();
+        $rez = $db->select('count(*)')->from(self::TABLE)->where('ad_id', $adId)->get();
+        return (int)$rez[0][0];
+    }
+
     public static function hasUserRated(int $userId, int $adId): bool
     {
         $db = new DBHelper();
