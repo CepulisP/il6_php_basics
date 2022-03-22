@@ -21,17 +21,40 @@ class Type extends AbstractModel implements ModelInterface
         }
     }
 
-    public function assignData(): void {}
+    public function assignData(): void
+    {
+        $this->data = [
+            'name' => $this->name
+        ];
+    }
 
     public function getName(): string
     {
         return $this->name;
     }
 
+    public function setName(string $type): void
+    {
+        $this->name = $type;
+    }
+
     public function load(int $id): ?Type
     {
         $db = new DBHelper();
         $type = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
+
+        if (!empty($type)) {
+            $this->id = (int)$type['id'];
+            $this->name = $type['name'];
+            return $this;
+        }
+        return null;
+    }
+
+    public function loadByName(string $name): ?Type
+    {
+        $db = new DBHelper();
+        $type = $db->select()->from(self::TABLE)->where('name', $name)->getOne();
 
         if (!empty($type)) {
             $this->id = (int)$type['id'];

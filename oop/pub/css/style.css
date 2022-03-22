@@ -219,7 +219,7 @@ body{
 }
 
 .search-field option{
-    color: #000;
+    color: var(--grey-900);
 }
 
 .search-term{
@@ -230,6 +230,7 @@ body{
     border-radius: 0;
     outline: none;
     font-size: 1em;
+    color:var(--grey-900)
 }
 
 .search-term:focus{

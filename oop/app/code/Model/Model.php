@@ -23,11 +23,22 @@ class Model extends AbstractModel implements ModelInterface
         }
     }
 
-    public function assignData(): void {}
+    public function assignData(): void
+    {
+        $this->data = [
+            'name' => $this->name,
+            'manufacturer_id' => $this->manufacturerId
+        ];
+    }
 
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function setName(string $model): void
+    {
+        $this->name = $model;
     }
 
     public function getManufacturerId(): int
@@ -35,10 +46,29 @@ class Model extends AbstractModel implements ModelInterface
         return $this->manufacturerId;
     }
 
+    public function setManufacturerId(int $id): void
+    {
+        $this->manufacturerId = $id;
+    }
+
     public function load(int $id): ?Model
     {
         $db = new DBHelper();
         $model = $db->select()->from(self::TABLE)->where('id', $id)->getOne();
+
+        if (!empty($model)) {
+            $this->id = (int)$model['id'];
+            $this->name = $model['name'];
+            $this->manufacturerId = (int)$model['manufacturer_id'];
+            return $this;
+        }
+        return null;
+    }
+
+    public function loadByName(string $name): ?Model
+    {
+        $db = new DBHelper();
+        $model = $db->select()->from(self::TABLE)->where('name', $name)->getOne();
 
         if (!empty($model)) {
             $this->id = (int)$model['id'];

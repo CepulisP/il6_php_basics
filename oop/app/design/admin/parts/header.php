@@ -19,6 +19,7 @@
                     <li><a href='<?= $this->link('') ?>'>Home</a></li>
                     <li><a href='<?= $this->link('admin/users') ?>'>Users</a></li>
                     <li><a href='<?= $this->link('admin/ads') ?>'>Ads</a></li>
+                    <li><a href='<?= $this->link('database') ?>'>Database</a></li>
                     <li><a href='<?= $this->link('user/logout/') ?>'>Logout</a></li>
                 </ul>
             </nav>

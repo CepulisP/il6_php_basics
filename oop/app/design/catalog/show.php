@@ -46,15 +46,13 @@
         <?php endif; ?>
         <br>
         <?php if ($this->isUserLoggedIn()) : ?>
-            <?php if (!$ad->hasUserSaved()) : ?>
+            <?php if ($ad->hasUserSaved()) : ?>
+                <div class="unsave">
+            <?php else : ?>
                 <div class="save">
+            <?php endif; ?>
                     <a href="<?= $this->link('catalog/savead', '?id=' . $ad->getId() . '&back=' . $ad->getSlug()) ?>">&#9825;</a>
                 </div>
-            <?php else : ?>
-                <div class="unsave">
-                    <a href="<?= $this->link('catalog/unsavead', '?id=' . $ad->getId() . '&back=' . $ad->getSlug()) ?>">&hearts;</a>
-                </div>
-            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>

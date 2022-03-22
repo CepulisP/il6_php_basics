@@ -40,7 +40,6 @@ class Catalog extends AbstractController implements ControllerInterface
     public function show(string $slug): void
     {
         $ad = new Ad();
-        $ad->loadBySlug($slug);
 
         if ($ad->loadBySlug($slug) == null) {
             $error = new Error();
@@ -84,6 +83,7 @@ class Catalog extends AbstractController implements ControllerInterface
 
         $this->data['related'] = Ad::getRelatedAds($adId, 5);
         $this->data['ad'] = $ad;
+        $this->data['meta_description'] = $ad->getDescription();
         $this->data['author'] = $ad->getUser();
         $this->data['comment_box'] = $form->getForm();
         $this->data['comments'] = $ad->getComments();
@@ -459,24 +459,15 @@ class Catalog extends AbstractController implements ControllerInterface
     public function saveAd(): void
     {
         if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
+        $savedAd = new SavedAd();
 
-        if (!SavedAd::hasUserSaved((int)$_GET['id'], (int)$_SESSION['user_id'])) {
-            $savedAd = new SavedAd();
+        if ($savedAd->loadByUserAndAd((int)$_GET['id'], (int)$_SESSION['user_id']) == null) {
             $savedAd->setUserId((int)$_SESSION['user_id']);
             $savedAd->setAdId((int)$_GET['id']);
             $savedAd->save();
+        }else{
+            $savedAd->delete();
         }
-        Url::redirect('catalog/show/' . $_GET['back']);
-    }
-
-    public function unsaveAd(): void
-    {
-        if (!isset($_SESSION['user_id'])) Url::redirect('user/login');
-
-        $savedAd = new SavedAd();
-        $savedAd->loadByUserAndAd((int)$_GET['id'], (int)$_SESSION['user_id']);
-        $savedAd->delete();
-
         Url::redirect('catalog/show/' . $_GET['back']);
     }
 
