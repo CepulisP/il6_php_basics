@@ -83,6 +83,7 @@ class Catalog extends AbstractController implements ControllerInterface
 
         $this->data['related'] = Ad::getRelatedAds($adId, 5);
         $this->data['ad'] = $ad;
+        $this->data['meta_description'] = $ad->getDescription();
         $this->data['author'] = $ad->getUser();
         $this->data['comment_box'] = $form->getForm();
         $this->data['comments'] = $ad->getComments();
