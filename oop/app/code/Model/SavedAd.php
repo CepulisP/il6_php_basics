@@ -77,6 +77,12 @@ class SavedAd extends AbstractModel implements ModelInterface
         return $db->select()->from(self::TABLE)->where('user_id', $userId)->get();
     }
 
+    public static function getSavedAdUsers(int $adId): array
+    {
+        $db = new DBHelper();
+        return $db->select()->from(self::TABLE)->where('ad_id', $adId)->get();
+    }
+
     public static function hasUserSaved(int $adId, int $userId): bool
     {
         $db = new DBHelper();
