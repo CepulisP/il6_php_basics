@@ -1,5 +1,5 @@
-<form action="<?= $this->link('database/import') ?>" method="POST">
-    <input type="text" name="file_name">
-    <input type="submit" value="import" class="btn">
+<form action="<?= $this->link('database/importads') ?>" method="POST">
+    <input type="text" name="file_name" placeholder="filename.csv">
+    <input type="submit" value="Import ads" class="btn">
 </form>
-<a href="<?= $this->link('database/export') ?>" class="btn">Export ads</a>
+<a href="<?= $this->link('database/exportads') ?>" class="btn">Export ads</a>
