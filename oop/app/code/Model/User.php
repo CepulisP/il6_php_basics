@@ -302,4 +302,17 @@ class User extends AbstractModel implements ModelInterface
         $user = new User($id);
         return $user->getNickname();
     }
+
+    public static function getSavedAdUsersIds(int $adId): array
+    {
+        $users = SavedAd::getSavedAdUsers($adId);
+        $savedUsers = [];
+        foreach ($users as $user){
+            $savedUser = new User((int)$user['user_id']);
+            if ($savedUser->isActive()){
+                $savedUsers[] = $savedUser->getId();
+            }
+        }
+        return $savedUsers;
+    }
 }

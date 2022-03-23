@@ -13,6 +13,7 @@ use Model\Model;
 use Model\Rating;
 use Model\SavedAd;
 use Model\Type;
+use Model\User as UserModel;
 use Helper\Url;
 use Model\Ad;
 use Core\AbstractController;
@@ -427,6 +428,12 @@ class Catalog extends AbstractController implements ControllerInterface
     public function update(): void
     {
         $ad = new Ad((int)$_POST['id']);
+
+        if ($_POST['price'] != $ad->getPrice()) {
+            $message = 'Price of ad \"' . $ad->getTitle() . '\" has changed from ' .
+                $ad->getPrice() . '€ to ' . $_POST['price'] . '€';
+            Message::systemMessage($message, UserModel::getSavedAdUsersIds($ad->getId()));
+        }
 
         $ad->setTitle($_POST['title']);
         $ad->setDescription($_POST['description']);

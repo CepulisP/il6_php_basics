@@ -104,4 +104,16 @@ class Message extends AbstractController implements ControllerInterface
 
         Url::redirect('message/chat/' . $recipientId);
     }
+
+    public static function systemMessage(string $message, array $recipientIds): void
+    {
+        foreach ($recipientIds as $recipientId) {
+            $msg = new MessageModel();
+            $msg->setMessage($message);
+            $msg->setSenderId(42);
+            $msg->setRecipientId((int)$recipientId);
+            $msg->setSeen(0);
+            $msg->save();
+        }
+    }
 }
