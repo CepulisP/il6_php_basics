@@ -13,12 +13,18 @@ use Model\Type;
 
 class Database extends AbstractController implements ControllerInterface
 {
+    public function __construct()
+    {
+        parent::__construct();
+        if (!$this->isUserAdmin()) Url::redirect('');
+    }
+
     public function index(): void
     {
         $this->render('database/index');
     }
 
-    public function import(): void
+    public function importAds(): void
     {
         if (!isset($_POST['file_name'])) Url::redirect('database');
 
@@ -73,9 +79,24 @@ class Database extends AbstractController implements ControllerInterface
         Url::redirect('database');
     }
 
-    public function export(): void
+    public function exportAds(): void
     {
-        //To do: complete export
+        $ads = Ad::getAllAds();
+        $adsArray = [];
+
+        foreach ($ads as $key => $ad){
+            $adsArray[$key]['title'] = $ad->getTitle();
+            $adsArray[$key]['description'] = $ad->getDescription();
+            $adsArray[$key]['manufacturer'] = $ad->getManufacturer();
+            $adsArray[$key]['model'] = $ad->getModel();
+            $adsArray[$key]['price'] = $ad->getPrice();
+            $adsArray[$key]['year'] = $ad->getYear();
+            $adsArray[$key]['type'] = $ad->getType();
+            $adsArray[$key]['image'] = $ad->getImage();
+            $adsArray[$key]['vin'] = $ad->getVin();
+        }
+        $csvPath = PROJECT_ROOT_DIR . '\var\exports\ads.csv';
+        Csv::arrayToCsv($adsArray, $csvPath);
         Url::redirect('database');
     }
 }

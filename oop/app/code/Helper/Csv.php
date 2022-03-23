@@ -19,6 +19,19 @@ class Csv
         return $assignHeaders ? self::assignHeaders($data) : $data;
     }
 
+    public static function arrayToCsv(array $data, string $fileName, bool $addHeaders = true): void
+    {
+        $file = fopen($fileName, 'a');
+        if ($addHeaders) {
+            $headers = array_keys($data[0]);
+            fputcsv($file, $headers);
+        }
+        foreach ($data as $element){
+            fputcsv($file, $element);
+        }
+        fclose($file);
+    }
+
     public static function assignHeaders(array $array): array
     {
         $headers = $array[0];
