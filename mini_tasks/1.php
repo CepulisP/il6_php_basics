@@ -8,7 +8,8 @@
 //
 //Kurių skaičių daugiau?
 
-function algoOne($array){
+function algoOne($array)
+{
 
     if (count($array)) {                                        // checks if array isn't empty
         foreach ($array as $value) {

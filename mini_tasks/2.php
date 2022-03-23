@@ -6,4 +6,4 @@ $text = str_split(str_replace([',', '.', ' '], '', strtolower($text)));
 foreach ($text as $letter) $letters[$letter] = isset($letters[$letter]) ? $letters[$letter] + 1 : 1;
 
 echo '<pre>' . print_r($letters, true) . '</pre>';
-echo 'Most common letter: ' . array_search(max($letters),$letters) . '<br>Least common letter: ' . array_search(min($letters),$letters);
+echo 'Most common letter: ' . array_search(max($letters), $letters) . '<br>Least common letter: ' . array_search(min($letters), $letters);
