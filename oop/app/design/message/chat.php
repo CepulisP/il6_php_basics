@@ -5,15 +5,15 @@
     <div class="chat-box">
         <?php foreach ($this->data['chat'] as $msg) : ?>
             <?php if ($msg->getSenderId() == $this->data['sender']->getId()) : ?>
-                <div class="sender-message">
+                <div class="sender-message chat-msg">
             <?php else : ?>
-                <div class="user-message">
+                <div class="user-message chat-msg">
             <?php endif; ?>
                     <div class="message_date">
                         <?= $msg->getCreatedAt() ?>
                     </div>
                     <div class="message_content">
-                        <p><?= $msg->getMessage() ?></p>
+                        <?= $msg->getMessage() ?>
                     </div>
                 </div>
         <?php endforeach; ?>

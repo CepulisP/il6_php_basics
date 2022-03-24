@@ -362,6 +362,7 @@ footer{
     padding: 10px;
     font-size: 18pt;
     background-color: var(--grey-500);
+    word-wrap: break-word;
 }
 
 .user-message{
@@ -373,6 +374,11 @@ footer{
     padding: 10px;
     font-size: 18pt;
     background-color: var(--grey-500);
+    word-wrap: break-word;
+}
+
+.chat-msg a{
+    text-decoration: underline;
 }
 
 .chat-input{

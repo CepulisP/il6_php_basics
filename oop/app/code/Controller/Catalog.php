@@ -17,6 +17,7 @@ use Model\User as UserModel;
 use Helper\Url;
 use Model\Ad;
 use Core\AbstractController;
+use Service\PriceChangeInformer\Messenger;
 
 class Catalog extends AbstractController implements ControllerInterface
 {
@@ -430,9 +431,14 @@ class Catalog extends AbstractController implements ControllerInterface
         $ad = new Ad((int)$_POST['id']);
 
         if ($_POST['price'] != $ad->getPrice()) {
-            $message = 'Price of ad \"' . $ad->getTitle() . '\" has changed from ' .
-                $ad->getPrice() . '€ to ' . $_POST['price'] . '€';
-            Message::systemMessage($message, UserModel::getSavedAdUsersIds($ad->getId()));
+//            Old solution
+//            $message = 'Price of ad \"' . $ad->getTitle() . '\" has changed from ' .
+//                $ad->getPrice() . '€ to ' . $_POST['price'] . '€';
+//            Message::systemMessage($message, UserModel::getSavedAdUsersIds($ad->getId()));
+
+//            Cron solution
+            $messenger = new Messenger();
+            $messenger->setMessages((int)$_POST['id']);
         }
 
         $ad->setTitle($_POST['title']);
