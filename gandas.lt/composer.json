@@ -1,0 +1,16 @@
+{
+    "name": "povilasc/gandas.lt",
+    "description": "Another news portal",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "": "app/code"
+        }
+    },
+    "authors": [
+        {
+            "name": "Povilas Cepulis",
+            "email": "cepulisp0@gmail.com"
+        }
+    ]
+}

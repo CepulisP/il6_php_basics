@@ -1,11 +1,17 @@
 /desktop.ini
 /oop/var/
+/gandas.lt/var/
 /oop/vendor/
+/gandas.lt/vendor/
 /oop/config.php
+/gandas.lt/config.php
 /oop/pub/images/
+/gandas.lt/pub/images/
+/gandas.lt/README.md
 /.idea/
 /shop/products.csv
 /subscribe/emails.csv
 /thegame/images/
 /thegame/outcomes.csv
 /user_interface/users.csv
+/advent_of_code/
