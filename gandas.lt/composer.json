@@ -12,5 +12,8 @@
             "name": "Povilas Cepulis",
             "email": "cepulisp0@gmail.com"
         }
-    ]
+    ],
+    "require": {
+        "aura/sqlquery": "^2.7"
+    }
 }
