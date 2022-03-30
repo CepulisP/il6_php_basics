@@ -3,7 +3,7 @@
     <title><?= $this->data['title']; ?></title>
     <meta name="description" content="<?= $this->data['meta_description']; ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="<?= BASE_URL_WITHOUT_INDEX_PHP . 'css/style.css'; ?>"
+    <link rel="stylesheet" href="<?= BASE_URL_WITHOUT_INDEX_PHP . 'css/style.css'; ?>">
 </head>
 <body>
 <header class="main-header">
