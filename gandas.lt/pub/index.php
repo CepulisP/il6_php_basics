@@ -17,20 +17,3 @@ $router = new \Core\Router();
 $launcher = new \Core\Launcher();
 
 $launcher->start($router->getRouteInfo());
-
-?>
-
-<style>
-
-    body {
-        background: #000;
-        color: #FFF;
-        font-family: Arial,sans-serif;
-        font-size: 2rem;
-    }
-
-    a {
-        color: #FFF;
-    }
-
-</style>

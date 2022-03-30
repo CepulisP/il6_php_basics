@@ -4,27 +4,29 @@ declare(strict_types=1);
 
 namespace Model;
 
-use Core\AbstractModel;
+use Core\DB;
+use Core\ModelAbstract;
+use Aura\SqlQuery\QueryFactory;
 
-class News extends AbstractModel
+class News extends ModelAbstract
 {
-    protected int $id;
+    private int $id;
 
-    protected string $title;
+    private string $title;
 
-    protected string $content;
+    private string $content;
 
-    protected int $authorId;
+    private int $authorId;
 
-    protected int $active;
+    private int $active;
 
-    protected int $views;
+    private int $views;
 
-    protected string $slug;
+    private string $slug;
 
-    protected string $image;
+    private string $image;
 
-    protected string $createdAt;
+    private string $createdAt;
 
     /**
      * @return int
@@ -165,9 +167,81 @@ class News extends AbstractModel
     public function loadBySlug(string $slug): ?News
     {
 
-        $this->select()->from('news')->where('slug = :slug', ['slug' => $slug]);
-        // ↓Placeholder - TO BE CONTINUED
-        return $this;
+        $sql = $this->select();
+        $sql->cols(['*'])->from('news')->where('slug = :slug')->bindValue('slug', $slug);
+
+        if ($rez = $this->db->get($sql)) {
+
+            $this->id = (int)$rez['id'];
+            $this->title = $rez['title'];
+            $this->content = $rez['content'];
+            $this->authorId = (int)$rez['author_id'];
+            $this->createdAt = $rez['created_at'];
+            $this->active = (int)$rez['active'];
+            $this->views = (int)$rez['views'];
+            $this->slug = $rez['slug'];
+            $this->image = $rez['image'];
+
+            return $this;
+
+        }
+
+        return null;
+
+    }
+
+    public function load(int $id): ?News
+    {
+
+        $sql = $this->select();
+        $sql->cols(['*'])->from('news')->where('id = :id')->bindValue('id', $id);
+
+        if ($rez = $this->db->get($sql)) {
+
+            $this->id = (int)$rez['id'];
+            $this->title = $rez['title'];
+            $this->content = $rez['content'];
+            $this->authorId = (int)$rez['author_id'];
+            $this->createdAt = $rez['created_at'];
+            $this->active = (int)$rez['active'];
+            $this->views = (int)$rez['views'];
+            $this->slug = $rez['slug'];
+            $this->image = $rez['image'];
+
+            return $this;
+
+        }
+
+        return null;
+
+    }
+
+    public static function getAllNews(): ?array
+    {
+
+        $queryFactory = new QueryFactory('mysql');
+        $db = new DB();
+
+        $sql = $queryFactory->newSelect();
+        $sql->cols(['*'])->from('news');
+
+        if ($rez = $db->getAll($sql)) {
+
+            $data = [];
+
+            foreach ($rez as $element) {
+
+                $news = new News();
+                $news->load((int) $element['id']);
+                $data[] = $news;
+
+            }
+
+            return $data;
+
+        }
+
+        return null;
 
     }
 }

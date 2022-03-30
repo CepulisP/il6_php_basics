@@ -6,14 +6,17 @@ namespace Core;
 
 use Aura\SqlQuery\QueryFactory;
 
-class AbstractModel
+class ModelAbstract
 {
     protected QueryFactory $queryFactory;
+
+    protected DB $db;
 
     public function __construct()
     {
 
-        $queryFactory = new QueryFactory('mysql');
+        $this->queryFactory = new QueryFactory('mysql');
+        $this->db = new DB();
 
     }
 

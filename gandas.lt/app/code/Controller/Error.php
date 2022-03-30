@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Controller;
 
-class Error
+use Core\ControllerAbstract;
+
+class Error extends ControllerAbstract
 {
     public function error404(): void
     {
-        echo '404 page not found';
+
+        echo $this->twig->render('parts\errors\error404.html');
+
     }
 }

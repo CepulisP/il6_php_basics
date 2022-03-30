@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Controller;
 
-class Home
+use Core\ControllerAbstract;
+
+class Home extends ControllerAbstract
 {
-    public function index()
+    public function index(): void
     {
-        echo 'Home';
+
+        echo $this->twig->render('parts\home.html');
+
     }
 }

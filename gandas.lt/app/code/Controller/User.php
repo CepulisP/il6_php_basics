@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Controller;
 
-class User
+use Core\ControllerAbstract;
+
+class User extends ControllerAbstract
 {
     public function index(): void
     {

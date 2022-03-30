@@ -1,0 +1,16 @@
+{% include 'parts/header.html' %}
+
+<div class="content">
+    <div class="title">
+        {{ news. Title }}
+    </div>
+    <img src="{{ news.image }}">
+    <div class="created-at">
+        {{ news.createdAt }}
+    </div>
+    <div class="content">
+        {{ news. Content }}
+    </div>
+</div>
+
+{% include 'parts/footer.html' %}
