@@ -11,7 +11,7 @@ class Error extends ControllerAbstract
     public function error404(): void
     {
 
-        echo $this->twig->render('parts\errors\error404.html');
+        $this->render('parts\errors\error404.html');
 
     }
 }

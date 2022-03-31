@@ -18,4 +18,13 @@ class ControllerAbstract
         ]);
 
     }
+
+    protected function render(string $template, ?array $variables = []): void
+    {
+
+        $this->twig->display('parts\header.html');
+        $this->twig->display($template, $variables);
+        $this->twig->display('parts\footer.html');
+
+    }
 }

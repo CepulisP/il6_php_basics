@@ -11,7 +11,7 @@ class Home extends ControllerAbstract
     public function index(): void
     {
 
-        echo $this->twig->render('parts\home.html');
+        $this->render('parts\home.html');
 
     }
 }
