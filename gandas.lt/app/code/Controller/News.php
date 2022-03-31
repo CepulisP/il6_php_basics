@@ -30,7 +30,7 @@ class News extends ControllerAbstract
 
         }
 
-        $this->render('news\single.html', ['news' => $news]);
+        $this->twig->display('news\single.html', ['news' => $news]);
 
     }
 
@@ -39,7 +39,7 @@ class News extends ControllerAbstract
 
         $data = NewsModel::getAllNews();
 
-        $this->render('news\all.html', ['data' => $data]);
+        $this->twig->display('news\all.html', ['data' => $data]);
 
     }
 }
