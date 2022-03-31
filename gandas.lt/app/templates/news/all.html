@@ -1,9 +1,7 @@
-{% include 'parts/header.html' %}
-
-<div class="all-content">
+<div class="content-container">
     <div class="item-row-container">
         <div class="item-row-title">
-            <h1>All News</h1>
+            <h1 class="title">All News</h1>
         </div>
         <ul class="item-row">
             {% for news in data %}
@@ -11,8 +9,8 @@
                 <a href='http://localhost/pamokos/gandas.lt/pub/index.php/{{ news.slug }}'>
                     <img src="{{ news.image }}">
                     <div class="news-container-right">
-                        <span class="news-container-title">{{ news. Title }}</span>
-                        <span class="news-container-content">{{ news. Content }}</span>
+                        <span class="news-container-title title">{{ news. Title }}</span>
+                        <p class="news-container-content">{{ news. Content }}</p>
                         <span class="news-container-date">{{ news. CreatedAt }}</span>
                     </div>
                 </a>
@@ -22,5 +20,3 @@
         <hr class="flow-break">
     </div>
 </div>
-
-{% include 'parts/footer.html' %}
