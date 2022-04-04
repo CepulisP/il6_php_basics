@@ -6,6 +6,7 @@ namespace Controller;
 
 use Core\ControllerAbstract;
 use Model\News as NewsModel;
+use Model\Collections\News as NewsCollection;
 
 class News extends ControllerAbstract
 {
@@ -37,9 +38,11 @@ class News extends ControllerAbstract
     public function all(): void
     {
 
-        $data = NewsModel::getAllNews();
+        $news = new NewsCollection();
 
-        $this->twig->display('news\all.html', ['data' => $data]);
+        $news->filter('active', '1');
+
+        $this->twig->display('news\all.html', ['news' => $news->get()]);
 
     }
 }

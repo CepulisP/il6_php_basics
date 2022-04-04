@@ -216,32 +216,4 @@ class News extends ModelAbstract
 
     }
 
-    public static function getAllNews(): ?array
-    {
-
-        $queryFactory = new QueryFactory('mysql');
-        $db = new DB();
-
-        $sql = $queryFactory->newSelect();
-        $sql->cols(['*'])->from('news');
-
-        if ($rez = $db->getAll($sql)) {
-
-            $data = [];
-
-            foreach ($rez as $element) {
-
-                $news = new News();
-                $news->load((int) $element['id']);
-                $data[] = $news;
-
-            }
-
-            return $data;
-
-        }
-
-        return null;
-
-    }
 }
