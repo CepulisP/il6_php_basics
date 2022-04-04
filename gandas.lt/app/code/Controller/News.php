@@ -41,6 +41,9 @@ class News extends ControllerAbstract
         $news = new NewsCollection();
 
         $news->filter('active', '1');
+//        $news->orderBy(['created_at DESC']);
+//        $news->limit(5);
+//        $news->offset(0);
 
         $this->twig->display('news\all.html', ['news' => $news->get()]);
 

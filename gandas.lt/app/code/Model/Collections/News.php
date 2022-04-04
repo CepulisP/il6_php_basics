@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Model\Collections;
 
 use Core\CollectionAbstract;
+use Model\News as NewsModel;
 
 class News extends CollectionAbstract
 {
@@ -20,7 +21,7 @@ class News extends CollectionAbstract
 
             foreach ($rez as $element) {
 
-                $new = new \Model\News();
+                $new = new NewsModel();
                 $news[] = $new->load((int) $element['id']);
 
             }

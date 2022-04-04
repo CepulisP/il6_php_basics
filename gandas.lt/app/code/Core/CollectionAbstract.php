@@ -43,4 +43,31 @@ class CollectionAbstract
         return $this;
 
     }
+
+    public function orderBy(array $order): CollectionAbstract
+    {
+
+        $this->select->orderBy($order);
+
+        return $this;
+
+    }
+
+    public function limit(int $limit): CollectionAbstract
+    {
+
+        $this->select->limit($limit);
+
+        return $this;
+
+    }
+
+    public function offset(int $offset): CollectionAbstract
+    {
+
+        $this->select->offset($offset);
+
+        return $this;
+
+    }
 }
