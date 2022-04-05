@@ -219,9 +219,9 @@ class Account extends ModelAbstract
         $select->cols(['id'])->from(self::TABLE)->where('email = :email')->where('password = :password');
         $select->bindValues(['email' => $email, 'password' => $pass]);
 
-        $rez = $db->getAll($select);
+        $rez = $db->get($select);
         
-        return (int) $rez[0]['id'] ?? null;
+        return (int) $rez['id'] ?? null;
     }
 
 }

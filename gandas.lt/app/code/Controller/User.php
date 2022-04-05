@@ -27,6 +27,7 @@ class User extends ControllerAbstract
 
     public function edit(): void
     {
+
         if (!isset($_SESSION['user_id'])) UrlHelper::redirect('user/login');
 
         $user = new Account((int) $_SESSION['user_id']);
