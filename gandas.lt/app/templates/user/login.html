@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="title">Sign in</h1>
+<form action="http://localhost/pamokos/gandas.lt/pub/index.php/user/execlogin/" method="POST">
+    <div>
+        <input type="email" name="email" placeholder="Email">
+    </div>
+    <div>
+        <input type="password" name="password" placeholder="Password">
+    </div>
+    <div>
+        <input class="btn" type="submit" name="submit" placeholder="Login">
+    </div>
+</form>
+{% endblock %}

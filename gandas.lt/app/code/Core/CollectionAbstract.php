@@ -21,7 +21,7 @@ class CollectionAbstract
         $this->db = new DB();
 
         $this->select = $this->queryFactory->newSelect();
-        $this->select->cols(['*'])->from(static::TABLE);
+        $this->select->cols(['id'])->from(static::TABLE);
 
     }
 

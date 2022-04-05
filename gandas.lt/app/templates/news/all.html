@@ -9,7 +9,7 @@
             <ul class="item-row">
                 {% for item in news %}
                 <li class="news-container">
-                    <a href='http://localhost/pamokos/gandas.lt/pub/index.php/{{ news.slug }}'>
+                    <a href='http://localhost/pamokos/gandas.lt/pub/index.php/{{ item.slug }}'>
                         <img src="{{ item.image }}">
                         <div class="news-container-right">
                             <span class="news-container-title title">{{ item. Title }}</span>

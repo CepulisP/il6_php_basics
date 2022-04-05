@@ -10,7 +10,7 @@ use Aura\SqlQuery\QueryFactory;
 
 class News extends ModelAbstract
 {
-    private int $id;
+    protected const TABLE = 'news';
 
     private string $title;
 
@@ -28,12 +28,17 @@ class News extends ModelAbstract
 
     private string $createdAt;
 
-    /**
-     * @return int
-     */
-    public function getId(): int
+    public function __construct(?int $id = null)
     {
-        return $this->id;
+
+        parent::__construct();
+
+        if ($id !== null) {
+
+            $this->load($id);
+
+        }
+
     }
 
     /**
@@ -164,6 +169,21 @@ class News extends ModelAbstract
         $this->createdAt = $createdAt;
     }
 
+    protected function assignData(): void
+    {
+
+        $this->data = [
+            'title' => $this->title,
+            'content' => $this->content,
+            'author_id' => $this->authorId,
+            'active' => $this->active,
+            'views' => $this->views,
+            'slug' => $this->slug,
+            'image' => $this->image
+        ];
+
+    }
+
     public function loadBySlug(string $slug): ?News
     {
 
@@ -198,13 +218,13 @@ class News extends ModelAbstract
 
         if ($rez = $this->db->get($sql)) {
 
-            $this->id = (int)$rez['id'];
+            $this->id = (int) $rez['id'];
             $this->title = $rez['title'];
             $this->content = $rez['content'];
-            $this->authorId = (int)$rez['author_id'];
+            $this->authorId = (int) $rez['author_id'];
             $this->createdAt = $rez['created_at'];
-            $this->active = (int)$rez['active'];
-            $this->views = (int)$rez['views'];
+            $this->active = (int) $rez['active'];
+            $this->views = (int) $rez['views'];
             $this->slug = $rez['slug'];
             $this->image = $rez['image'];
 

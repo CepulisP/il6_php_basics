@@ -28,10 +28,10 @@ class DB
     public function get(\Aura\SqlQuery\Common\SelectInterface $sql): ?array
     {
 
-        $sth = $this->pdo->prepare($sql->getStatement());
-        $sth->execute($sql->getBindValues());
+        $db = $this->pdo->prepare($sql->getStatement());
+        $db->execute($sql->getBindValues());
 
-        if ($rez = $sth->fetch(\PDO::FETCH_ASSOC)) {
+        if ($rez = $db->fetch(\PDO::FETCH_ASSOC)) {
 
             return $rez;
 
@@ -44,16 +44,36 @@ class DB
     public function getAll(\Aura\SqlQuery\Common\SelectInterface $sql): ?array
     {
 
-        $sth = $this->pdo->prepare($sql->getStatement());
-        $sth->execute($sql->getBindValues());
+        $db = $this->pdo->prepare($sql->getStatement());
+        $db->execute($sql->getBindValues());
 
-        if ($rez = $sth->fetchAll(\PDO::FETCH_ASSOC)) {
+        if ($rez = $db->fetchAll(\PDO::FETCH_ASSOC)) {
 
             return $rez;
 
         }
 
         return null;
+
+    }
+
+    public function execInsert(\Aura\SqlQuery\Common\InsertInterface $sql): \PDOStatement
+    {
+
+        $db = $this->pdo->prepare($sql->getStatement());
+        $db->execute($sql->getBindValues());
+
+        return $db;
+
+    }
+
+    public function execUpdate(\Aura\SqlQuery\Common\UpdateInterface $sql): \PDOStatement
+    {
+
+        $db = $this->pdo->prepare($sql->getStatement());
+        $db->execute($sql->getBindValues());
+
+        return $db;
 
     }
 }

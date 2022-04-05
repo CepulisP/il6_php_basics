@@ -32,6 +32,10 @@ body {
     flex-direction: column;
 }
 
+input {
+    color: var(--grey-900);
+}
+
 a {
     text-decoration: none;
     color: #FFF;

@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="title">Edit</h1>
+<form action="http://localhost/pamokos/gandas.lt/pub/index.php/user/execedit/" method="POST">
+    <ul>
+        <li>
+            <input type="text" name="name" placeholder="Name" value="{{ user.name }}">
+        </li>
+        <li>
+            <input type="text" name="last_name" placeholder="Last Name" value="{{ user.lastName }}">
+        </li>
+        <li>
+            <input type="text" name="nickname" placeholder="Nickname" value="{{ user.nickName }}">
+        </li>
+        <li>
+            <input type="email" name="email" placeholder="Email" value="{{ user.email }}">
+        </li>
+        <li>
+            <input type="password" name="password" placeholder="Password">
+        </li>
+        <li>
+            <input type="password" name="password2" placeholder="Repeat password">
+        </li>
+        <li>
+            <input class="btn" type="submit" name="submit" placeholder="Save">
+        </li>
+    </ul>
+</form>
+{% endblock %}
