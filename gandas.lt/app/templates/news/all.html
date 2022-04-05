@@ -1,22 +1,27 @@
-<div class="content-container">
-    <div class="item-row-container">
-        <div class="item-row-title">
-            <h1 class="title">All News</h1>
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content-container">
+        <div class="item-row-container">
+            <div class="item-row-title">
+                <h1 class="title">All News</h1>
+            </div>
+            <ul class="item-row">
+                {% for item in news %}
+                <li class="news-container">
+                    <a href='http://localhost/pamokos/gandas.lt/pub/index.php/{{ item.slug }}'>
+                        <img src="{{ item.image }}">
+                        <div class="news-container-right">
+                            <span class="news-container-title title">{{ item. Title }}</span>
+                            <p class="news-container-content">{{ item. Content }}</p>
+                            <span class="news-container-date">{{ item. CreatedAt }}</span>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
-        <ul class="item-row">
-            {% for news in data %}
-            <li class="news-container">
-                <a href='http://localhost/pamokos/gandas.lt/pub/index.php/{{ news.slug }}'>
-                    <img src="{{ news.image }}">
-                    <div class="news-container-right">
-                        <span class="news-container-title title">{{ news. Title }}</span>
-                        <p class="news-container-content">{{ news. Content }}</p>
-                        <span class="news-container-date">{{ news. CreatedAt }}</span>
-                    </div>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
         <hr class="flow-break">
     </div>
-</div>
+{% endblock %}
+

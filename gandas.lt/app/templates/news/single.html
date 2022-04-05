@@ -1,16 +1,20 @@
-<div class="content-container no-margin-padding">
-    <div class="news-single-container no-margin-padding">
-        <div class="news-header  no-margin-padding">
-            <img src="{{ news.image }}">
-            <h1 class="news-title title">
-                {{ news. Title }}
-            </h1>
-        </div>
-        <div class="news-content">
-            <div class="author">By {{ news.authorId }} (placeholder for author)</div>
-            <div class="date">{{ news.createdAt }}</div>
-            <p>{{ news. Content|nl2br }}</p>
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content-container no-margin-padding">
+        <div class="news-single-container no-margin-padding">
+            <div class="news-header  no-margin-padding">
+                <img src="{{ news.image }}">
+                <h1 class="news-title title">
+                    {{ news. Title }}
+                </h1>
+            </div>
+            <div class="news-content">
+                <div class="author">By {{ news.authorId }} (placeholder for author)</div>
+                <div class="date">{{ news.createdAt }}</div>
+                <p>{{ news. Content|nl2br }}</p>
+            </div>
         </div>
     </div>
-</div>
-<hr class="flow-break">
+    <hr class="flow-break">
+{% endblock %}

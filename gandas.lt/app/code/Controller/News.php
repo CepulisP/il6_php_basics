@@ -6,6 +6,7 @@ namespace Controller;
 
 use Core\ControllerAbstract;
 use Model\News as NewsModel;
+use Model\Collections\News as NewsCollection;
 
 class News extends ControllerAbstract
 {
@@ -30,16 +31,21 @@ class News extends ControllerAbstract
 
         }
 
-        $this->render('news\single.html', ['news' => $news]);
+        $this->twig->display('news\single.html', ['news' => $news]);
 
     }
 
     public function all(): void
     {
 
-        $data = NewsModel::getAllNews();
+        $news = new NewsCollection();
 
-        $this->render('news\all.html', ['data' => $data]);
+        $news->filter('active', '1');
+//        $news->orderBy(['created_at DESC']);
+//        $news->limit(5);
+//        $news->offset(0);
+
+        $this->twig->display('news\all.html', ['news' => $news->get()]);
 
     }
 }

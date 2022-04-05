@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1 class="title">Register</h1>
+    <form action="http://localhost/pamokos/gandas.lt/pub/index.php/user/execregister/" method="POST">
+        <ul>
+            <li>
+                <input type="text" name="name" placeholder="Name">
+            </li>
+            <li>
+                <input type="text" name="last_name" placeholder="Last Name">
+            </li>
+            <li>
+                <input type="text" name="nickname" placeholder="Nickname">
+            </li>
+            <li>
+                <input type="email" name="email" placeholder="Email">
+            </li>
+            <li>
+                <input type="password" name="password" placeholder="Password">
+            </li>
+            <li>
+                <input type="password" name="password2" placeholder="Repeat password">
+            </li>
+            <li>
+                <input class="btn" type="submit" name="submit" placeholder="Register">
+            </li>
+        </ul>
+    </form>
+{% endblock %}
