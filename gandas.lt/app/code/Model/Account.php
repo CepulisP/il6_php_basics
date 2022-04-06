@@ -10,7 +10,7 @@ use Core\ModelAbstract;
 
 class Account extends ModelAbstract
 {
-    protected const TABLE = 'users';
+    public const TABLE = 'users';
 
     private string $name;
 

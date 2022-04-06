@@ -545,17 +545,13 @@ footer {
 .news-container-right {
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .news-container:hover {
     background: var(--grey-500);
     transform: scale(1.005);
     box-shadow: 0 5px 2px -2px #00000040;
-}
-
-.news-container img {
-    width: 100%;
-    height: auto;
 }
 
 .news-container-title {
@@ -588,9 +584,14 @@ footer {
     margin-top: auto;
 }
 
-.news-container img {
+.news-container-img {
     margin-right: 0.5rem;
-    width: auto;
+    width: 370px;
+    height: 180px;
+}
+
+.news-container-img img{
+    width: 370px;
     height: 180px;
 }
 

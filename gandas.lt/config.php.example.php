@@ -7,3 +7,6 @@ define('DB_HOST', 'localhost');
 define('DEBUG_MODE', 0);
 define('PROJECT_ROOT', __dir__);
 define('BASE_URL', 'http://localhost/pamokos/gandas.lt/pub/index.php/');
+define('WEBIT_API_KEY', 'webit_api_key_long_one');
+define('TRANSLATE_API_KEY', 'translate_api_key_long_one');
+

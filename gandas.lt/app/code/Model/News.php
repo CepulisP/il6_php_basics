@@ -10,7 +10,7 @@ use Aura\SqlQuery\QueryFactory;
 
 class News extends ModelAbstract
 {
-    protected const TABLE = 'news';
+    public const TABLE = 'news';
 
     private string $title;
 
