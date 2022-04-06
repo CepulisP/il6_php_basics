@@ -31,7 +31,7 @@ class News extends ControllerAbstract
 
         }
 
-        $this->twig->display('news\single.html', ['news' => $news]);
+        $this->twig->display('news\single.html', ['news' => $news, 'online' => $this->isUserLoggedIn()]);
 
     }
 
@@ -45,7 +45,7 @@ class News extends ControllerAbstract
 //        $news->limit(5);
 //        $news->offset(0);
 
-        $this->twig->display('news\all.html', ['news' => $news->get()]);
+        $this->twig->display('news\all.html', ['news' => $news->get(), 'online' => $this->isUserLoggedIn()]);
 
     }
 }

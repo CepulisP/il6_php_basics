@@ -11,7 +11,7 @@ class Home extends ControllerAbstract
     public function index(): void
     {
 
-        $this->twig->display('home.html');
+        $this->twig->display('home.html', ['online' => $this->isUserLoggedIn()]);
 
     }
 }

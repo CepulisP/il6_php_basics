@@ -21,7 +21,7 @@ class User extends ControllerAbstract
 
         if (isset($_SESSION['user_id'])) $this->logout();
 
-        $this->twig->display('user\register.html');
+        $this->twig->display('user\register.html', ['online' => $this->isUserLoggedIn()]);
 
     }
 
@@ -32,7 +32,7 @@ class User extends ControllerAbstract
 
         $user = new Account((int) $_SESSION['user_id']);
 
-        $this->twig->display('user\edit.html', ['user' => $user]);
+        $this->twig->display('user\edit.html', ['user' => $user, 'online' => $this->isUserLoggedIn()]);
 
     }
 
@@ -41,7 +41,7 @@ class User extends ControllerAbstract
 
         if (isset($_SESSION['user_id'])) $this->logout();
 
-        $this->twig->display('user\login.html');
+        $this->twig->display('user\login.html', ['online' => $this->isUserLoggedIn()]);
 
     }
 

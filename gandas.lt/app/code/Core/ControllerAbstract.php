@@ -19,4 +19,11 @@ class ControllerAbstract
 
     }
 
+    protected function isUserLoggedIn(): bool
+    {
+
+        return isset($_SESSION['user_id']);
+
+    }
+
 }
